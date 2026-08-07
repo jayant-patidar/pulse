@@ -19,6 +19,11 @@ import { MembershipsModule } from './root/memberships/memberships.module';
 import { RbacModule } from './root/rbac/rbac.module';
 import { AuditModule } from './root/audit/audit.module';
 
+import { NotificationsModule } from './root/notifications/notifications.module';
+import { RealtimeModule } from './root/realtime/realtime.module';
+import { SearchModule } from './root/search/search.module';
+import { BullModule } from '@nestjs/bull';
+
 // ---- TRUNK MODULES ----
 import { ProjectsModule } from './trunk/projects/projects.module';
 import { TasksModule } from './trunk/tasks/tasks.module';
@@ -44,6 +49,13 @@ import { ConstructionModule } from './branches/construction/construction.module'
       }),
       inject: [ConfigService],
     }),
+    BullModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: (configService: ConfigService) => ({
+        redis: configService.get<string>('REDIS_URL', 'redis://localhost:6379'),
+      }),
+      inject: [ConfigService],
+    }),
 
     // ---- ROOT LAYER ----
     AuthModule,
@@ -52,6 +64,9 @@ import { ConstructionModule } from './branches/construction/construction.module'
     MembershipsModule,
     RbacModule,
     AuditModule,
+    NotificationsModule,
+    RealtimeModule,
+    SearchModule,
 
     // ---- TRUNK LAYER ----
     ProjectsModule,

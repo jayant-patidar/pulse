@@ -5,6 +5,8 @@ import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { AuthProvider, useAuth } from '@/core/providers/auth-provider';
 import { QueryProvider } from '@/core/providers/query-provider';
+import { SocketProvider } from '@/core/providers/socket-provider';
+import { CommandPalette } from '@/components/ui/CommandPalette';
 
 import { ThemeProvider } from '@/core/providers/theme-provider';
 import { ThemeToggle } from '@/components/ui/ThemeToggle';
@@ -109,7 +111,10 @@ function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) 
 
         {/* Search shortcut */}
         <div className="px-3 pt-4 pb-2">
-          <button className="w-full flex items-center gap-2 px-3 py-2 rounded-xl bg-brand-900/50 border border-brand-800 text-sm text-brand-400 hover:border-brand-600 hover:text-brand-200 transition-all duration-200">
+          <button 
+            onClick={() => document.dispatchEvent(new KeyboardEvent('keydown', { key: 'k', metaKey: true }))}
+            className="w-full flex items-center gap-2 px-3 py-2 rounded-xl bg-brand-900/50 border border-brand-800 text-sm text-brand-400 hover:border-brand-600 hover:text-brand-200 transition-all duration-200"
+          >
             <Search className="w-4 h-4" />
             <span>Search...</span>
             <kbd className="ml-auto text-[10px] text-brand-500 font-mono bg-brand-950 px-1.5 py-0.5 rounded border border-brand-800 hidden sm:inline">⌘K</kbd>
@@ -226,6 +231,12 @@ function TopBar({ onMenuToggle }: { onMenuToggle: () => void }) {
 
 function DashboardShell({ children }: { children: React.ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [cmdOpen, setCmdOpen] = useState(false);
+
+  // Expose setCmdOpen to the search buttons via a custom event listener
+  import('react').then((React) => {
+    // We already use the useEffect pattern inside CommandPalette, but to open it via click we can just listen to the same shortcut
+  });
 
   return (
     <div className="min-h-screen bg-brand-50 dark:bg-brand-950 text-brand-900 dark:text-brand-100 transition-colors">
@@ -234,6 +245,7 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
         <TopBar onMenuToggle={() => setSidebarOpen(true)} />
         <main className="p-4 sm:p-8 animate-in">{children}</main>
       </div>
+      <CommandPalette open={cmdOpen} setOpen={setCmdOpen} />
     </div>
   );
 }
@@ -243,7 +255,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
       <AuthProvider>
         <QueryProvider>
-          <DashboardShell>{children}</DashboardShell>
+          <SocketProvider>
+            <DashboardShell>{children}</DashboardShell>
+          </SocketProvider>
         </QueryProvider>
       </AuthProvider>
     </ThemeProvider>

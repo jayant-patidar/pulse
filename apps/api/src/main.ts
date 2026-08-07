@@ -8,6 +8,8 @@ import helmet from 'helmet';
 import cookieParser from 'cookie-parser';
 import { ResponseEnvelopeInterceptor } from './common/interceptors';
 import { GlobalExceptionFilter } from './common/filters/global-exception.filter';
+import { RedisIoAdapter } from './root/realtime/redis.adapter';
+import { ConfigService } from '@nestjs/config';
 
 async function bootstrap(): Promise<void> {
   const app = await NestFactory.create(AppModule);
@@ -35,6 +37,11 @@ async function bootstrap(): Promise<void> {
   );
   app.useGlobalFilters(new GlobalExceptionFilter());
   app.useGlobalInterceptors(new ResponseEnvelopeInterceptor());
+
+  const configService = app.get(ConfigService);
+  const redisIoAdapter = new RedisIoAdapter(app, configService);
+  await redisIoAdapter.connectToRedis();
+  app.useWebSocketAdapter(redisIoAdapter);
 
   const port = process.env.PORT || 3001;
   await app.listen(port);

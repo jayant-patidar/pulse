@@ -21,8 +21,11 @@
     "@nestjs/mongoose": "^10.1.0",
     "@nestjs/passport": "^10.0.0",
     "@nestjs/platform-express": "^10.4.0",
+    "@nestjs/platform-socket.io": "^10.4.22",
+    "@nestjs/websockets": "^10.4.22",
     "@pulse/types": "workspace:*",
     "@pulse/validators": "workspace:*",
+    "@socket.io/redis-adapter": "^8.3.0",
     "argon2": "^0.41.0",
     "bullmq": "^5.25.0",
     "class-transformer": "^0.5.1",
@@ -35,6 +38,7 @@
     "passport-jwt": "^4.0.0",
     "reflect-metadata": "^0.2.0",
     "rxjs": "^7.8.0",
+    "socket.io": "^4.8.3",
     "zod": "^3.23.0"
   },
   "devDependencies": {
