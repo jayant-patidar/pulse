@@ -10,7 +10,7 @@ interface FormFieldProps extends React.HTMLAttributes<HTMLDivElement> {
 export function FormField({ label, error, required, children, className, ...props }: FormFieldProps) {
   return (
     <div className={cn("flex flex-col gap-1.5", className)} {...props}>
-      <label className="text-sm font-medium text-gray-900 flex justify-between">
+      <label className="text-sm font-medium text-brand-900 dark:text-brand-100 flex justify-between">
         <span>
           {label}
           {required && <span className="text-red-500 ml-1">*</span>}

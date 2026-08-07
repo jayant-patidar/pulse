@@ -72,6 +72,11 @@ export default function EquipmentPage() {
 
   const filteredEquipment = equipment?.filter((e: any) => e.name.toLowerCase().includes(search.toLowerCase())) || [];
 
+  const totalEquipment = equipment?.length || 0;
+  const activeFleet = equipment?.filter((e: any) => e.status === 'IN_USE').length || 0;
+  const inMaintenance = equipment?.filter((e: any) => e.status === 'MAINTENANCE').length || 0;
+  const available = equipment?.filter((e: any) => e.status === 'AVAILABLE').length || 0;
+
   return (
     <div className="max-w-7xl mx-auto space-y-8">
       <PageHeader
@@ -88,10 +93,10 @@ export default function EquipmentPage() {
 
       <StatsGrid
         stats={[
-          { label: "Active Fleet", value: "34" },
-          { label: "In Maintenance", value: "2", trend: "Normal", trendDirection: "neutral" },
-          { label: "Utilization Rate", value: "87%", trend: "+5%", trendDirection: "up" },
-          { label: "Alerts", value: "0", trendDirection: "neutral" },
+          { label: "Total Equipment", value: totalEquipment.toString() },
+          { label: "Active Fleet", value: activeFleet.toString() },
+          { label: "In Maintenance", value: inMaintenance.toString(), trend: inMaintenance > 0 ? "Action Needed" : "Normal", trendDirection: inMaintenance > 0 ? "down" : "neutral" },
+          { label: "Available", value: available.toString() },
         ]}
       />
 

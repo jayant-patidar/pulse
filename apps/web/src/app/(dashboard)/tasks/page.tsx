@@ -68,6 +68,11 @@ export default function TasksPage() {
 
   const filteredTasks = tasks?.filter((t: any) => t.title.toLowerCase().includes(search.toLowerCase())) || [];
 
+  const openTasks = tasks?.filter((t: any) => ['TODO', 'IN_PROGRESS', 'UNDER_REVIEW'].includes(t.status)).length || 0;
+  const overdueTasks = tasks?.filter((t: any) => t.dueDate && new Date(t.dueDate) < new Date() && t.status !== 'DONE').length || 0;
+  const completedTasks = tasks?.filter((t: any) => t.status === 'DONE').length || 0;
+  const totalTasks = tasks?.length || 0;
+
   return (
     <div className="max-w-7xl mx-auto space-y-8">
       <PageHeader
@@ -84,10 +89,10 @@ export default function TasksPage() {
 
       <StatsGrid
         stats={[
-          { label: "My Open Tasks", value: "8" },
-          { label: "Overdue", value: "3", trend: "Urgent", trendDirection: "down" },
-          { label: "Completed This Week", value: "24", trend: "+12%", trendDirection: "up" },
-          { label: "Blocked", value: "1", trendDirection: "down" },
+          { label: "Total Tasks", value: totalTasks.toString() },
+          { label: "Open Tasks", value: openTasks.toString() },
+          { label: "Completed", value: completedTasks.toString() },
+          { label: "Overdue", value: overdueTasks.toString(), trend: overdueTasks > 0 ? "Urgent" : "None", trendDirection: overdueTasks > 0 ? "down" : "neutral" },
         ]}
       />
 

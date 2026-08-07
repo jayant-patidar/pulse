@@ -74,6 +74,14 @@ export default function ProjectsPage() {
 
   const filteredProjects = projects?.filter((p: any) => p.name.toLowerCase().includes(search.toLowerCase())) || [];
 
+  const activeProjects = projects?.filter((p: any) => p.status === 'ACTIVE').length || 0;
+  const projectsOnHold = projects?.filter((p: any) => p.status === 'ON_HOLD').length || 0;
+  const totalBudget = projects?.reduce((acc: number, p: any) => acc + (p.budget || 0), 0) || 0;
+  const formattedBudget = totalBudget >= 100000000 
+    ? `$${(totalBudget / 100000000).toFixed(1)}M` 
+    : `$${(totalBudget / 100).toLocaleString()}`;
+  const totalProjects = projects?.length || 0;
+
   return (
     <div className="max-w-7xl mx-auto space-y-8">
       <PageHeader
@@ -90,10 +98,10 @@ export default function ProjectsPage() {
 
       <StatsGrid
         stats={[
-          { label: "Active Projects", value: "12", trend: "+2", trendDirection: "up" },
-          { label: "Total Budget", value: "$4.2M" },
-          { label: "Projects On Hold", value: "3", trend: "-1", trendDirection: "down" },
-          { label: "Avg Schedule Variance", value: "+4 Days", trend: "Needs Attention", trendDirection: "down" },
+          { label: "Active Projects", value: activeProjects.toString() },
+          { label: "Total Budget", value: formattedBudget },
+          { label: "Projects On Hold", value: projectsOnHold.toString() },
+          { label: "Total Projects", value: totalProjects.toString() },
         ]}
       />
 

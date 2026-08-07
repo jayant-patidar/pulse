@@ -84,6 +84,14 @@ export default function DocumentsPage() {
 
   const filteredDocuments = documents?.filter((d: any) => d.name.toLowerCase().includes(search.toLowerCase())) || [];
 
+  const totalFiles = documents?.length || 0;
+  const pendingApproval = documents?.filter((d: any) => d.status === 'PENDING').length || 0;
+  const totalSizeBytes = documents?.reduce((acc: number, d: any) => acc + (d.sizeBytes || 0), 0) || 0;
+  const storageUsed = totalSizeBytes > 1024 * 1024 * 1024 
+    ? `${(totalSizeBytes / (1024 * 1024 * 1024)).toFixed(1)} GB`
+    : `${(totalSizeBytes / (1024 * 1024)).toFixed(1)} MB`;
+  const recentUploads = documents?.filter((d: any) => d.createdAt && new Date(d.createdAt) >= new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)).length || 0;
+
   return (
     <div className="max-w-7xl mx-auto space-y-8">
       <PageHeader
@@ -100,10 +108,10 @@ export default function DocumentsPage() {
 
       <StatsGrid
         stats={[
-          { label: "Total Files", value: "1,248" },
-          { label: "Pending Approval", value: "12", trend: "Needs Review", trendDirection: "down" },
-          { label: "Storage Used", value: "4.2 GB", trend: "15% of Quota", trendDirection: "neutral" },
-          { label: "Recent Uploads", value: "24", trendDirection: "up" },
+          { label: "Total Files", value: totalFiles.toString() },
+          { label: "Pending Approval", value: pendingApproval.toString(), trend: pendingApproval > 0 ? "Needs Review" : "Clear", trendDirection: pendingApproval > 0 ? "down" : "neutral" },
+          { label: "Storage Used", value: storageUsed },
+          { label: "Recent Uploads", value: recentUploads.toString(), trendDirection: recentUploads > 0 ? "up" : "neutral" },
         ]}
       />
 

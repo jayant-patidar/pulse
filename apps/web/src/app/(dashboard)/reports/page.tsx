@@ -72,6 +72,11 @@ export default function DailyReportsPage() {
     },
   ];
 
+  const totalReports = reports?.length || 0;
+  const reportsThisWeek = reports?.filter((r: any) => new Date(r.date) >= new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)).length || 0;
+  const avgWorkers = totalReports > 0 ? Math.round(reports.reduce((acc: number, r: any) => acc + (r.totalWorkerCount || 0), 0) / totalReports) : 0;
+  const weatherDelays = reports?.filter((r: any) => r.weather?.conditions?.toLowerCase().includes('rain') || r.weather?.conditions?.toLowerCase().includes('storm') || r.weather?.conditions?.toLowerCase().includes('snow')).length || 0;
+
   return (
     <div className="max-w-7xl mx-auto space-y-8">
       <PageHeader
@@ -88,10 +93,10 @@ export default function DailyReportsPage() {
 
       <StatsGrid
         stats={[
-          { label: "Pending Approval", value: "4", trend: "Needs Action", trendDirection: "down" },
-          { label: "Reports This Week", value: "14" },
-          { label: "Avg Workers/Day", value: "45", trend: "+5", trendDirection: "up" },
-          { label: "Weather Delays", value: "0", trendDirection: "neutral" },
+          { label: "Total Reports", value: totalReports.toString() },
+          { label: "Reports This Week", value: reportsThisWeek.toString() },
+          { label: "Avg Workers/Day", value: avgWorkers.toString() },
+          { label: "Weather Delays", value: weatherDelays.toString(), trend: weatherDelays > 0 ? "Needs Attention" : "Normal", trendDirection: weatherDelays > 0 ? "down" : "neutral" },
         ]}
       />
 

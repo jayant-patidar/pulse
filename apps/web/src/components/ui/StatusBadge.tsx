@@ -11,13 +11,13 @@ const statusStyles: Record<string, string> = {
   ACTIVE: "bg-emerald-100 dark:bg-emerald-900/50 text-emerald-800 dark:text-emerald-400 border-emerald-300 dark:border-emerald-800",
   ON_HOLD: "bg-accent-100 dark:bg-accent-900/50 text-accent-800 dark:text-accent-400 border-accent-300 dark:border-accent-800",
   COMPLETED: "bg-brand-800 dark:bg-brand-700 text-brand-100 border-brand-900 dark:border-brand-600",
-  ARCHIVED: "bg-gray-100 dark:bg-gray-800/50 text-gray-500 dark:text-gray-400 border-gray-200 dark:border-gray-700",
+  ARCHIVED: "bg-brand-100 dark:bg-brand-800 dark:bg-gray-800/50 text-brand-500 dark:text-brand-400 dark:text-gray-400 border-gray-200 dark:border-gray-700",
   
   // Tasks
   TODO: "bg-white dark:bg-brand-900 text-brand-600 dark:text-brand-300 border-brand-200 dark:border-brand-800 shadow-sm",
   IN_PROGRESS: "bg-sky-100 dark:bg-sky-900/50 text-sky-800 dark:text-sky-400 border-sky-300 dark:border-sky-800",
   BLOCKED: "bg-red-100 dark:bg-red-900/50 text-red-800 dark:text-red-400 border-red-300 dark:border-red-800 font-semibold",
-  CANCELLED: "bg-gray-100 dark:bg-gray-800/50 text-gray-500 dark:text-gray-400 border-gray-200 dark:border-gray-700",
+  CANCELLED: "bg-brand-100 dark:bg-brand-800 dark:bg-gray-800/50 text-brand-500 dark:text-brand-400 dark:text-gray-400 border-gray-200 dark:border-gray-700",
 
   // Reports & Documents
   SUBMITTED: "bg-purple-100 dark:bg-purple-900/50 text-purple-800 dark:text-purple-400 border-purple-300 dark:border-purple-800",
@@ -32,7 +32,7 @@ const statusStyles: Record<string, string> = {
   IN_USE: "bg-brand-100 dark:bg-brand-900/50 text-brand-800 dark:text-brand-300 border-brand-300 dark:border-brand-700",
   UNDER_MAINTENANCE: "bg-accent-100 dark:bg-accent-900/50 text-accent-800 dark:text-accent-400 border-accent-300 dark:border-accent-800",
   OUT_OF_SERVICE: "bg-red-100 dark:bg-red-900/50 text-red-800 dark:text-red-400 border-red-300 dark:border-red-800",
-  RETIRED: "bg-gray-100 dark:bg-gray-800/50 text-gray-500 dark:text-gray-400 border-gray-200 dark:border-gray-700",
+  RETIRED: "bg-brand-100 dark:bg-brand-800 dark:bg-gray-800/50 text-brand-500 dark:text-brand-400 dark:text-gray-400 border-gray-200 dark:border-gray-700",
 
   // Priority
   LOW: "bg-brand-50 dark:bg-brand-900/50 text-brand-600 dark:text-brand-400 border-brand-200 dark:border-brand-800",

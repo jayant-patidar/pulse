@@ -83,7 +83,7 @@ export function DataTable<T>({
 
       {pagination && pagination.totalPages > 1 && (
         <div className="flex items-center justify-between px-6 py-4 border-t border-brand-200/50 dark:border-brand-800/50 bg-brand-50/30 dark:bg-brand-900/30">
-          <span className="text-sm text-gray-500">
+          <span className="text-sm text-brand-500 dark:text-brand-400">
             Page {pagination.page} of {pagination.totalPages}
           </span>
           <div className="flex gap-2">

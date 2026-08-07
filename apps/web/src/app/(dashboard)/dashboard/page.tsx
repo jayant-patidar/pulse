@@ -1,3 +1,7 @@
+'use client';
+
+import { useQuery } from '@tanstack/react-query';
+import { api } from '@/core/lib/api-client';
 import { PageHeader } from '@/components/ui/PageHeader';
 import { StatsGrid } from '@/components/ui/StatsGrid';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
@@ -5,6 +9,20 @@ import { Button } from '@/components/ui/Button';
 import { LayoutDashboard, Plus, ClipboardList, UploadCloud, Tractor, HardHat, ChevronRight } from 'lucide-react';
 
 export default function DashboardPage() {
+  const { data: projectsData } = useQuery({ queryKey: ['projects', 1], queryFn: () => api.get<any>(`/trunk/projects?page=1&limit=100`) });
+  const { data: tasksData } = useQuery({ queryKey: ['tasks', 1], queryFn: () => api.get<any>(`/trunk/tasks?page=1&limit=100`) });
+  const { data: reportsData } = useQuery({ queryKey: ['daily-reports', 1], queryFn: () => api.get<any>(`/trunk/daily-reports?page=1&limit=100`) });
+
+  const projects = projectsData || [];
+  const tasks = tasksData || [];
+  const reports = reportsData || [];
+
+  const activeProjects = projects.filter((p: any) => p.status === 'ACTIVE').length || 0;
+  const openTasks = tasks.filter((t: any) => ['TODO', 'IN_PROGRESS', 'UNDER_REVIEW'].includes(t.status)).length || 0;
+  const reportsToday = reports.filter((r: any) => new Date(r.date) >= new Date(Date.now() - 24 * 60 * 60 * 1000)).length || 0;
+  // We don't have members API easily available here without another query, so leaving it as total projects for now or keeping it hardcoded. Let's make it Total Projects.
+  const totalProjects = projects.length || 0;
+
   return (
     <div className="max-w-7xl mx-auto space-y-8">
       <PageHeader
@@ -15,10 +33,10 @@ export default function DashboardPage() {
 
       <StatsGrid
         stats={[
-          { label: 'Active Projects', value: '12', trend: '+2', trendDirection: 'up' },
-          { label: 'Open Tasks', value: '8', trend: '-3', trendDirection: 'down' },
-          { label: 'Reports Today', value: '4', trend: 'Pending', trendDirection: 'neutral' },
-          { label: 'Team Members', value: '24' },
+          { label: 'Active Projects', value: activeProjects.toString() },
+          { label: 'Open Tasks', value: openTasks.toString() },
+          { label: 'Reports Today', value: reportsToday.toString() },
+          { label: 'Total Projects', value: totalProjects.toString() },
         ]}
       />
 
