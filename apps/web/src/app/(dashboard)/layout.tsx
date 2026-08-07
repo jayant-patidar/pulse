@@ -3,6 +3,8 @@
 import { useState } from 'react';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
+import { useQuery } from '@tanstack/react-query';
+import { api } from '@/core/lib/api-client';
 import { AuthProvider, useAuth } from '@/core/providers/auth-provider';
 import { QueryProvider } from '@/core/providers/query-provider';
 import { SocketProvider } from '@/core/providers/socket-provider';
@@ -26,55 +28,19 @@ import {
 
 const NAV_ITEMS = [
   {
-    label: 'Dashboard',
+    label: 'Portfolio Dashboard',
     href: '/dashboard',
     icon: <LayoutDashboard className="w-5 h-5" />,
   },
   {
-    label: 'Projects',
+    label: 'All Projects',
     href: '/projects',
     icon: <HardHat className="w-5 h-5" />,
   },
   {
-    label: 'Tasks',
-    href: '/tasks',
-    icon: <ListTodo className="w-5 h-5" />,
-  },
-  {
-    label: 'Daily Reports',
-    href: '/reports',
-    icon: <ClipboardList className="w-5 h-5" />,
-  },
-  {
-    label: 'Documents',
-    href: '/documents',
-    icon: <FileText className="w-5 h-5" />,
-  },
-  {
-    label: 'Equipment',
+    label: 'Company Fleet',
     href: '/equipment',
     icon: <Tractor className="w-5 h-5" />,
-  },
-  // --- CONSTRUCTION BRANCH ---
-  {
-    label: 'Safety Incidents',
-    href: '/construction/safety',
-    icon: <HardHat className="w-5 h-5" />,
-  },
-  {
-    label: 'Change Orders',
-    href: '/construction/change-orders',
-    icon: <FileText className="w-5 h-5" />,
-  },
-  {
-    label: 'Purchase Orders',
-    href: '/construction/purchase-orders',
-    icon: <ClipboardList className="w-5 h-5" />,
-  },
-  {
-    label: 'Insurance (COI)',
-    href: '/construction/coi',
-    icon: <FileText className="w-5 h-5" />,
   },
 ];
 
@@ -86,9 +52,38 @@ const BOTTOM_NAV = [
   },
 ];
 
+const PROJECT_NAV_ITEMS = [
+  { label: 'Overview', href: '/dashboard', icon: <LayoutDashboard className="w-5 h-5" /> },
+  { label: 'Tasks & Schedule', href: '/tasks', icon: <ListTodo className="w-5 h-5" /> },
+  { label: 'Field Operations', href: '/reports', icon: <ClipboardList className="w-5 h-5" /> },
+  { label: 'Project Fleet', href: '/equipment', icon: <Tractor className="w-5 h-5" /> },
+  { label: 'Documents', href: '/documents', icon: <FileText className="w-5 h-5" /> },
+  { label: 'Finance', href: '/finance', icon: <Settings className="w-5 h-5" /> },
+  { label: 'Procurement', href: '/procurement', icon: <ClipboardList className="w-5 h-5" /> },
+  { label: 'Compliance', href: '/compliance', icon: <HardHat className="w-5 h-5" /> },
+  { label: 'Directory', href: '/directory', icon: <Settings className="w-5 h-5" /> },
+];
+
 function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
   const pathname = usePathname();
   const { user, logout } = useAuth();
+  
+  // Detect if we are inside a project workspace
+  const projectMatch = pathname.match(/^\/projects\/([a-f\d]{24})\//i);
+  const projectId = projectMatch ? projectMatch[1] : null;
+  
+  const currentNavItems = projectId 
+    ? PROJECT_NAV_ITEMS.map(item => ({ ...item, href: `/projects/${projectId}${item.href}` }))
+    : NAV_ITEMS;
+
+  const { data: project } = useQuery({
+    queryKey: ['project', projectId],
+    queryFn: async () => {
+      const res = await api.get<any>(`/trunk/projects/${projectId}`);
+      return res;
+    },
+    enabled: !!projectId,
+  });
 
   return (
     <>
@@ -110,24 +105,33 @@ function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) 
           ${isOpen ? 'translate-x-0' : '-translate-x-full'}
         `}
       >
-        {/* Logo */}
-        <div className="flex items-center gap-3 px-5 h-16 border-b border-brand-200 dark:border-brand-800">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-accent-500 to-accent-600 flex items-center justify-center shadow-md shadow-accent-500/20">
-            <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" />
-            </svg>
+        {/* Logo / Context Switcher */}
+        <div className="flex flex-col justify-center px-5 h-16 border-b border-brand-200 dark:border-brand-800">
+          <div className="flex items-center gap-3">
+            <Link href={projectId ? "/projects" : "/dashboard"} className="w-8 h-8 rounded-lg bg-gradient-to-br from-accent-500 to-accent-600 flex items-center justify-center shadow-md shadow-accent-500/20 shrink-0 cursor-pointer hover:opacity-90 transition-opacity">
+              <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                {projectId ? <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" /> : <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" />}
+              </svg>
+            </Link>
+            <div className="flex flex-col min-w-0">
+              <span className="text-xl font-display font-bold text-brand-900 dark:text-white tracking-tight truncate">
+                {projectId ? (project?.name || 'Loading Project...') : 'Pulse'}
+              </span>
+              {projectId && (
+                <span className="text-[10px] text-brand-500 dark:text-brand-400 font-medium truncate uppercase tracking-wider">
+                  Return to Portfolio
+                </span>
+              )}
+            </div>
+            
+            {/* Mobile close */}
+            <button
+              onClick={onClose}
+              className="ml-auto p-1.5 rounded-lg text-brand-500 dark:text-brand-400 hover:text-brand-900 dark:hover:text-white hover:bg-brand-100 dark:hover:bg-white/10 lg:hidden transition-colors"
+            >
+              <Menu className="w-5 h-5" />
+            </button>
           </div>
-          <span className="text-xl font-display font-bold text-brand-900 dark:text-white tracking-tight">Pulse</span>
-          <span className="ml-auto hidden sm:inline text-[10px] font-bold text-accent-600 dark:text-accent-500 bg-accent-50 dark:bg-accent-500/10 px-1.5 py-0.5 rounded-md border border-accent-200 dark:border-accent-500/20 uppercase tracking-wider">
-            Beta
-          </span>
-          {/* Mobile close */}
-          <button
-            onClick={onClose}
-            className="ml-auto p-1.5 rounded-lg text-brand-500 dark:text-brand-400 hover:text-brand-900 dark:hover:text-white hover:bg-brand-100 dark:hover:bg-white/10 lg:hidden transition-colors"
-          >
-            <Menu className="w-5 h-5" />
-          </button>
         </div>
 
         {/* Search shortcut */}
@@ -137,14 +141,14 @@ function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) 
             className="w-full flex items-center gap-2 px-3 py-2 rounded-xl bg-brand-50 dark:bg-brand-900/50 border border-brand-200 dark:border-brand-800 text-sm text-brand-500 dark:text-brand-400 hover:border-brand-300 dark:hover:border-brand-600 hover:text-brand-900 dark:hover:text-brand-200 transition-all duration-200"
           >
             <Search className="w-4 h-4" />
-            <span>Search...</span>
+            <span>Search {projectId ? 'Project' : 'Portfolio'}...</span>
             <kbd className="ml-auto text-[10px] text-brand-400 dark:text-brand-500 font-mono bg-white dark:bg-brand-950 px-1.5 py-0.5 rounded border border-brand-200 dark:border-brand-800 hidden sm:inline">⌘K</kbd>
           </button>
         </div>
 
         {/* Main Nav */}
         <nav className="flex-1 px-3 py-2 space-y-1 overflow-y-auto mt-2">
-          {NAV_ITEMS.map((item) => {
+          {currentNavItems.map((item) => {
             const isActive = pathname === item.href || pathname.startsWith(item.href + '/');
             return (
                <Link

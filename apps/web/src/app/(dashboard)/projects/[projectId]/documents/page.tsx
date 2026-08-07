@@ -15,15 +15,19 @@ import { SlideOver } from '@/components/ui/SlideOver';
 import { DocumentForm } from './_components/DocumentForm';
 import { CreateDocumentInput } from '@pulse/validators';
 
+import { useParams } from 'next/navigation';
+
 export default function DocumentsPage() {
+  const params = useParams();
+  const projectId = params.projectId as string;
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const queryClient = useQueryClient();
 
   const { data, isLoading } = useQuery({
-    queryKey: ['documents', page],
-    queryFn: () => api.get<any>(`/trunk/documents?page=${page}&limit=20`),
+    queryKey: ['documents', projectId, page],
+    queryFn: () => api.get<any>(`/trunk/documents?projectId=${projectId}&page=${page}&limit=20`),
   });
   
   const documents = data|| [];

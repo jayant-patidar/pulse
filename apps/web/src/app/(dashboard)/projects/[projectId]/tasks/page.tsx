@@ -15,7 +15,11 @@ import { SlideOver } from '@/components/ui/SlideOver';
 import { TaskForm } from './_components/TaskForm';
 import { CreateTaskInput } from '@pulse/validators';
 
+import { useParams } from 'next/navigation';
+
 export default function TasksPage() {
+  const params = useParams();
+  const projectId = params.projectId as string;
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -23,8 +27,8 @@ export default function TasksPage() {
   const queryClient = useQueryClient();
 
   const { data, isLoading } = useQuery({
-    queryKey: ['tasks', page],
-    queryFn: () => api.get<any>(`/trunk/tasks?page=${page}&limit=20`),
+    queryKey: ['tasks', projectId, page],
+    queryFn: () => api.get<any>(`/trunk/tasks?projectId=${projectId}&page=${page}&limit=20`),
   });
   
   const tasks = data|| [];

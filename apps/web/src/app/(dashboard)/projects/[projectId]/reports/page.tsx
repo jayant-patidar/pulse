@@ -15,15 +15,19 @@ import { SlideOver } from '@/components/ui/SlideOver';
 import { ReportForm } from './_components/ReportForm';
 import { CreateDailyReportInput } from '@pulse/validators';
 
+import { useParams } from 'next/navigation';
+
 export default function DailyReportsPage() {
+  const params = useParams();
+  const projectId = params.projectId as string;
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const queryClient = useQueryClient();
 
   const { data, isLoading } = useQuery({
-    queryKey: ['daily-reports', page],
-    queryFn: () => api.get<any>(`/trunk/daily-reports?page=${page}&limit=20`),
+    queryKey: ['daily-reports', projectId, page],
+    queryFn: () => api.get<any>(`/trunk/daily-reports?projectId=${projectId}&page=${page}&limit=20`),
   });
   
   const reports = data|| [];

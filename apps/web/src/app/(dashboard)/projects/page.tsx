@@ -117,6 +117,7 @@ export default function ProjectsPage() {
           data={filteredProjects}
           keyExtractor={(item) => item._id}
           isLoading={isLoading}
+          onRowClick={(item) => window.location.href = `/projects/${item._id}/dashboard`}
         />
       </div>
 
