@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { Inter, Outfit } from 'next/font/google';
 import './globals.css';
-import { Toaster } from 'sonner';
+import { Toaster } from '@/components/ui/Toaster';
 import { ThemeProvider } from '@/core/providers/theme-provider';
 
 const inter = Inter({
@@ -30,7 +30,7 @@ export default function RootLayout({
       <body className={`${inter.className} bg-gray-50 text-brand-900 antialiased selection:bg-accent-500/30 selection:text-accent-700`} suppressHydrationWarning>
         <ThemeProvider>
           {children}
-          <Toaster position="top-right" richColors />
+          <Toaster />
         </ThemeProvider>
       </body>
     </html>
