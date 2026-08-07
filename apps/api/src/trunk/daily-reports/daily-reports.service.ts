@@ -7,6 +7,7 @@ import { Model } from 'mongoose';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { DailyReportDocument } from './daily-reports.schema';
 import { parsePaginationQuery, buildPaginatedMeta, type PaginationQuery } from '../../common/helpers';
+import { ReportExtensionRegistry } from './daily-reports.registry';
 
 @Injectable()
 export class DailyReportsService {
@@ -15,9 +16,17 @@ export class DailyReportsService {
   constructor(
     @InjectModel(DailyReportDocument.name) private readonly reportModel: Model<DailyReportDocument>,
     private readonly eventEmitter: EventEmitter2,
+    private readonly registry: ReportExtensionRegistry,
   ) {}
 
   async create(orgId: string, userId: string, industry: string, dto: Record<string, unknown>) {
+    if (dto.extensions) {
+      const plugin = this.registry.getPlugin(industry);
+      if (plugin) {
+        dto.extensions = await plugin.validateExtensions(dto.extensions);
+      }
+    }
+
     const report = await this.reportModel.create({
       ...dto,
       organizationId: orgId,
@@ -62,10 +71,18 @@ export class DailyReportsService {
 
   async update(orgId: string, userId: string, id: string, dto: Record<string, unknown>) {
     // Only DRAFT reports can be edited
-    const existing = await this.reportModel.findOne({ _id: id, organizationId: orgId, deletedAt: null });
+    const existing = await this.reportModel.findOne({ _id: id, organizationId: orgId, deletedAt: null }).lean();
     if (!existing) throw new NotFoundException('Daily report not found');
     if (existing.status !== 'DRAFT') {
       throw new BadRequestException(`Cannot edit a report with status: ${existing.status}. Only DRAFT reports can be modified.`);
+    }
+
+    if (dto.extensions) {
+      const industry = (existing as any).industry || 'CONSTRUCTION';
+      const plugin = this.registry.getPlugin(industry);
+      if (plugin) {
+        dto.extensions = await plugin.validateExtensions(dto.extensions);
+      }
     }
 
     const report = await this.reportModel.findOneAndUpdate(

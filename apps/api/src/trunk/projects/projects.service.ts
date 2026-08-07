@@ -7,6 +7,7 @@ import { Model } from 'mongoose';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { ProjectDocument } from './projects.schema';
 import { parsePaginationQuery, buildPaginatedMeta, type PaginationQuery } from '../../common/helpers';
+import { ProjectExtensionRegistry } from './projects.registry';
 
 @Injectable()
 export class ProjectsService {
@@ -15,9 +16,17 @@ export class ProjectsService {
   constructor(
     @InjectModel(ProjectDocument.name) private readonly projectModel: Model<ProjectDocument>,
     private readonly eventEmitter: EventEmitter2,
+    private readonly registry: ProjectExtensionRegistry,
   ) {}
 
   async create(orgId: string, userId: string, industry: string, dto: Record<string, unknown>) {
+    if (dto.extensions) {
+      const plugin = this.registry.getPlugin(industry);
+      if (plugin) {
+        dto.extensions = await plugin.validateExtensions(dto.extensions);
+      }
+    }
+
     const project = await this.projectModel.create({
       ...dto,
       organizationId: orgId,
@@ -71,6 +80,17 @@ export class ProjectsService {
   }
 
   async update(orgId: string, userId: string, id: string, dto: Record<string, unknown>) {
+    // If extensions are being updated, we must validate them using the project's industry
+    if (dto.extensions) {
+      const existingProject = await this.projectModel.findOne({ _id: id, organizationId: orgId }).lean();
+      if (existingProject) {
+        const plugin = this.registry.getPlugin(existingProject.industry);
+        if (plugin) {
+          dto.extensions = await plugin.validateExtensions(dto.extensions);
+        }
+      }
+    }
+
     const project = await this.projectModel.findOneAndUpdate(
       { _id: id, organizationId: orgId, deletedAt: null },
       { $set: dto },

@@ -7,6 +7,7 @@ import { Model } from 'mongoose';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { TaskDocument } from './tasks.schema';
 import { parsePaginationQuery, buildPaginatedMeta, type PaginationQuery } from '../../common/helpers';
+import { TaskExtensionRegistry } from './tasks.registry';
 
 // Valid status transitions (state machine)
 const STATUS_TRANSITIONS: Record<string, string[]> = {
@@ -25,9 +26,17 @@ export class TasksService {
   constructor(
     @InjectModel(TaskDocument.name) private readonly taskModel: Model<TaskDocument>,
     private readonly eventEmitter: EventEmitter2,
+    private readonly registry: TaskExtensionRegistry,
   ) {}
 
   async create(orgId: string, userId: string, industry: string, dto: Record<string, unknown>) {
+    if (dto.extensions) {
+      const plugin = this.registry.getPlugin(industry);
+      if (plugin) {
+        dto.extensions = await plugin.validateExtensions(dto.extensions);
+      }
+    }
+
     const task = await this.taskModel.create({
       ...dto,
       organizationId: orgId,
@@ -73,16 +82,30 @@ export class TasksService {
   }
 
   async update(orgId: string, userId: string, id: string, dto: Record<string, unknown>) {
-    // Validate status transition if status is being changed
-    if (dto.status) {
-      const current = await this.taskModel.findOne({ _id: id, organizationId: orgId, deletedAt: null });
-      if (!current) throw new NotFoundException('Task not found');
+    const current = await this.taskModel.findOne({ _id: id, organizationId: orgId, deletedAt: null }).lean();
+    if (!current) throw new NotFoundException('Task not found');
 
+    // Validate status transition if status is being changed
+    if (dto.status && dto.status !== current.status) {
       const allowed = STATUS_TRANSITIONS[current.status] || [];
       if (!allowed.includes(dto.status as string)) {
         throw new BadRequestException(
           `Cannot transition from ${current.status} to ${dto.status}. Allowed: ${allowed.join(', ') || 'none (terminal state)'}`,
         );
+      }
+
+      // Dependency Checking: Cannot complete if dependencies are not completed
+      if (dto.status === 'COMPLETED' && current.dependencies && current.dependencies.length > 0) {
+        const blockingTasks = await this.taskModel.find({
+          _id: { $in: current.dependencies },
+          organizationId: orgId,
+          status: { $nin: ['COMPLETED', 'CANCELLED'] },
+        }).lean();
+        
+        if (blockingTasks.length > 0) {
+          const blockingIds = blockingTasks.map(t => t._id.toString());
+          throw new BadRequestException(`Cannot complete task. Waiting on dependencies: ${blockingIds.join(', ')}`);
+        }
       }
 
       // Auto-set dates on status transitions
@@ -91,6 +114,15 @@ export class TasksService {
       }
       if (dto.status === 'COMPLETED') {
         dto.actualEndDate = new Date();
+      }
+    }
+
+    // Validate extensions if updating
+    if (dto.extensions) {
+      const industry = (current as any).industry || 'CONSTRUCTION';
+      const plugin = this.registry.getPlugin(industry);
+      if (plugin) {
+        dto.extensions = await plugin.validateExtensions(dto.extensions);
       }
     }
 

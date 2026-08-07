@@ -10,6 +10,7 @@ import { Select } from '@/components/ui/Select';
 import { FormField } from '@/components/ui/FormField';
 import { useQuery } from '@tanstack/react-query';
 import { api } from '@/core/lib/api-client';
+import { ExtensionFieldRenderer } from '@/components/ui/ExtensionFieldRenderer';
 
 interface ReportFormProps {
   initialData?: any;
@@ -32,6 +33,7 @@ export function ReportForm({ initialData, onSubmit, isLoading }: ReportFormProps
       activitiesDescription: initialData?.activitiesDescription || '',
       totalWorkerCount: initialData?.totalWorkerCount || undefined,
       notes: initialData?.notes || '',
+      extensions: initialData?.extensions || {},
     },
   });
 
@@ -93,6 +95,13 @@ export function ReportForm({ initialData, onSubmit, isLoading }: ReportFormProps
           error={!!errors.notes}
         />
       </FormField>
+
+      <ExtensionFieldRenderer
+        industry="CONSTRUCTION" // Placeholder for Phase 2
+        entityType="daily_report"
+        extensions={form.watch('extensions') || {}}
+        onChange={(ext) => form.setValue('extensions', ext, { shouldDirty: true })}
+      />
 
       <div className="pt-4 flex justify-end gap-3 border-t border-brand-200 dark:border-brand-800">
         <Button type="submit" variant="primary" isLoading={isLoading}>

@@ -7,6 +7,7 @@ import { Model } from 'mongoose';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { EquipmentDocument } from './equipment.schema';
 import { parsePaginationQuery, buildPaginatedMeta, type PaginationQuery } from '../../common/helpers';
+import { EquipmentExtensionRegistry } from './equipment.registry';
 
 @Injectable()
 export class EquipmentService {
@@ -15,9 +16,17 @@ export class EquipmentService {
   constructor(
     @InjectModel(EquipmentDocument.name) private readonly equipmentModel: Model<EquipmentDocument>,
     private readonly eventEmitter: EventEmitter2,
+    private readonly registry: EquipmentExtensionRegistry,
   ) {}
 
   async create(orgId: string, userId: string, industry: string, dto: Record<string, unknown>) {
+    if (dto.extensions) {
+      const plugin = this.registry.getPlugin(industry);
+      if (plugin) {
+        dto.extensions = await plugin.validateExtensions(dto.extensions);
+      }
+    }
+
     const equipment = await this.equipmentModel.create({
       ...dto,
       organizationId: orgId,
@@ -61,6 +70,17 @@ export class EquipmentService {
   }
 
   async update(orgId: string, userId: string, id: string, dto: Record<string, unknown>) {
+    if (dto.extensions) {
+      const existing = await this.equipmentModel.findOne({ _id: id, organizationId: orgId, deletedAt: null }).lean();
+      if (existing) {
+        const industry = (existing as any).industry || 'CONSTRUCTION';
+        const plugin = this.registry.getPlugin(industry);
+        if (plugin) {
+          dto.extensions = await plugin.validateExtensions(dto.extensions);
+        }
+      }
+    }
+
     const equipment = await this.equipmentModel.findOneAndUpdate(
       { _id: id, organizationId: orgId, deletedAt: null },
       { $set: dto },

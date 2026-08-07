@@ -10,6 +10,7 @@ import { Select } from '@/components/ui/Select';
 import { FormField } from '@/components/ui/FormField';
 import { useQuery } from '@tanstack/react-query';
 import { api } from '@/core/lib/api-client';
+import { ExtensionFieldRenderer } from '@/components/ui/ExtensionFieldRenderer';
 
 interface TaskFormProps {
   initialData?: any;
@@ -33,6 +34,7 @@ export function TaskForm({ initialData, onSubmit, isLoading }: TaskFormProps) {
       description: initialData?.description || '',
       priority: initialData?.priority || 'MEDIUM',
       estimatedHours: initialData?.estimatedHours || undefined,
+      extensions: initialData?.extensions || {},
     },
   });
 
@@ -91,6 +93,13 @@ export function TaskForm({ initialData, onSubmit, isLoading }: TaskFormProps) {
           />
         </FormField>
       </div>
+
+      <ExtensionFieldRenderer
+        industry="CONSTRUCTION" // Placeholder for Phase 2
+        entityType="task"
+        extensions={form.watch('extensions') || {}}
+        onChange={(ext) => form.setValue('extensions', ext, { shouldDirty: true })}
+      />
 
       <div className="pt-4 flex justify-end gap-3 border-t border-brand-200 dark:border-brand-800">
         <Button type="submit" variant="primary" isLoading={isLoading}>
