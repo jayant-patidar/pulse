@@ -8,7 +8,7 @@ services:
     name: pulse-api
     env: node
     plan: free
-    buildCommand: pnpm install && pnpm turbo run build --filter=@pulse/api
+    buildCommand: pnpm install && pnpm turbo run build --filter=@pulse/api --force
     startCommand: pnpm --filter @pulse/api start
     envVars:
       - key: MONGO_URI
@@ -29,7 +29,7 @@ services:
     name: pulse-web
     env: node
     plan: free
-    buildCommand: pnpm install && pnpm turbo run build --filter=@pulse/web
+    buildCommand: pnpm install && pnpm turbo run build --filter=@pulse/web --force
     startCommand: pnpm --filter @pulse/web start
     envVars:
       - key: NEXT_PUBLIC_API_URL
