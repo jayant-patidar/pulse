@@ -155,8 +155,11 @@ export default function LoginPage() {
           type="button"
           className="flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl border border-white/[0.08] bg-white/[0.02] text-sm font-medium text-zinc-300 hover:bg-white/[0.05] transition-all duration-200"
         >
-          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M22.675 0h-21.35c-.732 0-1.325.593-1.325 1.325v21.351c0 .731.593 1.324 1.325 1.324h11.495v-9.294h-3.128v-3.622h3.128v-2.671c0-3.1 1.893-4.788 4.659-4.788 1.325 0 2.463.099 2.795.143v3.24l-1.918.001c-1.504 0-1.795.715-1.795 1.763v2.313h3.587l-.467 3.622h-3.12v9.293h6.116c.73 0 1.323-.593 1.323-1.325v-21.35c0-.732-.593-1.325-1.325-1.325z"/>
+          <svg className="w-4 h-4" viewBox="0 0 21 21">
+            <path fill="#f25022" d="M1 1h9v9H1z"/>
+            <path fill="#00a4ef" d="M11 1h9v9h-9z"/>
+            <path fill="#7fba00" d="M1 11h9v9H1z"/>
+            <path fill="#ffb900" d="M11 11h9v9h-9z"/>
           </svg>
           Microsoft
         </button>

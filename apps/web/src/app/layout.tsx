@@ -26,9 +26,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`light ${inter.variable} ${outfit.variable}`} suppressHydrationWarning>
-      <body className={`${inter.className} bg-gray-50 text-brand-900 antialiased selection:bg-accent-500/30 selection:text-accent-700`} suppressHydrationWarning>
-        <ThemeProvider>
+    <html lang="en" className={`${inter.variable} ${outfit.variable}`} suppressHydrationWarning>
+      <body className={`${inter.className} bg-gray-50 text-brand-900 dark:bg-slate-950 dark:text-slate-50 antialiased selection:bg-accent-500/30 selection:text-accent-700`} suppressHydrationWarning>
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
           {children}
           <Toaster />
         </ThemeProvider>
