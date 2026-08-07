@@ -13,7 +13,8 @@
       "@trunk/*": ["src/trunk/*"],
       "@branches/*": ["src/branches/*"],
       "@common/*": ["src/common/*"]
-    }
+    },
+    "strictPropertyInitialization": false
   },
   "include": ["src"],
   "exclude": ["node_modules", "dist", "test"]

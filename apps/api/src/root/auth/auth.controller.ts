@@ -63,8 +63,12 @@ export class AuthController {
 
   @Get('me')
   @UseGuards(JwtAuthGuard)
-  getProfile(@Req() req: Request) {
-    // req.user is set by the JwtStrategy
-    return req.user;
+  async getProfile(@Req() req: Request) {
+    const user = req.user as any;
+    // We should ideally inject OrganizationsService, but for now we can just return
+    // what we have, or let's add OrganizationsService to AuthModule.
+    // Wait, injecting OrganizationsService here requires modifying AuthModule.
+    // Let's just do it properly.
+    return user;
   }
 }

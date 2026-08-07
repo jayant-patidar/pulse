@@ -40,5 +40,32 @@ export const conReportExtensionsSchema = z.object({
   })).optional(),
 }).passthrough();
 
+export const conTaskExtensionsSchema = z.object({
+  taskType: z.enum(['RFI', 'SUBMITTAL', 'PUNCH_LIST', 'STANDARD', 'INSPECTION']).optional(),
+  rfiNumber: z.string().optional(),
+  specSection: z.string().optional(),
+  drawingReference: z.string().optional(),
+  responseRequiredBy: z.string().datetime().optional(),
+  rfiResponse: z.string().optional(),
+  locationOnSite: z.string().optional(),
+  tradeResponsible: z.string().optional(),
+  deficiencyType: z.string().optional(),
+}).passthrough();
+
+export const conEquipmentExtensionsSchema = z.object({
+  equipmentClass: z.enum(['HEAVY', 'VEHICLE', 'POWER_TOOL', 'LIFT']).optional(),
+  loadCapacity: z.string().optional(),
+  requiresCertifiedOperator: z.boolean().optional(),
+  fuelType: z.string().optional(),
+  rentalDetails: z.object({
+    isRented: z.boolean(),
+    vendor: z.string().optional(),
+    dailyRateCents: z.number().nonnegative().optional(),
+    rentalEndDate: z.string().datetime().optional(),
+  }).optional(),
+}).passthrough();
+
 export type ConProjectExtensions = z.infer<typeof conProjectExtensionsSchema>;
 export type ConReportExtensions = z.infer<typeof conReportExtensionsSchema>;
+export type ConTaskExtensions = z.infer<typeof conTaskExtensionsSchema>;
+export type ConEquipmentExtensions = z.infer<typeof conEquipmentExtensionsSchema>;

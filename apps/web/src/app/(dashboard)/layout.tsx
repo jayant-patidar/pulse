@@ -55,6 +55,27 @@ const NAV_ITEMS = [
     href: '/equipment',
     icon: <Tractor className="w-5 h-5" />,
   },
+  // --- CONSTRUCTION BRANCH ---
+  {
+    label: 'Safety Incidents',
+    href: '/construction/safety',
+    icon: <HardHat className="w-5 h-5" />,
+  },
+  {
+    label: 'Change Orders',
+    href: '/construction/change-orders',
+    icon: <FileText className="w-5 h-5" />,
+  },
+  {
+    label: 'Purchase Orders',
+    href: '/construction/purchase-orders',
+    icon: <ClipboardList className="w-5 h-5" />,
+  },
+  {
+    label: 'Insurance (COI)',
+    href: '/construction/coi',
+    icon: <FileText className="w-5 h-5" />,
+  },
 ];
 
 const BOTTOM_NAV = [
