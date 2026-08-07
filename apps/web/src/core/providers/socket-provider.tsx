@@ -3,7 +3,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
 import { useAuth } from './auth-provider';
-import { env } from '../lib/utils'; // Assuming this has API_URL
 
 interface SocketContextValue {
   socket: Socket | null;
@@ -20,10 +19,10 @@ export const useSocket = () => useContext(SocketContext);
 export function SocketProvider({ children }: { children: React.ReactNode }) {
   const [socket, setSocket] = useState<Socket | null>(null);
   const [isConnected, setIsConnected] = useState(false);
-  const { token, isAuthenticated } = useAuth();
+  const { isAuthenticated } = useAuth();
 
   useEffect(() => {
-    if (!isAuthenticated || !token) {
+    if (!isAuthenticated) {
       if (socket) {
         socket.disconnect();
         setSocket(null);
@@ -34,7 +33,7 @@ export function SocketProvider({ children }: { children: React.ReactNode }) {
 
     const socketUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
     const socketInstance = io(socketUrl, {
-      auth: { token: `Bearer ${token}` },
+      withCredentials: true,
     });
 
     socketInstance.on('connect', () => {
@@ -50,7 +49,8 @@ export function SocketProvider({ children }: { children: React.ReactNode }) {
     // Listen to global notifications
     socketInstance.on('notification.new', (payload) => {
       console.log('New notification received:', payload);
-      // Here we could plug in react-toastify or sonner to show a toast
+      // Fallback alert so we can visually see the test worked!
+      window.alert(`🔔 NEW NOTIFICATION: ${payload?.title || 'Unknown'}\n${payload?.body || ''}`);
     });
 
     setSocket(socketInstance);
@@ -58,7 +58,7 @@ export function SocketProvider({ children }: { children: React.ReactNode }) {
     return () => {
       socketInstance.disconnect();
     };
-  }, [token, isAuthenticated]);
+  }, [isAuthenticated]);
 
   return (
     <SocketContext.Provider value={{ socket, isConnected }}>

@@ -220,7 +220,14 @@ function TopBar({ onMenuToggle }: { onMenuToggle: () => void }) {
       {/* Right actions */}
       <div className="flex items-center gap-2">
         <ThemeToggle />
-        <button className="relative p-2 rounded-xl text-brand-500 dark:text-brand-400 hover:bg-brand-50 dark:hover:bg-brand-800 hover:text-brand-900 dark:hover:text-brand-100 transition-all duration-200">
+        <button 
+          onClick={async () => {
+            const { api } = await import('@/core/lib/api-client');
+            await api.get('/notifications/test-trigger');
+          }}
+          className="relative p-2 rounded-xl text-brand-500 dark:text-brand-400 hover:bg-brand-50 dark:hover:bg-brand-800 hover:text-brand-900 dark:hover:text-brand-100 transition-all duration-200"
+          title="Click to trigger a test notification"
+        >
           <Bell className="w-5 h-5" />
           <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-accent-500 ring-2 ring-white dark:ring-brand-950" />
         </button>

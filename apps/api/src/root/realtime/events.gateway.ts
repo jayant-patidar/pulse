@@ -12,7 +12,8 @@ import { JwtService } from '@nestjs/jwt';
 
 @WebSocketGateway({
   cors: {
-    origin: '*', // In production, restrict to FRONTEND_URL
+    origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+    credentials: true,
   },
 })
 export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
@@ -29,7 +30,18 @@ export class EventsGateway implements OnGatewayInit, OnGatewayConnection, OnGate
 
   async handleConnection(client: Socket) {
     try {
-      const token = client.handshake.auth.token?.split(' ')[1] || client.handshake.headers.authorization?.split(' ')[1];
+      const cookieHeader = client.handshake.headers.cookie;
+      let token = client.handshake.auth.token?.split(' ')[1] || client.handshake.headers.authorization?.split(' ')[1];
+      
+      if (!token && cookieHeader) {
+        const cookies = cookieHeader.split(';').reduce((acc: any, str: string) => {
+          const [key, val] = str.split('=');
+          if (key && val) acc[key.trim()] = val.trim();
+          return acc;
+        }, {});
+        token = cookies['accessToken'];
+      }
+
       if (!token) {
         client.disconnect();
         return;

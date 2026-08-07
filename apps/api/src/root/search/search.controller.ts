@@ -10,7 +10,10 @@ export class SearchController {
 
   @Get()
   async globalSearch(@Query('q') query: string, @Req() req: Request) {
-    const orgId = (req as any).tenantId;
+    const orgId = (req.user as any).org;
+    if (!query) {
+      return [];
+    }
     return this.searchService.globalSearch(query, orgId);
   }
 }
