@@ -58,7 +58,12 @@ class ApiClient {
         } else {
           isRefreshing = false;
           refreshPromise = null;
-          if (typeof window !== 'undefined') window.location.href = '/login';
+          if (
+            typeof window !== 'undefined' &&
+            !['/login', '/register'].includes(window.location.pathname)
+          ) {
+            window.location.href = '/login';
+          }
           throw new Error('Session expired');
         }
       }
