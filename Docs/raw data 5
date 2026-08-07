@@ -1,0 +1,564 @@
+Using **MongoDB is a valid choice**, especially for the first version of **Pulse**. In fact, for this type of product, MongoDB can be a very good fit if we design the data model correctly.
+
+I would adjust the architecture from a traditional ERP-style system to a more **modern SaaS + document + workflow platform**.
+
+The reason MongoDB makes sense here:
+
+* Field operations generate lots of **semi-structured data**
+* Daily reports vary by company
+* Documents, forms, inspections, checklists, photos, and workflows evolve frequently
+* Different industries will have different fields
+* Faster product iteration is important
+
+However, we need to be careful with:
+
+* financial transactions
+* complex reporting
+* analytics
+* relationships
+
+For MVP → MongoDB is excellent.
+
+---
+
+# Pulse Architecture (MongoDB Version)
+
+## High-Level
+
+```
+                Web Application
+                      |
+                      |
+              Next.js + TypeScript
+                      |
+                      |
+               NestJS Backend
+                      |
+        --------------------------------
+        |              |               |
+   User Module   Project Module   AI Module
+        |
+        |
+     MongoDB
+        |
+ -------------------------------
+ |              |               |
+Redis       File Storage     Vector DB
+```
+
+---
+
+# Recommended Stack
+
+## Frontend
+
+```
+Next.js
+TypeScript
+React
+Tailwind CSS
+Shadcn UI
+React Query
+Zustand
+```
+
+---
+
+## Backend
+
+```
+Node.js
+TypeScript
+NestJS
+```
+
+Why NestJS:
+
+Similar structure to Spring Boot:
+
+```
+Controller
+Service
+Repository
+Module
+DTO
+Guard
+Middleware
+```
+
+Very enterprise-friendly.
+
+---
+
+## Database
+
+```
+MongoDB Atlas
+```
+
+Use:
+
+* MongoDB Transactions
+* Indexing
+* Aggregation Pipeline
+* Change Streams
+
+---
+
+## ODM
+
+Use:
+
+```
+Mongoose
+```
+
+or
+
+```
+Prisma MongoDB
+```
+
+I would choose:
+
+**Mongoose**
+
+because MongoDB-specific features are better supported.
+
+---
+
+# Pulse MongoDB Domain Design
+
+Instead of hundreds of relational tables, we design around business objects.
+
+---
+
+# User Collection
+
+```json
+{
+ "_id": "123",
+
+ "name": "John Smith",
+
+ "email": "john@test.com",
+
+ "organizationId": "abc",
+
+ "role": "SITE_MANAGER",
+
+ "skills": [
+   "Electrical",
+   "Safety Certified"
+ ],
+
+ "certifications": [
+   {
+     "name": "Safety Level 2",
+     "expiry": "2027-01-20"
+   }
+ ]
+}
+```
+
+---
+
+# Organization Collection
+
+```json
+{
+ "_id":"company123",
+
+"name":"ABC Construction",
+
+"industry":"Construction",
+
+"users":[
+ "123",
+ "456"
+],
+
+"settings":{
+ "timezone":"EST",
+ "currency":"CAD"
+}
+}
+```
+
+---
+
+# Project Collection
+
+```json
+{
+ "_id":"project001",
+
+"name":"Downtown Tower",
+
+"organizationId":"company123",
+
+"location":{
+ "address":"Toronto",
+ "coordinates":[]
+},
+
+"status":"ACTIVE",
+
+"members":[
+ {
+  "userId":"123",
+  "role":"Supervisor"
+ }
+],
+
+"milestones":[
+ {
+  "name":"Foundation",
+  "status":"Completed"
+ }
+]
+}
+```
+
+---
+
+# Daily Report Collection
+
+This is where MongoDB shines.
+
+Different companies can customize reports.
+
+```json
+{
+"_id":"report001",
+
+"projectId":"project001",
+
+"createdBy":"user123",
+
+"date":"2026-08-02",
+
+"weather":{
+ "condition":"Sunny",
+ "temperature":25
+},
+
+"workers":[
+ {
+  "name":"Mike",
+  "hours":8
+ }
+],
+
+"activities":[
+ "Concrete pouring",
+ "Electrical installation"
+],
+
+"issues":[
+ {
+  "type":"Material Delay",
+  "description":"Steel delivery delayed"
+ }
+],
+
+"photos":[
+ "s3://photo1"
+]
+}
+```
+
+---
+
+# Document Collection
+
+```json
+{
+"id":"doc123",
+
+"type":"CONTRACT",
+
+"name":"Construction Agreement.pdf",
+
+"projectId":"project001",
+
+"storageUrl":"S3 location",
+
+"version":3,
+
+"uploadedBy":"user123",
+
+"aiProcessed":true,
+
+"embeddingId":"vector123"
+}
+```
+
+---
+
+# Equipment Collection
+
+```json
+{
+"id":"equipment123",
+
+"name":"CAT Excavator",
+
+"type":"Heavy Equipment",
+
+"status":"AVAILABLE",
+
+"location":"Project A",
+
+"maintenance":[
+ {
+  "date":"2026-07-01",
+  "description":"Oil change"
+ }
+]
+}
+```
+
+---
+
+# AI Data Model
+
+## AI Conversation
+
+```json
+{
+"userId":"123",
+
+"context":"Project",
+
+"messages":[
+ {
+  "role":"user",
+  "content":
+  "Why is project delayed?"
+ }
+]
+}
+```
+
+---
+
+# AI Architecture
+
+Keep AI separate.
+
+```
+NestJS API
+
+      |
+      |
+Python AI Service
+
+      |
+ -----------------
+ |               |
+LLM          Vector DB
+```
+
+---
+
+# AI Features
+
+## 1. Document Intelligence
+
+Flow:
+
+```
+Upload PDF
+
+↓
+
+MongoDB stores metadata
+
+↓
+
+S3 stores file
+
+↓
+
+AI Service
+
+↓
+
+Extract Text
+
+↓
+
+Create Embeddings
+
+↓
+
+Store Vector
+
+↓
+
+RAG Search
+```
+
+---
+
+## 2. Project Assistant
+
+Question:
+
+"Why are we behind schedule?"
+
+AI searches:
+
+MongoDB:
+
+* Tasks
+* Reports
+* Issues
+
+Vector DB:
+
+* Documents
+
+Returns:
+
+```
+Project delay causes:
+
+1. Steel delivery delay
+2. Permit approval
+3. Weather
+```
+
+---
+
+# Additional MongoDB Advantages For Pulse
+
+## Custom Forms
+
+Every industry has different workflows.
+
+Construction:
+
+```
+Safety Inspection Form
+```
+
+HVAC:
+
+```
+Equipment Service Form
+```
+
+Solar:
+
+```
+Installation Checklist
+```
+
+MongoDB handles this naturally.
+
+---
+
+## Dynamic Workflows
+
+Example:
+
+Company creates:
+
+```
+Approval Flow:
+
+Worker submits report
+
+↓
+
+Supervisor approves
+
+↓
+
+Manager reviews
+
+↓
+
+Client receives
+```
+
+No database redesign required.
+
+---
+
+# What We Should Avoid Storing Only In MongoDB
+
+For future enterprise version:
+
+Maybe add:
+
+## PostgreSQL
+
+For:
+
+* Accounting
+* Payments
+* Financial reporting
+* Complex analytics
+
+## Elasticsearch/OpenSearch
+
+For:
+
+* Enterprise search
+
+## Redis
+
+For:
+
+* Cache
+* Sessions
+* Queues
+
+---
+
+# Final Pulse MVP Stack
+
+```
+Frontend:
+Next.js + TypeScript
+
+Backend:
+NestJS + TypeScript
+
+Database:
+MongoDB Atlas
+
+Cache:
+Redis
+
+Storage:
+AWS S3 (later)
+
+AI:
+Python FastAPI
+
+LLM:
+OpenAI / Claude / Gemini
+
+Vector:
+MongoDB Atlas Vector Search
+(or Pinecone)
+
+Authentication:
+JWT + OAuth
+
+Realtime:
+WebSockets
+
+Background Jobs:
+BullMQ
+```
+
+---
+
+I actually like this direction better for **Pulse MVP** because the product will evolve rapidly. MongoDB gives us flexibility to support **construction first → all field industries later** without constantly redesigning the database.
+
+The important thing is we should design it as a **multi-tenant SaaS from day one** (many companies using one platform), because that is what turns it from a project into a real startup architecture.
