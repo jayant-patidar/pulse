@@ -1,34 +1,32 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/core/lib/api-client';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/Card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { ClipboardList, Plus, Truck, Package } from 'lucide-react';
 import type { PurchaseOrder } from '@pulse/types';
+import { SlideOver } from '@/components/ui/SlideOver';
+import { PurchaseOrderForm } from './_components/PurchaseOrderForm';
+import { CreatePurchaseOrderInput } from '@pulse/validators';
 
 export default function PurchaseOrdersPage() {
-  const [purchaseOrders, setPurchaseOrders] = useState<PurchaseOrder[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const queryClient = useQueryClient();
 
-  useEffect(() => {
-    fetchPurchaseOrders();
-  }, []);
+  const { data: purchaseOrders = [], isLoading } = useQuery({
+    queryKey: ['purchase-orders'],
+    queryFn: () => api.get<PurchaseOrder[]>('/construction/purchase-orders'),
+  });
 
-  const fetchPurchaseOrders = async () => {
-    try {
-      const data = await api.get<PurchaseOrder[]>('/construction/purchase-orders');
-      setPurchaseOrders(data);
-    } catch (error) {
-      console.error('Failed to fetch purchase orders:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const createDemoPO = async () => {
-    alert('Create Purchase Order form would open here.');
-  };
+  const createMutation = useMutation({
+    mutationFn: (newPO: CreatePurchaseOrderInput) => api.post('/construction/purchase-orders', newPO),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['purchase-orders'] });
+      setIsDrawerOpen(false);
+    },
+  });
 
   return (
     <div className="space-y-6">
@@ -39,7 +37,7 @@ export default function PurchaseOrdersPage() {
           </h1>
           <p className="text-sm text-brand-500">Track material procurement and deliveries.</p>
         </div>
-        <Button onClick={createDemoPO} className="gap-2 bg-brand-900 text-white hover:bg-brand-800 dark:bg-white dark:text-brand-900 dark:hover:bg-brand-100">
+        <Button onClick={() => setIsDrawerOpen(true)} className="gap-2 bg-brand-900 text-white hover:bg-brand-800 dark:bg-white dark:text-brand-900 dark:hover:bg-brand-100">
           <Plus className="w-4 h-4" />
           Create PO
         </Button>
@@ -63,7 +61,7 @@ export default function PurchaseOrdersPage() {
             <p className="text-sm text-brand-500 max-w-sm mb-6">
               Manage your materials and supplies by creating your first purchase order.
             </p>
-            <Button onClick={createDemoPO} variant="outline" className="gap-2">
+            <Button onClick={() => setIsDrawerOpen(true)} variant="outline" className="gap-2">
               <Plus className="w-4 h-4" />
               Create PO
             </Button>
@@ -92,7 +90,7 @@ export default function PurchaseOrdersPage() {
                 <div className="space-y-3">
                   <div className="flex items-center gap-2 text-sm text-brand-700 dark:text-brand-300">
                     <Package className="w-4 h-4 text-brand-400" />
-                    <span>{po.lineItems.length} Items</span>
+                    <span>{po.lineItems?.length || 0} Items</span>
                   </div>
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2 text-sm text-brand-700 dark:text-brand-300">
@@ -109,6 +107,18 @@ export default function PurchaseOrdersPage() {
           ))}
         </div>
       )}
+
+      <SlideOver
+        isOpen={isDrawerOpen}
+        onClose={() => setIsDrawerOpen(false)}
+        title="Create Purchase Order"
+        description="Issue a new purchase order to a supplier."
+      >
+        <PurchaseOrderForm
+          onSubmit={(data) => createMutation.mutate(data)}
+          isLoading={createMutation.isPending}
+        />
+      </SlideOver>
     </div>
   );
 }

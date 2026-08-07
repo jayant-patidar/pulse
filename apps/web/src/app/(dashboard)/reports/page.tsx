@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/core/lib/api-client';
 import { Button } from '@/components/ui/Button';
 import { DataTable } from '@/components/ui/DataTable';
@@ -11,14 +11,29 @@ import { Plus, ClipboardList, CloudSun } from 'lucide-react';
 
 import { PageHeader } from '@/components/ui/PageHeader';
 import { StatsGrid } from '@/components/ui/StatsGrid';
+import { SlideOver } from '@/components/ui/SlideOver';
+import { ReportForm } from './_components/ReportForm';
+import { CreateDailyReportInput } from '@pulse/validators';
 
 export default function DailyReportsPage() {
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const queryClient = useQueryClient();
 
-  const { data: reports, isLoading } = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: ['daily-reports', page],
-    queryFn: () => api.get<any[]>(`/trunk/daily-reports?page=${page}&limit=20`),
+    queryFn: () => api.get<any>(`/trunk/daily-reports?page=${page}&limit=20`),
+  });
+  
+  const reports = data|| [];
+
+  const createMutation = useMutation({
+    mutationFn: (newReport: CreateDailyReportInput) => api.post('/trunk/daily-reports', newReport),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['daily-reports'] });
+      setIsDrawerOpen(false);
+    },
   });
 
   const columns = [
@@ -26,7 +41,7 @@ export default function DailyReportsPage() {
       header: 'Date',
       accessorKey: 'date',
       cell: (item: any) => (
-        <div className="font-medium text-brand-900">
+        <div className="font-medium text-brand-900 dark:text-brand-100">
           {new Date(item.date).toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' })}
         </div>
       ),
@@ -40,7 +55,7 @@ export default function DailyReportsPage() {
       header: 'Weather',
       accessorKey: 'weather',
       cell: (item: any) => (
-        <div className="flex items-center gap-2 text-brand-600 text-sm">
+        <div className="flex items-center gap-2 text-brand-600 dark:text-brand-400 text-sm">
           {item.weather?.condition ? (
             <>
               <CloudSun className="w-4 h-4 text-brand-400" />
@@ -53,7 +68,7 @@ export default function DailyReportsPage() {
     {
       header: 'Workers',
       accessorKey: 'totalWorkerCount',
-      cell: (item: any) => <span className="font-medium text-brand-700">{item.totalWorkerCount || 0}</span>,
+      cell: (item: any) => <span className="font-medium text-brand-700 dark:text-brand-300">{item.totalWorkerCount || 0}</span>,
     },
   ];
 
@@ -64,7 +79,7 @@ export default function DailyReportsPage() {
         description="Site logs, weather conditions, and daily progress."
         icon={<ClipboardList className="w-6 h-6" />}
         actions={
-          <Button variant="primary">
+          <Button variant="primary" onClick={() => setIsDrawerOpen(true)}>
             <Plus className="w-4 h-4 mr-2" />
             New Report
           </Button>
@@ -85,11 +100,23 @@ export default function DailyReportsPage() {
 
         <DataTable
           columns={columns}
-          data={reports || []}
+          data={reports}
           keyExtractor={(item) => item._id}
           isLoading={isLoading}
         />
       </div>
+
+      <SlideOver
+        isOpen={isDrawerOpen}
+        onClose={() => setIsDrawerOpen(false)}
+        title="Create Daily Report"
+        description="Log today's site activity, weather, and workforce details."
+      >
+        <ReportForm
+          onSubmit={(data) => createMutation.mutate(data)}
+          isLoading={createMutation.isPending}
+        />
+      </SlideOver>
     </div>
   );
 }

@@ -10,7 +10,7 @@ import { Document, Schema as MongooseSchema, Types } from 'mongoose';
 
 @Schema({ timestamps: true, collection: 'projects' })
 export class ProjectDocument extends Document {
-  @Prop({ type: Types.ObjectId, required: true, index: true })
+  @Prop({ type: MongooseSchema.Types.ObjectId, required: true, index: true })
   declare organizationId: Types.ObjectId;
 
   @Prop({ required: true, trim: true, maxlength: 200 })
@@ -54,14 +54,14 @@ export class ProjectDocument extends Document {
   declare actualCost?: number;
 
   // Team & Client
-  @Prop({ type: Types.ObjectId })
+  @Prop({ type: MongooseSchema.Types.ObjectId })
   declare clientId?: Types.ObjectId;
 
-  @Prop({ type: [Types.ObjectId], default: [] })
+  @Prop({ type: [MongooseSchema.Types.ObjectId], default: [] })
   declare managerIds: Types.ObjectId[];
 
   // Audit & Soft Delete
-  @Prop({ type: Types.ObjectId, required: true })
+  @Prop({ type: MongooseSchema.Types.ObjectId, required: true })
   declare createdBy: Types.ObjectId;
 
   @Prop({ type: Date, default: null })

@@ -9,7 +9,8 @@
     "lint": "eslint \"{src,test}/**/*.ts\" --fix",
     "test": "jest",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "clean": "rm -rf dist"
+    "clean": "rm -rf dist",
+    "seed": "ts-node scripts/seed.ts"
   },
   "dependencies": {
     "@nestjs/bull": "^10.2.0",

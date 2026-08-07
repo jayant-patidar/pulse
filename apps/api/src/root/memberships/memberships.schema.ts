@@ -1,12 +1,12 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document, Types } from 'mongoose';
+import { Document, Types, Schema as MongooseSchema } from 'mongoose';
 
 @Schema({ timestamps: true, collection: 'memberships' })
 export class MembershipDocument extends Document {
-  @Prop({ type: Types.ObjectId, ref: 'UserDocument', required: true })
+  @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'UserDocument', required: true })
   declare userId: Types.ObjectId;
 
-  @Prop({ type: Types.ObjectId, ref: 'OrganizationDocument', required: true })
+  @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'OrganizationDocument', required: true })
   declare organizationId: Types.ObjectId;
 
   @Prop({ required: true, enum: ['OWNER', 'ADMIN', 'MANAGER', 'SUPERVISOR', 'WORKER', 'CONTRACTOR'] })
@@ -21,10 +21,10 @@ export class MembershipDocument extends Document {
   @Prop()
   declare invitationExpiresAt?: Date;
 
-  @Prop({ type: [{ projectId: Types.ObjectId, role: String }], default: [] })
+  @Prop({ type: [{ projectId: MongooseSchema.Types.ObjectId, role: String }], default: [] })
   declare projectRoles: Array<{ projectId: Types.ObjectId; role: string }>;
 
-  @Prop({ type: [Types.ObjectId], default: [] })
+  @Prop({ type: [MongooseSchema.Types.ObjectId], default: [] })
   declare teamIds: Types.ObjectId[];
 
   @Prop({

@@ -8,10 +8,10 @@ import { Document, Schema as MongooseSchema, Types } from 'mongoose';
 
 @Schema({ timestamps: true, collection: 'daily_reports' })
 export class DailyReportDocument extends Document {
-  @Prop({ type: Types.ObjectId, required: true, index: true })
+  @Prop({ type: MongooseSchema.Types.ObjectId, required: true, index: true })
   declare organizationId: Types.ObjectId;
 
-  @Prop({ type: Types.ObjectId, required: true, index: true })
+  @Prop({ type: MongooseSchema.Types.ObjectId, required: true, index: true })
   declare projectId: Types.ObjectId;
 
   @Prop({ required: true })
@@ -46,17 +46,17 @@ export class DailyReportDocument extends Document {
   @Prop({ type: [{ cause: String, hoursLost: Number, description: String }], default: [] })
   declare delays: Array<{ cause: string; hoursLost: number; description?: string }>;
 
-  @Prop({ type: [Types.ObjectId], default: [] })
+  @Prop({ type: [MongooseSchema.Types.ObjectId], default: [] })
   declare photos: Types.ObjectId[];
 
   @Prop({ maxlength: 10000 })
   declare notes?: string;
 
   // Audit & Soft Delete
-  @Prop({ type: Types.ObjectId, required: true })
+  @Prop({ type: MongooseSchema.Types.ObjectId, required: true })
   declare createdBy: Types.ObjectId;
 
-  @Prop({ type: Types.ObjectId })
+  @Prop({ type: MongooseSchema.Types.ObjectId })
   declare approvedBy?: Types.ObjectId;
 
   @Prop({ type: Date, default: null })

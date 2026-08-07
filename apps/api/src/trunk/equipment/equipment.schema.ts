@@ -8,7 +8,7 @@ import { Document, Schema as MongooseSchema, Types } from 'mongoose';
 
 @Schema({ timestamps: true, collection: 'equipment' })
 export class EquipmentDocument extends Document {
-  @Prop({ type: Types.ObjectId, required: true, index: true })
+  @Prop({ type: MongooseSchema.Types.ObjectId, required: true, index: true })
   declare organizationId: Types.ObjectId;
 
   @Prop({ required: true, trim: true, maxlength: 200 })
@@ -33,10 +33,10 @@ export class EquipmentDocument extends Document {
   declare status: string;
 
   // Current Assignment
-  @Prop({ type: Types.ObjectId })
+  @Prop({ type: MongooseSchema.Types.ObjectId })
   declare currentProjectId?: Types.ObjectId;
 
-  @Prop({ type: Types.ObjectId })
+  @Prop({ type: MongooseSchema.Types.ObjectId })
   declare currentAssigneeId?: Types.ObjectId;
 
   // Financials
@@ -59,7 +59,7 @@ export class EquipmentDocument extends Document {
   };
 
   // Audit & Soft Delete
-  @Prop({ type: Types.ObjectId, required: true })
+  @Prop({ type: MongooseSchema.Types.ObjectId, required: true })
   declare createdBy: Types.ObjectId;
 
   @Prop({ type: Date, default: null })

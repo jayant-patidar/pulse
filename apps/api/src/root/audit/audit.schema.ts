@@ -1,12 +1,12 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document, Types } from 'mongoose';
+import { Document, Types, Schema as MongooseSchema } from 'mongoose';
 
 @Schema({ timestamps: true, collection: 'audit_logs' })
 export class AuditLogDocument extends Document {
-  @Prop({ type: Types.ObjectId, required: true, index: true })
+  @Prop({ type: MongooseSchema.Types.ObjectId, required: true, index: true })
   declare organizationId: Types.ObjectId;
 
-  @Prop({ type: Types.ObjectId })
+  @Prop({ type: MongooseSchema.Types.ObjectId })
   declare userId?: Types.ObjectId;
 
   @Prop({ required: true })
@@ -15,7 +15,7 @@ export class AuditLogDocument extends Document {
   @Prop({ required: true })
   declare resource: string;
 
-  @Prop({ type: Types.ObjectId })
+  @Prop({ type: MongooseSchema.Types.ObjectId })
   declare resourceId?: Types.ObjectId;
 
   @Prop({ type: Object })

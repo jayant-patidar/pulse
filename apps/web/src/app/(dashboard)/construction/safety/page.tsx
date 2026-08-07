@@ -1,41 +1,32 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/core/lib/api-client';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { HardHat, Plus, AlertTriangle, CheckCircle2, Clock } from 'lucide-react';
 import type { SafetyIncident } from '@pulse/types';
+import { SlideOver } from '@/components/ui/SlideOver';
+import { IncidentForm } from './_components/IncidentForm';
+import { CreateSafetyIncidentInput } from '@pulse/validators';
 
 export default function SafetyIncidentsPage() {
-  const [incidents, setIncidents] = useState<SafetyIncident[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const queryClient = useQueryClient();
 
-  useEffect(() => {
-    fetchIncidents();
-  }, []);
+  const { data: incidents = [], isLoading } = useQuery({
+    queryKey: ['safety-incidents'],
+    queryFn: () => api.get<SafetyIncident[]>('/construction/safety'),
+  });
 
-  const fetchIncidents = async () => {
-    try {
-      const data = await api.get<SafetyIncident[]>('/construction/safety');
-      setIncidents(data);
-    } catch (error) {
-      console.error('Failed to fetch safety incidents:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const createDemoIncident = async () => {
-    try {
-      // Need a valid project ID, but for demo we can mock or use a known one.
-      // Better yet, just show a blank state since creating requires a project ID.
-      // For now, let's assume there's an API error if no project.
-      alert('Create Incident Form would open here.');
-    } catch (error) {
-      console.error(error);
-    }
-  };
+  const createMutation = useMutation({
+    mutationFn: (newIncident: CreateSafetyIncidentInput) => api.post('/construction/safety', newIncident),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['safety-incidents'] });
+      setIsDrawerOpen(false);
+    },
+  });
 
   return (
     <div className="space-y-6">
@@ -46,7 +37,7 @@ export default function SafetyIncidentsPage() {
           </h1>
           <p className="text-sm text-brand-500">Track and manage OSHA recordable incidents.</p>
         </div>
-        <Button onClick={createDemoIncident} className="gap-2 bg-red-600 hover:bg-red-700 text-white border-none">
+        <Button onClick={() => setIsDrawerOpen(true)} className="gap-2 bg-red-600 hover:bg-red-700 text-white border-none">
           <Plus className="w-4 h-4" />
           Report Incident
         </Button>
@@ -70,7 +61,7 @@ export default function SafetyIncidentsPage() {
             <p className="text-sm text-brand-500 max-w-sm mb-6">
               Your site is currently reporting zero active safety incidents. Great job keeping the team safe!
             </p>
-            <Button onClick={createDemoIncident} variant="outline" className="gap-2">
+            <Button onClick={() => setIsDrawerOpen(true)} variant="outline" className="gap-2">
               <Plus className="w-4 h-4" />
               Report New Incident
             </Button>
@@ -118,6 +109,18 @@ export default function SafetyIncidentsPage() {
           ))}
         </div>
       )}
+
+      <SlideOver
+        isOpen={isDrawerOpen}
+        onClose={() => setIsDrawerOpen(false)}
+        title="Report Safety Incident"
+        description="Log a safety incident. Critical incidents notify safety officers immediately."
+      >
+        <IncidentForm
+          onSubmit={(data) => createMutation.mutate(data)}
+          isLoading={createMutation.isPending}
+        />
+      </SlideOver>
     </div>
   );
 }

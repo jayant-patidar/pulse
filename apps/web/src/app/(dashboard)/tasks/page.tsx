@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/core/lib/api-client';
 import { Button } from '@/components/ui/Button';
 import { DataTable } from '@/components/ui/DataTable';
@@ -11,14 +11,30 @@ import { Plus, ListTodo } from 'lucide-react';
 
 import { PageHeader } from '@/components/ui/PageHeader';
 import { StatsGrid } from '@/components/ui/StatsGrid';
+import { SlideOver } from '@/components/ui/SlideOver';
+import { TaskForm } from './_components/TaskForm';
+import { CreateTaskInput } from '@pulse/validators';
 
 export default function TasksPage() {
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
-  const { data: tasks, isLoading } = useQuery({
+  const queryClient = useQueryClient();
+
+  const { data, isLoading } = useQuery({
     queryKey: ['tasks', page],
-    queryFn: () => api.get<any[]>(`/trunk/tasks?page=${page}&limit=20`),
+    queryFn: () => api.get<any>(`/trunk/tasks?page=${page}&limit=20`),
+  });
+  
+  const tasks = data|| [];
+
+  const createMutation = useMutation({
+    mutationFn: (newTask: CreateTaskInput) => api.post('/trunk/tasks', newTask),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['tasks'] });
+      setIsDrawerOpen(false);
+    },
   });
 
   const columns = [
@@ -26,7 +42,7 @@ export default function TasksPage() {
       header: 'Task Title',
       accessorKey: 'title',
       cell: (item: any) => (
-        <div className="font-medium text-brand-900">{item.title}</div>
+        <div className="font-medium text-brand-900 dark:text-brand-100">{item.title}</div>
       ),
     },
     {
@@ -43,14 +59,14 @@ export default function TasksPage() {
       header: 'Due Date',
       accessorKey: 'dueDate',
       cell: (item: any) => (
-        <span className={item.dueDate && new Date(item.dueDate) < new Date() ? 'text-red-600 font-semibold' : 'text-brand-500'}>
+        <span className={item.dueDate && new Date(item.dueDate) < new Date() ? 'text-red-600 font-semibold dark:text-red-400' : 'text-brand-500 dark:text-brand-400'}>
           {item.dueDate ? new Date(item.dueDate).toLocaleDateString() : '-'}
         </span>
       ),
     },
   ];
 
-  const filteredTasks = tasks?.filter(t => t.title.toLowerCase().includes(search.toLowerCase())) || [];
+  const filteredTasks = tasks?.filter((t: any) => t.title.toLowerCase().includes(search.toLowerCase())) || [];
 
   return (
     <div className="max-w-7xl mx-auto space-y-8">
@@ -59,7 +75,7 @@ export default function TasksPage() {
         description="Track and assign work across your projects."
         icon={<ListTodo className="w-6 h-6" />}
         actions={
-          <Button variant="primary">
+          <Button variant="primary" onClick={() => setIsDrawerOpen(true)}>
             <Plus className="w-4 h-4 mr-2" />
             Create Task
           </Button>
@@ -89,6 +105,18 @@ export default function TasksPage() {
           isLoading={isLoading}
         />
       </div>
+
+      <SlideOver
+        isOpen={isDrawerOpen}
+        onClose={() => setIsDrawerOpen(false)}
+        title="Create New Task"
+        description="Assign a new task to a project."
+      >
+        <TaskForm
+          onSubmit={(data) => createMutation.mutate(data)}
+          isLoading={createMutation.isPending}
+        />
+      </SlideOver>
     </div>
   );
 }

@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException, ConflictException, BadRequestException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { MembershipDocument } from './memberships.schema';
 import { OrganizationsService } from '../organizations/organizations.service';
@@ -120,14 +120,21 @@ export class MembershipsService {
   }
 
   async findByUserId(userId: string): Promise<MembershipDocument[]> {
-    return this.membershipModel.find({ userId, status: 'ACTIVE' });
+    return this.membershipModel.find({ userId: new Types.ObjectId(userId), status: 'ACTIVE' });
   }
 
   async findByUserAndOrg(userId: string, orgId: string): Promise<MembershipDocument | null> {
-    return this.membershipModel.findOne({ userId, organizationId: orgId, status: 'ACTIVE' });
+    return this.membershipModel.findOne({ 
+      userId: new Types.ObjectId(userId), 
+      organizationId: new Types.ObjectId(orgId), 
+      status: 'ACTIVE' 
+    });
   }
 
   async findByOrg(orgId: string): Promise<MembershipDocument[]> {
-    return this.membershipModel.find({ organizationId: orgId, status: { $in: ['ACTIVE', 'PENDING'] } });
+    return this.membershipModel.find({ 
+      organizationId: new Types.ObjectId(orgId), 
+      status: { $in: ['ACTIVE', 'PENDING'] } 
+    });
   }
 }

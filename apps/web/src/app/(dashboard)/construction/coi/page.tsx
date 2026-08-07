@@ -1,34 +1,32 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/core/lib/api-client';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/Card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { ShieldAlert, Plus, ShieldCheck, CalendarX } from 'lucide-react';
 import type { CertificateOfInsurance } from '@pulse/types';
+import { SlideOver } from '@/components/ui/SlideOver';
+import { COIForm } from './_components/COIForm';
+import { CreateCoiInput } from '@pulse/validators';
 
 export default function COIPage() {
-  const [cois, setCois] = useState<CertificateOfInsurance[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const queryClient = useQueryClient();
 
-  useEffect(() => {
-    fetchCOIs();
-  }, []);
+  const { data: cois = [], isLoading } = useQuery({
+    queryKey: ['cois'],
+    queryFn: () => api.get<CertificateOfInsurance[]>('/construction/coi'),
+  });
 
-  const fetchCOIs = async () => {
-    try {
-      const data = await api.get<CertificateOfInsurance[]>('/construction/coi');
-      setCois(data);
-    } catch (error) {
-      console.error('Failed to fetch COIs:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const createDemoCOI = async () => {
-    alert('Create COI form would open here.');
-  };
+  const createMutation = useMutation({
+    mutationFn: (newCOI: CreateCoiInput) => api.post('/construction/coi', newCOI),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['cois'] });
+      setIsDrawerOpen(false);
+    },
+  });
 
   return (
     <div className="space-y-6">
@@ -39,7 +37,7 @@ export default function COIPage() {
           </h1>
           <p className="text-sm text-brand-500">Track subcontractor compliance and expiration dates.</p>
         </div>
-        <Button onClick={createDemoCOI} className="gap-2 bg-brand-900 text-white hover:bg-brand-800 dark:bg-white dark:text-brand-900 dark:hover:bg-brand-100">
+        <Button onClick={() => setIsDrawerOpen(true)} className="gap-2 bg-brand-900 text-white hover:bg-brand-800 dark:bg-white dark:text-brand-900 dark:hover:bg-brand-100">
           <Plus className="w-4 h-4" />
           Add COI
         </Button>
@@ -63,7 +61,7 @@ export default function COIPage() {
             <p className="text-sm text-brand-500 max-w-sm mb-6">
               Track subcontractor compliance by adding Certificates of Insurance.
             </p>
-            <Button onClick={createDemoCOI} variant="outline" className="gap-2">
+            <Button onClick={() => setIsDrawerOpen(true)} variant="outline" className="gap-2">
               <Plus className="w-4 h-4" />
               Add COI
             </Button>
@@ -107,6 +105,18 @@ export default function COIPage() {
           ))}
         </div>
       )}
+
+      <SlideOver
+        isOpen={isDrawerOpen}
+        onClose={() => setIsDrawerOpen(false)}
+        title="Record Certificate of Insurance"
+        description="Add a new COI to track subcontractor compliance."
+      >
+        <COIForm
+          onSubmit={(data) => createMutation.mutate(data)}
+          isLoading={createMutation.isPending}
+        />
+      </SlideOver>
     </div>
   );
 }

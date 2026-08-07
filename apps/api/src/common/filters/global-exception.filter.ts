@@ -52,7 +52,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
       this.logger.warn(`${request.method} ${request.url} → ${status}: ${message}`);
     }
 
-    const body: ProblemDetails = {
+    const body: ProblemDetails & { errors?: any[] } = {
       type,
       title: HttpStatus[status] || 'Error',
       status,
@@ -60,6 +60,13 @@ export class GlobalExceptionFilter implements ExceptionFilter {
       instance: request.url,
       timestamp: new Date().toISOString(),
     };
+
+    if (exception instanceof HttpException) {
+      const exceptionResponse = exception.getResponse() as Record<string, unknown>;
+      if (exceptionResponse && exceptionResponse.errors) {
+        body.errors = exceptionResponse.errors as any[];
+      }
+    }
 
     response.status(status).json(body);
   }

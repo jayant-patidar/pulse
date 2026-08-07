@@ -95,7 +95,7 @@ function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) 
       {/* Mobile overlay */}
       {isOpen && (
         <div
-          className="fixed inset-0 z-40 bg-brand-950/40 backdrop-blur-sm lg:hidden"
+          className="fixed inset-0 z-40 bg-brand-900/40 dark:bg-brand-950/40 backdrop-blur-sm lg:hidden"
           onClick={onClose}
         />
       )}
@@ -104,27 +104,27 @@ function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) 
       <aside
         className={`
           fixed inset-y-0 left-0 z-50 w-72 sm:w-64 flex flex-col
-          border-r border-brand-800 bg-brand-950 shadow-2xl
+          border-r border-brand-200 dark:border-brand-800 bg-white dark:bg-brand-950 shadow-2xl
           transition-transform duration-300 ease-in-out
           lg:translate-x-0 lg:z-30
           ${isOpen ? 'translate-x-0' : '-translate-x-full'}
         `}
       >
         {/* Logo */}
-        <div className="flex items-center gap-3 px-5 h-16 border-b border-brand-800">
+        <div className="flex items-center gap-3 px-5 h-16 border-b border-brand-200 dark:border-brand-800">
           <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-accent-500 to-accent-600 flex items-center justify-center shadow-md shadow-accent-500/20">
             <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" />
             </svg>
           </div>
-          <span className="text-xl font-display font-bold text-white tracking-tight">Pulse</span>
-          <span className="ml-auto hidden sm:inline text-[10px] font-bold text-accent-500 bg-accent-500/10 px-1.5 py-0.5 rounded-md border border-accent-500/20 uppercase tracking-wider">
+          <span className="text-xl font-display font-bold text-brand-900 dark:text-white tracking-tight">Pulse</span>
+          <span className="ml-auto hidden sm:inline text-[10px] font-bold text-accent-600 dark:text-accent-500 bg-accent-50 dark:bg-accent-500/10 px-1.5 py-0.5 rounded-md border border-accent-200 dark:border-accent-500/20 uppercase tracking-wider">
             Beta
           </span>
           {/* Mobile close */}
           <button
             onClick={onClose}
-            className="ml-auto p-1.5 rounded-lg text-brand-400 hover:text-white hover:bg-white/10 lg:hidden transition-colors"
+            className="ml-auto p-1.5 rounded-lg text-brand-500 dark:text-brand-400 hover:text-brand-900 dark:hover:text-white hover:bg-brand-100 dark:hover:bg-white/10 lg:hidden transition-colors"
           >
             <Menu className="w-5 h-5" />
           </button>
@@ -134,11 +134,11 @@ function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) 
         <div className="px-3 pt-4 pb-2">
           <button 
             onClick={() => document.dispatchEvent(new KeyboardEvent('keydown', { key: 'k', metaKey: true }))}
-            className="w-full flex items-center gap-2 px-3 py-2 rounded-xl bg-brand-900/50 border border-brand-800 text-sm text-brand-400 hover:border-brand-600 hover:text-brand-200 transition-all duration-200"
+            className="w-full flex items-center gap-2 px-3 py-2 rounded-xl bg-brand-50 dark:bg-brand-900/50 border border-brand-200 dark:border-brand-800 text-sm text-brand-500 dark:text-brand-400 hover:border-brand-300 dark:hover:border-brand-600 hover:text-brand-900 dark:hover:text-brand-200 transition-all duration-200"
           >
             <Search className="w-4 h-4" />
             <span>Search...</span>
-            <kbd className="ml-auto text-[10px] text-brand-500 font-mono bg-brand-950 px-1.5 py-0.5 rounded border border-brand-800 hidden sm:inline">⌘K</kbd>
+            <kbd className="ml-auto text-[10px] text-brand-400 dark:text-brand-500 font-mono bg-white dark:bg-brand-950 px-1.5 py-0.5 rounded border border-brand-200 dark:border-brand-800 hidden sm:inline">⌘K</kbd>
           </button>
         </div>
 
@@ -161,7 +161,7 @@ function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) 
         </nav>
 
         {/* Bottom Nav */}
-        <div className="px-3 py-2 space-y-1 border-t border-brand-800">
+        <div className="px-3 py-2 space-y-1 border-t border-brand-200 dark:border-brand-800">
           {BOTTOM_NAV.map((item) => {
             const isActive = pathname === item.href;
             return (
@@ -179,22 +179,22 @@ function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) 
         </div>
 
         {/* User */}
-        <div className="px-3 py-3 border-t border-brand-800 bg-brand-900/20">
+        <div className="px-3 py-3 border-t border-brand-200 dark:border-brand-800 bg-brand-50/50 dark:bg-brand-900/20">
           <div className="flex items-center gap-3 px-2">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-brand-500 to-brand-600 border border-brand-400/20 flex items-center justify-center text-xs font-bold text-white shrink-0">
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-brand-500 to-brand-600 border border-brand-200 dark:border-brand-400/20 flex items-center justify-center text-xs font-bold text-white shrink-0">
               {user?.role?.[0] || 'U'}
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-brand-100 truncate">
+              <p className="text-sm font-medium text-brand-900 dark:text-brand-100 truncate">
                 {user?.role || 'User'}
               </p>
-              <p className="text-xs text-brand-400 truncate">
+              <p className="text-xs text-brand-500 dark:text-brand-400 truncate">
                 Org: {user?.orgId?.slice(-6) || '...'}
               </p>
             </div>
             <button
               onClick={logout}
-              className="p-1.5 rounded-lg text-brand-400 hover:text-white hover:bg-brand-800 transition-all duration-200 shrink-0"
+              className="p-1.5 rounded-lg text-brand-500 dark:text-brand-400 hover:text-brand-900 dark:hover:text-white hover:bg-brand-200 dark:hover:bg-brand-800 transition-all duration-200 shrink-0"
               title="Sign out"
             >
               <LogOut className="w-4 h-4" />

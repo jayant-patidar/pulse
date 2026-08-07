@@ -1,34 +1,32 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/core/lib/api-client';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/Card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { FileText, Plus, DollarSign, CalendarClock } from 'lucide-react';
 import type { ChangeOrder } from '@pulse/types';
+import { SlideOver } from '@/components/ui/SlideOver';
+import { ChangeOrderForm } from './_components/ChangeOrderForm';
+import { CreateChangeOrderInput } from '@pulse/validators';
 
 export default function ChangeOrdersPage() {
-  const [changeOrders, setChangeOrders] = useState<ChangeOrder[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const queryClient = useQueryClient();
 
-  useEffect(() => {
-    fetchChangeOrders();
-  }, []);
+  const { data: changeOrders = [], isLoading } = useQuery({
+    queryKey: ['change-orders'],
+    queryFn: () => api.get<ChangeOrder[]>('/construction/change-orders'),
+  });
 
-  const fetchChangeOrders = async () => {
-    try {
-      const data = await api.get<ChangeOrder[]>('/construction/change-orders');
-      setChangeOrders(data);
-    } catch (error) {
-      console.error('Failed to fetch change orders:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const createDemoCO = async () => {
-    alert('Create Change Order form would open here.');
-  };
+  const createMutation = useMutation({
+    mutationFn: (newCO: CreateChangeOrderInput) => api.post('/construction/change-orders', newCO),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['change-orders'] });
+      setIsDrawerOpen(false);
+    },
+  });
 
   return (
     <div className="space-y-6">
@@ -39,7 +37,7 @@ export default function ChangeOrdersPage() {
           </h1>
           <p className="text-sm text-brand-500">Manage budget and schedule impacts.</p>
         </div>
-        <Button onClick={createDemoCO} className="gap-2 bg-brand-900 text-white hover:bg-brand-800 dark:bg-white dark:text-brand-900 dark:hover:bg-brand-100">
+        <Button onClick={() => setIsDrawerOpen(true)} className="gap-2 bg-brand-900 text-white hover:bg-brand-800 dark:bg-white dark:text-brand-900 dark:hover:bg-brand-100">
           <Plus className="w-4 h-4" />
           Create CO
         </Button>
@@ -63,7 +61,7 @@ export default function ChangeOrdersPage() {
             <p className="text-sm text-brand-500 max-w-sm mb-6">
               There are no change orders recorded yet. Create one to track scope or budget changes.
             </p>
-            <Button onClick={createDemoCO} variant="outline" className="gap-2">
+            <Button onClick={() => setIsDrawerOpen(true)} variant="outline" className="gap-2">
               <Plus className="w-4 h-4" />
               Create CO
             </Button>
@@ -105,6 +103,18 @@ export default function ChangeOrdersPage() {
           ))}
         </div>
       )}
+
+      <SlideOver
+        isOpen={isDrawerOpen}
+        onClose={() => setIsDrawerOpen(false)}
+        title="Create Change Order"
+        description="Submit a new change order for approval."
+      >
+        <ChangeOrderForm
+          onSubmit={(data) => createMutation.mutate(data)}
+          isLoading={createMutation.isPending}
+        />
+      </SlideOver>
     </div>
   );
 }

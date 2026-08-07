@@ -8,10 +8,10 @@ import { Document, Schema as MongooseSchema, Types } from 'mongoose';
 
 @Schema({ timestamps: true, collection: 'documents' })
 export class DocumentRecord extends Document {
-  @Prop({ type: Types.ObjectId, required: true, index: true })
+  @Prop({ type: MongooseSchema.Types.ObjectId, required: true, index: true })
   declare organizationId: Types.ObjectId;
 
-  @Prop({ type: Types.ObjectId })
+  @Prop({ type: MongooseSchema.Types.ObjectId })
   declare projectId?: Types.ObjectId;
 
   @Prop({ required: true, trim: true, maxlength: 500 })
@@ -33,14 +33,14 @@ export class DocumentRecord extends Document {
   @Prop({ type: Number, default: 1 })
   declare version: number;
 
-  @Prop({ type: Types.ObjectId })
+  @Prop({ type: MongooseSchema.Types.ObjectId })
   declare parentDocumentId?: Types.ObjectId;
 
   @Prop({ type: Boolean, default: true })
   declare isLatest: boolean;
 
   // Organization
-  @Prop({ type: Types.ObjectId })
+  @Prop({ type: MongooseSchema.Types.ObjectId })
   declare folderId?: Types.ObjectId;
 
   @Prop({ type: [String], default: [] })
@@ -50,7 +50,7 @@ export class DocumentRecord extends Document {
   @Prop({ default: 'NONE', enum: ['NONE', 'PENDING', 'APPROVED', 'REJECTED'] })
   declare approvalStatus: string;
 
-  @Prop({ type: Types.ObjectId })
+  @Prop({ type: MongooseSchema.Types.ObjectId })
   declare approvedBy?: Types.ObjectId;
 
   // EXIF / Metadata
@@ -66,7 +66,7 @@ export class DocumentRecord extends Document {
   declare aiStatus: string;
 
   // Audit & Soft Delete
-  @Prop({ type: Types.ObjectId, required: true })
+  @Prop({ type: MongooseSchema.Types.ObjectId, required: true })
   declare createdBy: Types.ObjectId;
 
   @Prop({ type: Date, default: null })

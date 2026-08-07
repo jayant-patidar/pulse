@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/core/lib/api-client';
 import { Button } from '@/components/ui/Button';
 import { DataTable } from '@/components/ui/DataTable';
@@ -11,14 +11,29 @@ import { UploadCloud, FileText, Download } from 'lucide-react';
 
 import { PageHeader } from '@/components/ui/PageHeader';
 import { StatsGrid } from '@/components/ui/StatsGrid';
+import { SlideOver } from '@/components/ui/SlideOver';
+import { DocumentForm } from './_components/DocumentForm';
+import { CreateDocumentInput } from '@pulse/validators';
 
 export default function DocumentsPage() {
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const queryClient = useQueryClient();
 
-  const { data: documents, isLoading } = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: ['documents', page],
-    queryFn: () => api.get<any[]>(`/trunk/documents?page=${page}&limit=20`),
+    queryFn: () => api.get<any>(`/trunk/documents?page=${page}&limit=20`),
+  });
+  
+  const documents = data|| [];
+
+  const createMutation = useMutation({
+    mutationFn: (newDoc: CreateDocumentInput) => api.post('/trunk/documents', newDoc),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['documents'] });
+      setIsDrawerOpen(false);
+    },
   });
 
   function formatBytes(bytes: number) {
@@ -35,12 +50,12 @@ export default function DocumentsPage() {
       accessorKey: 'name',
       cell: (item: any) => (
         <div className="flex items-center gap-3">
-          <div className="p-2 bg-brand-50 text-brand-400 rounded-lg border border-brand-100">
+          <div className="p-2 bg-brand-50 dark:bg-brand-900/50 text-brand-400 rounded-lg border border-brand-100 dark:border-brand-800">
             <FileText className="w-5 h-5" />
           </div>
           <div>
-            <div className="font-medium text-brand-900">{item.name}</div>
-            <div className="text-sm text-brand-500">{item.originalFilename}</div>
+            <div className="font-medium text-brand-900 dark:text-brand-100">{item.name}</div>
+            <div className="text-sm text-brand-500 dark:text-brand-400">{item.originalFilename}</div>
           </div>
         </div>
       ),
@@ -48,12 +63,12 @@ export default function DocumentsPage() {
     {
       header: 'Size',
       accessorKey: 'sizeBytes',
-      cell: (item: any) => <span className="text-brand-500">{formatBytes(item.sizeBytes)}</span>,
+      cell: (item: any) => <span className="text-brand-500 dark:text-brand-400">{formatBytes(item.sizeBytes)}</span>,
     },
     {
       header: 'Approval',
-      accessorKey: 'approvalStatus',
-      cell: (item: any) => <StatusBadge status={item.approvalStatus} />,
+      accessorKey: 'status',
+      cell: (item: any) => <StatusBadge status={item.status} />,
     },
     {
       header: 'Actions',
@@ -67,7 +82,7 @@ export default function DocumentsPage() {
     },
   ];
 
-  const filteredDocuments = documents?.filter(d => d.name.toLowerCase().includes(search.toLowerCase())) || [];
+  const filteredDocuments = documents?.filter((d: any) => d.name.toLowerCase().includes(search.toLowerCase())) || [];
 
   return (
     <div className="max-w-7xl mx-auto space-y-8">
@@ -76,7 +91,7 @@ export default function DocumentsPage() {
         description="Centralized storage for drawings, RFIs, and photos."
         icon={<FileText className="w-6 h-6" />}
         actions={
-          <Button variant="primary">
+          <Button variant="primary" onClick={() => setIsDrawerOpen(true)}>
             <UploadCloud className="w-4 h-4 mr-2" />
             Upload File
           </Button>
@@ -102,6 +117,18 @@ export default function DocumentsPage() {
           isLoading={isLoading}
         />
       </div>
+
+      <SlideOver
+        isOpen={isDrawerOpen}
+        onClose={() => setIsDrawerOpen(false)}
+        title="Upload Document"
+        description="Add a new file to the project repository."
+      >
+        <DocumentForm
+          onSubmit={(data) => createMutation.mutate(data)}
+          isLoading={createMutation.isPending}
+        />
+      </SlideOver>
     </div>
   );
 }

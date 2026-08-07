@@ -8,10 +8,10 @@ import { Document, Schema as MongooseSchema, Types } from 'mongoose';
 
 @Schema({ timestamps: true, collection: 'tasks' })
 export class TaskDocument extends Document {
-  @Prop({ type: Types.ObjectId, required: true, index: true })
+  @Prop({ type: MongooseSchema.Types.ObjectId, required: true, index: true })
   declare organizationId: Types.ObjectId;
 
-  @Prop({ type: Types.ObjectId, required: true, index: true })
+  @Prop({ type: MongooseSchema.Types.ObjectId, required: true, index: true })
   declare projectId: Types.ObjectId;
 
   @Prop({ required: true, trim: true, maxlength: 300 })
@@ -27,16 +27,16 @@ export class TaskDocument extends Document {
   declare priority: string;
 
   // Assignment & Hierarchy
-  @Prop({ type: [Types.ObjectId], default: [] })
+  @Prop({ type: [MongooseSchema.Types.ObjectId], default: [] })
   declare assigneeIds: Types.ObjectId[];
 
-  @Prop({ type: Types.ObjectId })
+  @Prop({ type: MongooseSchema.Types.ObjectId })
   declare teamId?: Types.ObjectId;
 
-  @Prop({ type: Types.ObjectId })
+  @Prop({ type: MongooseSchema.Types.ObjectId })
   declare parentTaskId?: Types.ObjectId;
 
-  @Prop({ type: [Types.ObjectId], default: [] })
+  @Prop({ type: [MongooseSchema.Types.ObjectId], default: [] })
   declare dependencies: Types.ObjectId[];
 
   // Schedule & Tracking
@@ -59,14 +59,14 @@ export class TaskDocument extends Document {
   @Prop({ type: [String], default: [] })
   declare tags: string[];
 
-  @Prop({ type: [Types.ObjectId], default: [] })
+  @Prop({ type: [MongooseSchema.Types.ObjectId], default: [] })
   declare attachments: Types.ObjectId[];
 
   @Prop({ maxlength: 2000 })
   declare blockedReason?: string;
 
   // Audit & Soft Delete
-  @Prop({ type: Types.ObjectId, required: true })
+  @Prop({ type: MongooseSchema.Types.ObjectId, required: true })
   declare createdBy: Types.ObjectId;
 
   @Prop({ type: Date, default: null })
