@@ -1,6 +1,8 @@
 import type { Metadata } from 'next';
 import { Inter, Outfit } from 'next/font/google';
 import './globals.css';
+import { Toaster } from 'sonner';
+import { ThemeProvider } from '@/core/providers/theme-provider';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -24,9 +26,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`light ${inter.variable} ${outfit.variable}`}>
+    <html lang="en" className={`light ${inter.variable} ${outfit.variable}`} suppressHydrationWarning>
       <body className={`${inter.className} bg-gray-50 text-brand-900 antialiased selection:bg-accent-500/30 selection:text-accent-700`} suppressHydrationWarning>
-        {children}
+        <ThemeProvider>
+          {children}
+          <Toaster position="top-right" richColors />
+        </ThemeProvider>
       </body>
     </html>
   );

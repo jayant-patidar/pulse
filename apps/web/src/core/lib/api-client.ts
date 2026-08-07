@@ -19,6 +19,9 @@ interface ApiError {
   timestamp: string;
 }
 
+let isRefreshing = false;
+let refreshPromise: Promise<boolean> | null = null;
+
 class ApiClient {
   async request<T>(
     endpoint: string,
@@ -36,6 +39,30 @@ class ApiClient {
     });
 
     if (!response.ok) {
+      if (response.status === 401 && !endpoint.includes('/auth/refresh') && !endpoint.includes('/auth/login')) {
+        if (!isRefreshing) {
+          isRefreshing = true;
+          refreshPromise = fetch(`${API_BASE}/root/auth/refresh`, {
+            method: 'POST',
+            credentials: 'include',
+            headers: { 'Content-Type': 'application/json' },
+          }).then(res => res.ok).catch(() => false);
+        }
+
+        const success = await refreshPromise;
+        if (success) {
+          isRefreshing = false;
+          refreshPromise = null;
+          // Retry original request
+          return this.request<T>(endpoint, options);
+        } else {
+          isRefreshing = false;
+          refreshPromise = null;
+          if (typeof window !== 'undefined') window.location.href = '/login';
+          throw new Error('Session expired');
+        }
+      }
+
       const error: ApiError = await response.json().catch(() => ({
         type: 'about:blank',
         title: 'Request Failed',
@@ -44,6 +71,12 @@ class ApiClient {
         instance: endpoint,
         timestamp: new Date().toISOString(),
       }));
+
+      if (typeof window !== 'undefined') {
+        const { toast } = await import('sonner');
+        toast.error(error.title || 'Error', { description: error.detail || 'An unexpected error occurred' });
+      }
+
       throw error;
     }
 

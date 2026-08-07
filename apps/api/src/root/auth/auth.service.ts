@@ -115,4 +115,16 @@ export class AuthService {
 
     return { accessToken, refreshToken };
   }
+
+  async refresh(refreshToken: string): Promise<AuthTokens> {
+    try {
+      const payload = this.jwtService.verify(refreshToken, {
+        secret: this.configService.get<string>('JWT_REFRESH_SECRET', 'dev-refresh-secret'),
+      });
+      // Important: don't pass the exp/iat from the old token payload, just extract what we need
+      return this.generateTokens(payload.sub, payload.org, payload.role);
+    } catch (err) {
+      throw new UnauthorizedException('Invalid or expired refresh token');
+    }
+  }
 }

@@ -61,6 +61,18 @@ export class AuthController {
     return { success: true };
   }
 
+  @Post('refresh')
+  @HttpCode(HttpStatus.OK)
+  async refresh(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
+    const refreshToken = req.cookies?.refreshToken;
+    if (!refreshToken) {
+      throw new import('@nestjs/common').UnauthorizedException('No refresh token');
+    }
+    const result = await this.authService.refresh(refreshToken);
+    this.setCookies(res, result);
+    return { success: true };
+  }
+
   @Get('me')
   @UseGuards(JwtAuthGuard)
   async getProfile(@Req() req: Request) {

@@ -1,0 +1,36 @@
+services:
+  - type: redis
+    name: pulse-redis
+    plan: free
+    ipAllowList: []
+
+  - type: web
+    name: pulse-api
+    env: node
+    plan: free
+    buildCommand: pnpm install && pnpm turbo run build --filter=@pulse/api
+    startCommand: pnpm --filter @pulse/api start
+    envVars:
+      - key: MONGO_URI
+        sync: false
+      - key: JWT_ACCESS_SECRET
+        generateValue: true
+      - key: JWT_REFRESH_SECRET
+        generateValue: true
+      - key: FRONTEND_URL
+        value: https://pulse-web.onrender.com
+      - key: REDIS_URL
+        fromService:
+          type: redis
+          name: pulse-redis
+          property: connectionString
+
+  - type: web
+    name: pulse-web
+    env: node
+    plan: free
+    buildCommand: pnpm install && pnpm turbo run build --filter=@pulse/web
+    startCommand: pnpm --filter @pulse/web start
+    envVars:
+      - key: NEXT_PUBLIC_API_URL
+        value: https://pulse-api.onrender.com/api/v1
