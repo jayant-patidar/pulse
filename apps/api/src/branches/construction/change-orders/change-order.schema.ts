@@ -60,6 +60,9 @@ export class ChangeOrderRecord extends Document {
   declare approvedBy?: MongooseSchema.Types.ObjectId;
 
   @Prop({ required: false })
+  declare approvedAt?: Date;
+
+  @Prop({ required: false })
   declare clientApprovalRequired?: boolean;
 
   @Prop({ required: false })

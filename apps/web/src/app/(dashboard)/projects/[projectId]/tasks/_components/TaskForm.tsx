@@ -11,6 +11,7 @@ import { FormField } from '@/components/ui/FormField';
 import { useQuery } from '@tanstack/react-query';
 import { api } from '@/core/lib/api-client';
 import { ExtensionFieldRenderer } from '@/components/ui/ExtensionFieldRenderer';
+import { useParams } from 'next/navigation';
 
 interface TaskFormProps {
   initialData?: any;
@@ -19,6 +20,9 @@ interface TaskFormProps {
 }
 
 export function TaskForm({ initialData, onSubmit, isLoading }: TaskFormProps) {
+  const params = useParams<{ projectId?: string }>();
+  const activeProjectId = params?.projectId || initialData?.projectId;
+
   // Fetch projects to populate the Project Select dropdown
   const { data: projectsData } = useQuery({
     queryKey: ['projects'],
@@ -29,7 +33,7 @@ export function TaskForm({ initialData, onSubmit, isLoading }: TaskFormProps) {
   const form = useForm<CreateTaskInput>({
     resolver: zodResolver(createTaskSchema),
     defaultValues: {
-      projectId: initialData?.projectId || '',
+      projectId: activeProjectId || '',
       title: initialData?.title || '',
       description: initialData?.description || '',
       priority: initialData?.priority || 'MEDIUM',
@@ -46,17 +50,28 @@ export function TaskForm({ initialData, onSubmit, isLoading }: TaskFormProps) {
 
   return (
     <form id="task-form" onSubmit={handleSubmit} className="space-y-6">
-      <FormField label="Project" error={errors.projectId?.message} required>
-        <Select 
-          {...form.register('projectId')} 
-          error={!!errors.projectId}
-        >
-          <option value="" disabled>Select a project</option>
-          {projects.map((p: any) => (
-            <option key={p._id} value={p._id}>{p.name}</option>
-          ))}
-        </Select>
-      </FormField>
+      {activeProjectId ? (
+        <FormField label="Project" required>
+          <Input 
+            value={projects.find((p: any) => p._id === activeProjectId)?.name || 'Loading...'} 
+            disabled 
+            className="bg-slate-50 dark:bg-brand-900/50 text-slate-500 dark:text-slate-400 cursor-not-allowed" 
+          />
+          <input type="hidden" {...form.register('projectId')} value={activeProjectId} />
+        </FormField>
+      ) : (
+        <FormField label="Project" error={errors.projectId?.message} required>
+          <Select 
+            {...form.register('projectId')} 
+            error={!!errors.projectId}
+          >
+            <option value="" disabled>Select a project</option>
+            {projects.map((p: any) => (
+              <option key={p._id} value={p._id}>{p.name}</option>
+            ))}
+          </Select>
+        </FormField>
+      )}
 
       <FormField label="Task Title" error={errors.title?.message} required>
         <Input 

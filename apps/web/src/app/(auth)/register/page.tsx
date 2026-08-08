@@ -74,13 +74,8 @@ export default function RegisterPage() {
   return (
     <div className="space-y-8">
       {/* Mobile logo */}
-      <div className="lg:hidden flex items-center gap-3 mb-4">
-        <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-brand-500 to-brand-600 flex items-center justify-center shadow-lg shadow-brand-500/30">
-          <svg className="w-4.5 h-4.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" />
-          </svg>
-        </div>
-        <span className="text-lg font-bold text-white">Pulse</span>
+      <div className="lg:hidden mb-4">
+        <Logo />
       </div>
 
       <div>

@@ -4,11 +4,12 @@ import { useProject } from '@/core/providers/project-provider';
 import { PageHeader } from '@/components/ui/PageHeader';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
 import { LayoutDashboard } from 'lucide-react';
+import { PulseLoader } from '@/components/ui/PulseLoader';
 
 export default function ProjectDashboardPage() {
   const { project, isLoading } = useProject();
 
-  if (isLoading) return <div>Loading project data...</div>;
+  if (isLoading) return <PulseLoader size="lg" text="Loading project..." />;
 
   return (
     <div className="max-w-7xl mx-auto space-y-8">

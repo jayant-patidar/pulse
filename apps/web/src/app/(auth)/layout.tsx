@@ -2,6 +2,7 @@
 
 import { AuthProvider } from '@/core/providers/auth-provider';
 import Image from 'next/image';
+import { Logo } from '@/components/ui/Logo';
 
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -25,14 +26,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
           {/* Content */}
           <div className="relative z-10 flex flex-col justify-between p-12 lg:p-16 w-full h-full">
             <div>
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-brand-600 flex items-center justify-center shadow-lg shadow-brand-500/30">
-                  <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" />
-                  </svg>
-                </div>
-                <span className="text-2xl font-bold text-white tracking-tight drop-shadow-md">Pulse</span>
-              </div>
+              <Logo forceDark={true} />
             </div>
 
             <div className="space-y-6">

@@ -11,6 +11,7 @@ import { useQuery } from '@tanstack/react-query';
 import { api } from '@/core/lib/api-client';
 import { UploadCloud } from 'lucide-react';
 import { useState } from 'react';
+import { useParams } from 'next/navigation';
 
 interface DocumentFormProps {
   initialData?: any;
@@ -19,6 +20,8 @@ interface DocumentFormProps {
 }
 
 export function DocumentForm({ initialData, onSubmit, isLoading }: DocumentFormProps) {
+  const params = useParams<{ projectId?: string }>();
+  const activeProjectId = params?.projectId || initialData?.projectId;
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
   const { data: projectsData } = useQuery({
@@ -30,7 +33,7 @@ export function DocumentForm({ initialData, onSubmit, isLoading }: DocumentFormP
   const form = useForm<CreateDocumentInput>({
     resolver: zodResolver(createDocumentSchema),
     defaultValues: {
-      projectId: initialData?.projectId || '',
+      projectId: activeProjectId || '',
       name: initialData?.name || '',
       originalFilename: initialData?.originalFilename || 'dummy_file.pdf',
       fileType: initialData?.fileType || 'application/pdf',
@@ -63,17 +66,28 @@ export function DocumentForm({ initialData, onSubmit, isLoading }: DocumentFormP
 
   return (
     <form id="document-form" onSubmit={handleSubmit} className="space-y-6">
-      <FormField label="Project" error={errors.projectId?.message}>
-        <Select 
-          {...form.register('projectId')} 
-          error={!!errors.projectId}
-        >
-          <option value="">No Project (General)</option>
-          {projects.map((p: any) => (
-            <option key={p._id} value={p._id}>{p.name}</option>
-          ))}
-        </Select>
-      </FormField>
+      {activeProjectId ? (
+        <FormField label="Project">
+          <Input 
+            value={projects.find((p: any) => p._id === activeProjectId)?.name || 'Loading...'} 
+            disabled 
+            className="bg-slate-50 dark:bg-brand-900/50 text-slate-500 dark:text-slate-400 cursor-not-allowed" 
+          />
+          <input type="hidden" {...form.register('projectId')} value={activeProjectId} />
+        </FormField>
+      ) : (
+        <FormField label="Project" error={errors.projectId?.message}>
+          <Select 
+            {...form.register('projectId')} 
+            error={!!errors.projectId}
+          >
+            <option value="">No Project (General)</option>
+            {projects.map((p: any) => (
+              <option key={p._id} value={p._id}>{p.name}</option>
+            ))}
+          </Select>
+        </FormField>
+      )}
 
       <FormField label="Upload File" error={errors.originalFilename?.message} required>
         <div className="mt-2 flex justify-center rounded-xl border border-dashed border-brand-300 dark:border-brand-700 px-6 py-10">

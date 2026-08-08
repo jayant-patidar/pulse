@@ -12,6 +12,7 @@ import { CommandPalette } from '@/components/ui/CommandPalette';
 
 import { ThemeProvider } from '@/core/providers/theme-provider';
 import { ThemeToggle } from '@/components/ui/ThemeToggle';
+import { Logo } from '@/components/ui/Logo';
 import {
   LayoutDashboard,
   HardHat,
@@ -108,14 +109,16 @@ function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) 
         {/* Logo / Context Switcher */}
         <div className="flex flex-col justify-center px-5 h-16 border-b border-brand-200 dark:border-brand-800">
           <div className="flex items-center gap-3">
-            <Link href={projectId ? "/projects" : "/dashboard"} className="w-8 h-8 rounded-lg bg-gradient-to-br from-accent-500 to-accent-600 flex items-center justify-center shadow-md shadow-accent-500/20 shrink-0 cursor-pointer hover:opacity-90 transition-opacity">
-              <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
-                {projectId ? <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" /> : <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" />}
-              </svg>
-            </Link>
+            {projectId && (
+              <Link href="/projects" className="w-8 h-8 rounded-lg bg-gradient-to-br from-accent-500 to-accent-600 flex items-center justify-center shadow-md shadow-accent-500/20 shrink-0 cursor-pointer hover:opacity-90 transition-opacity">
+                <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+                </svg>
+              </Link>
+            )}
             <div className="flex flex-col min-w-0">
               <span className="text-xl font-display font-bold text-brand-900 dark:text-white tracking-tight truncate">
-                {projectId ? (project?.name || 'Loading Project...') : 'Pulse'}
+                {projectId ? (project?.name || 'Loading Project...') : <Logo />}
               </span>
               {projectId && (
                 <span className="text-[10px] text-brand-500 dark:text-brand-400 font-medium truncate uppercase tracking-wider">
@@ -212,7 +215,28 @@ function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) 
 
 function TopBar({ onMenuToggle }: { onMenuToggle: () => void }) {
   const pathname = usePathname();
-  const pageTitle = NAV_ITEMS.find(i => pathname.includes(i.href))?.label || 'Dashboard';
+  
+  // Detect if we are inside a project workspace
+  const projectMatch = pathname.match(/^\/projects\/([a-f\d]{24})/i);
+  const projectId = projectMatch ? projectMatch[1] : null;
+  
+  // Fetch project to get the name (this uses React Query cache from Sidebar)
+  const { data: project } = useQuery({
+    queryKey: ['project', projectId],
+    queryFn: async () => {
+      const res = await api.get<any>(`/trunk/projects/${projectId}`);
+      return res;
+    },
+    enabled: !!projectId,
+  });
+  
+  // Combine all possible nav items
+  const projectNavItems = projectId 
+    ? PROJECT_NAV_ITEMS.map(item => ({ ...item, href: `/projects/${projectId}${item.href}` }))
+    : [];
+    
+  const allNavItems = [...projectNavItems, ...NAV_ITEMS].sort((a, b) => b.href.length - a.href.length);
+  const pageTitle = allNavItems.find(i => pathname.includes(i.href))?.label || 'Dashboard';
 
   return (
     <header className="sticky top-0 z-20 h-16 flex items-center justify-between px-4 sm:px-6 bg-white/80 dark:bg-brand-950/80 backdrop-blur-xl border-b border-brand-200 dark:border-brand-800 transition-colors">
@@ -226,19 +250,21 @@ function TopBar({ onMenuToggle }: { onMenuToggle: () => void }) {
         </button>
 
         {/* Mobile logo */}
-        <div className="flex items-center gap-2 lg:hidden">
-          <div className="w-7 h-7 rounded-md bg-gradient-to-br from-accent-500 to-accent-600 flex items-center justify-center shadow-sm">
-            <svg className="w-3.5 h-3.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" />
-            </svg>
-          </div>
+        <div className="flex items-center lg:hidden scale-75 origin-left">
+          <Logo />
         </div>
 
-        {/* Breadcrumb / Title (Desktop) */}
-        <div className="hidden lg:flex items-center text-sm font-medium text-brand-400">
-          <span className="hover:text-brand-600 dark:hover:text-brand-300 cursor-pointer">Pulse</span>
-          <span className="mx-2">/</span>
-          <span className="text-brand-900 dark:text-brand-100">{pageTitle}</span>
+        {/* Page Title (Desktop) */}
+        <div className="hidden lg:flex items-center text-sm font-medium text-brand-900 dark:text-brand-100">
+          {projectId && project ? (
+            <>
+              <span className="text-brand-500 dark:text-brand-400">{project.name}</span>
+              <span className="mx-2 text-brand-300 dark:text-brand-700">/</span>
+              <span>{pageTitle}</span>
+            </>
+          ) : (
+            <span>{pageTitle}</span>
+          )}
         </div>
       </div>
 

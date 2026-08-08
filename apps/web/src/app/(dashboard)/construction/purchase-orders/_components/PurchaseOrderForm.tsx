@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Select } from '@/components/ui/Select';
 import { FormField } from '@/components/ui/FormField';
+import { useParams } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
 import { api } from '@/core/lib/api-client';
 
@@ -17,6 +18,9 @@ interface PurchaseOrderFormProps {
 }
 
 export function PurchaseOrderForm({ initialData, onSubmit, isLoading }: PurchaseOrderFormProps) {
+  const params = useParams<{ projectId?: string }>();
+  const activeProjectId = params?.projectId || initialData?.projectId;
+
   const { data: projectsData } = useQuery({
     queryKey: ['projects'],
     queryFn: () => api.get<any>('/trunk/projects?limit=100'),
@@ -32,7 +36,7 @@ export function PurchaseOrderForm({ initialData, onSubmit, isLoading }: Purchase
   const form = useForm<CreatePurchaseOrderInput>({
     resolver: zodResolver(createPurchaseOrderSchema),
     defaultValues: {
-      projectId: initialData?.projectId || '',
+      projectId: activeProjectId || '',
       poNumber: initialData?.poNumber || '',
       supplierName: initialData?.supplierName || '',
       supplierContact: initialData?.supplierContact || '',
@@ -56,17 +60,28 @@ export function PurchaseOrderForm({ initialData, onSubmit, isLoading }: Purchase
 
   return (
     <form id="purchase-order-form" onSubmit={handleSubmit} className="space-y-6">
-      <FormField label="Project" error={errors.projectId?.message} required>
-        <Select 
-          {...form.register('projectId')} 
-          error={!!errors.projectId}
-        >
-          <option value="" disabled>Select a project</option>
-          {projects.map((p: any) => (
-            <option key={p._id} value={p._id}>{p.name}</option>
-          ))}
-        </Select>
-      </FormField>
+      {activeProjectId ? (
+        <FormField label="Project" required>
+          <Input 
+            value={projects.find((p: any) => p._id === activeProjectId)?.name || 'Loading...'} 
+            disabled 
+            className="bg-slate-50 dark:bg-brand-900/50 text-slate-500 dark:text-slate-400 cursor-not-allowed" 
+          />
+          <input type="hidden" {...form.register('projectId')} value={activeProjectId} />
+        </FormField>
+      ) : (
+        <FormField label="Project" error={errors.projectId?.message} required>
+          <Select 
+            {...form.register('projectId')} 
+            error={!!errors.projectId}
+          >
+            <option value="" disabled>Select a project</option>
+            {projects.map((p: any) => (
+              <option key={p._id} value={p._id}>{p.name}</option>
+            ))}
+          </Select>
+        </FormField>
+      )}
 
       <div className="grid grid-cols-2 gap-4">
         <FormField label="PO Number" error={errors.poNumber?.message} required>
