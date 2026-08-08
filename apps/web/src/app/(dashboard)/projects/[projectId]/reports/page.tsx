@@ -1,5 +1,7 @@
 'use client';
 
+import Link from 'next/link';
+
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/core/lib/api-client';
@@ -88,10 +90,17 @@ export default function DailyReportsPage() {
         description="Site logs, weather conditions, and daily progress."
         icon={<ClipboardList className="w-6 h-6" />}
         actions={
-          <Button variant="primary" onClick={() => setIsDrawerOpen(true)}>
-            <Plus className="w-4 h-4 mr-2" />
-            New Report
-          </Button>
+          <div className="flex items-center gap-2">
+            <Link href={`/projects/${params.projectId}/reports/safety`}>
+              <Button variant="outline" className="text-sm font-semibold text-brand-600 dark:text-brand-400">
+                Safety Incidents
+              </Button>
+            </Link>
+            <Button variant="primary" onClick={() => setIsDrawerOpen(true)}>
+              <Plus className="w-4 h-4 mr-2" />
+              New Report
+            </Button>
+          </div>
         }
       />
 

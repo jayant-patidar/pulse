@@ -9,6 +9,7 @@ interface AuthUser {
   userId: string;
   orgId: string;
   role: string;
+  name?: string;
 }
 
 interface AuthContextValue {

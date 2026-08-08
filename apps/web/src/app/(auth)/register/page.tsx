@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/core/providers/auth-provider';
+import { Logo } from '@/components/ui/Logo';
 
 const INDUSTRIES = [
   { value: 'CONSTRUCTION', label: 'Construction', icon: '🏗️', disabled: false },

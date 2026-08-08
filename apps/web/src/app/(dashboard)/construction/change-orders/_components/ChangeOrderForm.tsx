@@ -26,9 +26,9 @@ export function ChangeOrderForm({ initialData, onSubmit, isLoading }: ChangeOrde
 
   const { data: usersData } = useQuery({
     queryKey: ['users'],
-    queryFn: () => api.get<any>('/root/users?limit=100'),
+    queryFn: () => api.get<any>('/root/memberships'),
   });
-  const users = usersData|| [];
+  const users = usersData || [];
 
   const form = useForm<CreateChangeOrderInput>({
     resolver: zodResolver(createChangeOrderSchema),

@@ -4,21 +4,37 @@ import { useQuery } from '@tanstack/react-query';
 import { api } from '@/core/lib/api-client';
 import { Button } from '@/components/ui/Button';
 import { PulseLoader } from '@/components/ui/PulseLoader';
+import Link from 'next/link';
+import { ArrowLeft } from 'lucide-react';
+
+import { useRouter } from 'next/navigation';
 
 export default function ChangeOrdersPage({ params }: { params: { projectId: string } }) {
-  const { data: changeOrders, isLoading } = useQuery({
+  const router = useRouter();
+  const { data: coData, isLoading } = useQuery({
     queryKey: ['change-orders', params.projectId],
-    queryFn: () => api.get<any>(`/branches/construction/change-orders?projectId=${params.projectId}`),
+    queryFn: () => api.get<any>(`/construction/change-orders?projectId=${params.projectId}`),
   });
+
+  const changeOrders = Array.isArray(coData) ? coData : (coData?.data || []);
 
   return (
     <div className="p-6 space-y-6 max-w-7xl mx-auto">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Change Orders</h1>
-          <p className="text-sm text-gray-500 dark:text-gray-400">Manage financial and schedule impacts.</p>
+      <div>
+        <button 
+          onClick={() => router.back()}
+          className="inline-flex items-center text-sm font-medium text-brand-600 hover:text-brand-700 dark:text-brand-400 dark:hover:text-brand-300 mb-4"
+        >
+          <ArrowLeft className="w-4 h-4 mr-1" />
+          Go Back
+        </button>
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Change Orders</h1>
+            <p className="text-sm text-gray-500 dark:text-gray-400">Manage financial and schedule impacts.</p>
+          </div>
+          <Button variant="primary">Create Change Order</Button>
         </div>
-        <Button variant="primary">Create Change Order</Button>
       </div>
 
       <div className="bg-white dark:bg-slate-900 shadow-sm border border-gray-200 dark:border-slate-800 rounded-xl overflow-hidden min-h-[300px]">

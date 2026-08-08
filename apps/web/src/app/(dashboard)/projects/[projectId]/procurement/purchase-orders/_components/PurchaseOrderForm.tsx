@@ -29,9 +29,9 @@ export function PurchaseOrderForm({ initialData, onSubmit, isLoading }: Purchase
 
   const { data: usersData } = useQuery({
     queryKey: ['users'],
-    queryFn: () => api.get<any>('/root/users?limit=100'),
+    queryFn: () => api.get<any>('/root/memberships'),
   });
-  const users = usersData|| [];
+  const users = usersData || [];
 
   const form = useForm<CreatePurchaseOrderInput>({
     resolver: zodResolver(createPurchaseOrderSchema),

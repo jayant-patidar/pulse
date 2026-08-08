@@ -17,17 +17,24 @@ interface IncidentFormProps {
   initialData?: any;
   onSubmit: (data: CreateSafetyIncidentInput) => void;
   isLoading?: boolean;
+  projectId?: string;
 }
 
-export function IncidentForm({ initialData, onSubmit, isLoading }: IncidentFormProps) {
+export function IncidentForm({ initialData, onSubmit, isLoading, projectId }: IncidentFormProps) {
   const params = useParams<{ projectId?: string }>();
-  const activeProjectId = params?.projectId || initialData?.projectId;
+  const activeProjectId = projectId || params?.projectId || initialData?.projectId;
 
   const { data: projectsData } = useQuery({
     queryKey: ['projects'],
     queryFn: () => api.get<any>('/trunk/projects?limit=100'),
   });
-  const projects = projectsData|| [];
+  const projects = projectsData || [];
+
+  const { data: usersData } = useQuery({
+    queryKey: ['users'],
+    queryFn: () => api.get<any>('/root/memberships'),
+  });
+  const users = usersData || [];
 
   const form = useForm<CreateSafetyIncidentInput>({
     resolver: zodResolver(createSafetyIncidentSchema),

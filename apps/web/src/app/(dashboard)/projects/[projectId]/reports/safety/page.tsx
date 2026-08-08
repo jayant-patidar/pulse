@@ -10,26 +10,38 @@ import type { SafetyIncident } from '@pulse/types';
 import { SlideOver } from '@/components/ui/SlideOver';
 import { IncidentForm } from './_components/IncidentForm';
 import { CreateSafetyIncidentInput } from '@pulse/validators';
+import { useRouter } from 'next/navigation';
+import { ArrowLeft } from 'lucide-react';
 
-export default function SafetyIncidentsPage() {
+export default function SafetyIncidentsPage({ params }: { params: { projectId: string } }) {
+  const router = useRouter();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const queryClient = useQueryClient();
 
-  const { data: incidents = [], isLoading } = useQuery({
-    queryKey: ['safety-incidents'],
-    queryFn: () => api.get<SafetyIncident[]>('/construction/safety'),
+  const { data: incidentResponse = { data: [] }, isLoading } = useQuery({
+    queryKey: ['safety-incidents', params.projectId],
+    queryFn: () => api.get<{ data: SafetyIncident[] }>(`/construction/safety?projectId=${params.projectId}`),
   });
 
+  const incidents = Array.isArray(incidentResponse) ? incidentResponse : (incidentResponse.data || []);
+
   const createMutation = useMutation({
-    mutationFn: (newIncident: CreateSafetyIncidentInput) => api.post('/construction/safety', newIncident),
+    mutationFn: (newIncident: CreateSafetyIncidentInput) => api.post('/construction/safety', { ...newIncident, projectId: params.projectId }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['safety-incidents'] });
+      queryClient.invalidateQueries({ queryKey: ['safety-incidents', params.projectId] });
       setIsDrawerOpen(false);
     },
   });
 
   return (
     <div className="space-y-6">
+      <button 
+        onClick={() => router.back()}
+        className="inline-flex items-center text-sm font-medium text-brand-600 hover:text-brand-700 dark:text-brand-400 dark:hover:text-brand-300"
+      >
+        <ArrowLeft className="w-4 h-4 mr-1" />
+        Back to Field Operations
+      </button>
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-display font-bold text-brand-900 dark:text-brand-100">
@@ -114,11 +126,12 @@ export default function SafetyIncidentsPage() {
         isOpen={isDrawerOpen}
         onClose={() => setIsDrawerOpen(false)}
         title="Report Safety Incident"
-        description="Log a safety incident. Critical incidents notify safety officers immediately."
+        description="Log a new safety incident or near miss."
       >
         <IncidentForm
           onSubmit={(data) => createMutation.mutate(data)}
           isLoading={createMutation.isPending}
+          projectId={params.projectId}
         />
       </SlideOver>
     </div>

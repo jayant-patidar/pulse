@@ -1,11 +1,45 @@
 import { Controller, Post, Body, HttpCode, HttpStatus, Res, Get, Req, UseGuards, UnauthorizedException } from '@nestjs/common';
 import { Response, Request } from 'express';
 import { AuthService } from './auth.service';
+import { UsersService } from '../users/users.service';
 import { JwtAuthGuard } from '../../common/guards';
+import { IsEmail, IsString, MinLength } from 'class-validator';
+
+export class RegisterDto {
+  @IsEmail()
+  email!: string;
+
+  @IsString()
+  @MinLength(6)
+  password!: string;
+
+  @IsString()
+  firstName!: string;
+
+  @IsString()
+  lastName!: string;
+
+  @IsString()
+  organizationName!: string;
+
+  @IsString()
+  industry!: string;
+}
+
+export class LoginDto {
+  @IsEmail()
+  email!: string;
+
+  @IsString()
+  password!: string;
+}
 
 @Controller('root/auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly usersService: UsersService,
+  ) {}
 
   private setCookies(res: Response, tokens: { accessToken: string; refreshToken: string }) {
     const isProd = process.env.NODE_ENV === 'production';
@@ -25,14 +59,7 @@ export class AuthController {
 
   @Post('register')
   async register(
-    @Body() dto: {
-      email: string;
-      password: string;
-      firstName: string;
-      lastName: string;
-      organizationName: string;
-      industry: string;
-    },
+    @Body() dto: RegisterDto,
     @Res({ passthrough: true }) res: Response,
   ) {
     const tokens = await this.authService.register(dto);
@@ -43,7 +70,7 @@ export class AuthController {
   @Post('login')
   @HttpCode(HttpStatus.OK)
   async login(
-    @Body() dto: { email: string; password: string },
+    @Body() dto: LoginDto,
     @Res({ passthrough: true }) res: Response,
   ) {
     const result = await this.authService.login(dto.email, dto.password);
@@ -77,11 +104,21 @@ export class AuthController {
   @Get('me')
   @UseGuards(JwtAuthGuard)
   async getProfile(@Req() req: Request) {
-    const user = req.user as any;
-    // We should ideally inject OrganizationsService, but for now we can just return
-    // what we have, or let's add OrganizationsService to AuthModule.
-    // Wait, injecting OrganizationsService here requires modifying AuthModule.
-    // Let's just do it properly.
-    return user;
+    const jwtUser = req.user as any;
+    const user = await this.usersService.findById(jwtUser.sub);
+    
+    if (!user) {
+      throw new UnauthorizedException('User not found');
+    }
+
+    return {
+      _id: user._id,
+      email: user.email,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      name: `${user.firstName} ${user.lastName}`.trim(),
+      role: jwtUser.role,
+      orgId: jwtUser.org,
+    };
   }
 }

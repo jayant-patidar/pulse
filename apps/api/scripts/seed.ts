@@ -162,12 +162,40 @@ async function bootstrap() {
     await EquipmentModel.create({
       organizationId: org._id,
       ...commonFields,
+      projectId: project1._id,
       name: 'Tower Crane A',
+      assetTag: 'EQ-001',
       status: 'IN_USE',
       lastMaintenanceDate: new Date(),
       extensions: {
         equipmentClass: 'CRANE',
         loadCapacity: '20 Tons'
+      }
+    });
+    
+    await EquipmentModel.create({
+      organizationId: org._id,
+      ...commonFields,
+      projectId: project1._id,
+      name: 'Deere 310L Backhoe',
+      assetTag: 'EQ-002',
+      status: 'AVAILABLE',
+      lastMaintenanceDate: new Date(),
+      extensions: {
+        equipmentClass: 'EXCAVATOR',
+      }
+    });
+
+    await EquipmentModel.create({
+      organizationId: org._id,
+      ...commonFields,
+      projectId: project1._id,
+      name: 'Bobcat T76 Loader',
+      assetTag: 'EQ-003',
+      status: 'UNDER_MAINTENANCE',
+      lastMaintenanceDate: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
+      extensions: {
+        equipmentClass: 'LOADER',
       }
     });
 
@@ -180,10 +208,23 @@ async function bootstrap() {
       projectId: project1._id,
       incidentType: 'INJURY',
       severity: 'MEDIUM',
-      dateOccurred: new Date(),
+      dateOccurred: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
       description: 'Worker tripped over exposed rebar.',
       status: 'OPEN',
       oshaRecordable: true,
+      reportedBy: user._id
+    });
+
+    await SafetyModel.create({
+      organizationId: org._id,
+      ...commonFields,
+      projectId: project1._id,
+      incidentType: 'NEAR_MISS',
+      severity: 'LOW',
+      dateOccurred: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000),
+      description: 'Dropped tool from scaffolding, no injuries.',
+      status: 'CLOSED',
+      oshaRecordable: false,
       reportedBy: user._id
     });
 
@@ -203,6 +244,22 @@ async function bootstrap() {
         { description: 'Marble Flooring', quantity: 1000, unitPriceCents: 4500, totalCents: 4500000 }
       ]
     });
+    
+    await ChangeOrderModel.create({
+      organizationId: org._id,
+      ...commonFields,
+      projectId: project1._id,
+      coNumber: 'CO-002',
+      title: 'Structural Steel Revision',
+      reasonCode: 'DESIGN_CHANGE',
+      costImpactCents: 12000000, // $120,000
+      scheduleImpactDays: 14,
+      status: 'APPROVED',
+      requestedBy: user._id,
+      lineItems: [
+        { description: 'Additional I-Beams', quantity: 50, unitPriceCents: 240000, totalCents: 12000000 }
+      ]
+    });
 
     // Purchase Order
     await PurchaseOrderModel.create({
@@ -219,11 +276,27 @@ async function bootstrap() {
         { materialDescription: 'Grade 60 Rebar', quantity: 10, unitOfMeasure: 'TON', unitPriceCents: 125000, totalCents: 1250000, quantityReceived: 0 }
       ]
     });
+    
+    await PurchaseOrderModel.create({
+      organizationId: org._id,
+      ...commonFields,
+      projectId: project1._id,
+      poNumber: 'PO-1002',
+      supplierName: 'Global Concrete',
+      status: 'PARTIALLY_DELIVERED',
+      totalAmountCents: 4500000, // $45,000
+      deliveryDateExpected: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000), // 2 days ago
+      issuedBy: user._id,
+      lineItems: [
+        { materialDescription: 'Concrete Mix', quantity: 100, unitOfMeasure: 'CY', unitPriceCents: 45000, totalCents: 4500000, quantityReceived: 50 }
+      ]
+    });
 
     // COI
     await COIModel.create({
       organizationId: org._id,
       ...commonFields,
+      projectId: project1._id,
       subcontractorName: 'Electric Corp',
       policyType: 'GENERAL_LIABILITY',
       carrierName: 'Travelers Insurance',
@@ -231,6 +304,19 @@ async function bootstrap() {
       status: 'COMPLIANT',
       effectiveDate: new Date(),
       expiryDate: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000) // 1 year
+    });
+
+    await COIModel.create({
+      organizationId: org._id,
+      ...commonFields,
+      projectId: project1._id,
+      subcontractorName: 'CoolBreeze HVAC',
+      policyType: 'WORKERS_COMP',
+      carrierName: 'State Farm',
+      policyNumber: 'WC-123456',
+      status: 'EXPIRED',
+      effectiveDate: new Date(Date.now() - 400 * 24 * 60 * 60 * 1000),
+      expiryDate: new Date(Date.now() - 35 * 24 * 60 * 60 * 1000) // Expired 35 days ago
     });
 
     console.log('====================================');

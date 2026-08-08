@@ -5,31 +5,44 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/core/lib/api-client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
-import { ClipboardList, Plus, Truck, Package } from 'lucide-react';
+import { ClipboardList, Plus, Truck, Package, ArrowLeft } from 'lucide-react';
 import type { PurchaseOrder } from '@pulse/types';
 import { SlideOver } from '@/components/ui/SlideOver';
 import { PurchaseOrderForm } from './_components/PurchaseOrderForm';
 import { CreatePurchaseOrderInput } from '@pulse/validators';
+import Link from 'next/link';
 
-export default function PurchaseOrdersPage() {
+import { useRouter } from 'next/navigation';
+
+export default function PurchaseOrdersPage({ params }: { params: { projectId: string } }) {
+  const router = useRouter();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const queryClient = useQueryClient();
 
-  const { data: purchaseOrders = [], isLoading } = useQuery({
-    queryKey: ['purchase-orders'],
-    queryFn: () => api.get<PurchaseOrder[]>('/construction/purchase-orders'),
+  const { data: poResponse = { data: [] }, isLoading } = useQuery({
+    queryKey: ['purchase-orders', params.projectId],
+    queryFn: () => api.get<{ data: PurchaseOrder[] }>(`/construction/purchase-orders?projectId=${params.projectId}`),
   });
 
+  const purchaseOrders = Array.isArray(poResponse) ? poResponse : (poResponse.data || []);
+
   const createMutation = useMutation({
-    mutationFn: (newPO: CreatePurchaseOrderInput) => api.post('/construction/purchase-orders', newPO),
+    mutationFn: (newPO: CreatePurchaseOrderInput) => api.post('/construction/purchase-orders', { ...newPO, projectId: params.projectId }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['purchase-orders'] });
+      queryClient.invalidateQueries({ queryKey: ['purchase-orders', params.projectId] });
       setIsDrawerOpen(false);
     },
   });
 
   return (
     <div className="space-y-6">
+      <button 
+        onClick={() => router.back()}
+        className="inline-flex items-center text-sm font-medium text-brand-600 hover:text-brand-700 dark:text-brand-400 dark:hover:text-brand-300"
+      >
+        <ArrowLeft className="w-4 h-4 mr-1" />
+        Go Back
+      </button>
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-display font-bold text-brand-900 dark:text-brand-100">
@@ -112,7 +125,7 @@ export default function PurchaseOrdersPage() {
         isOpen={isDrawerOpen}
         onClose={() => setIsDrawerOpen(false)}
         title="Create Purchase Order"
-        description="Issue a new purchase order to a supplier."
+        description="Enter the details of the new purchase order."
       >
         <PurchaseOrderForm
           onSubmit={(data) => createMutation.mutate(data)}

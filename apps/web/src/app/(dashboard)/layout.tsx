@@ -189,14 +189,14 @@ function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) 
         <div className="px-3 py-3 border-t border-brand-200 dark:border-brand-800 bg-brand-50/50 dark:bg-brand-900/20">
           <div className="flex items-center gap-3 px-2">
             <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-brand-500 to-brand-600 border border-brand-200 dark:border-brand-400/20 flex items-center justify-center text-xs font-bold text-white shrink-0">
-              {user?.role?.[0] || 'U'}
+              {(user?.name?.[0] || user?.role?.[0] || 'U').toUpperCase()}
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-sm font-medium text-brand-900 dark:text-brand-100 truncate">
-                {user?.role || 'User'}
+                {user?.name || user?.role || 'User'}
               </p>
               <p className="text-xs text-brand-500 dark:text-brand-400 truncate">
-                Org: {user?.orgId?.slice(-6) || '...'}
+                {user?.role || 'Role'}
               </p>
             </div>
             <button
