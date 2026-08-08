@@ -25,4 +25,12 @@ export class UsersService {
   async findById(id: string): Promise<UserDocument | null> {
     return this.userModel.findById(id);
   }
+
+  async update(id: string, data: Partial<{ firstName: string; lastName: string; phone: string }>): Promise<UserDocument | null> {
+    return this.userModel.findByIdAndUpdate(id, { $set: data }, { new: true });
+  }
+
+  async updatePassword(id: string, passwordHash: string): Promise<void> {
+    await this.userModel.findByIdAndUpdate(id, { $set: { passwordHash } });
+  }
 }

@@ -26,6 +26,7 @@ interface AuthContextValue {
     industry: string;
   }) => Promise<void>;
   logout: () => void;
+  refetchUser: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null);
@@ -35,20 +36,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
 
+  const fetchUser = useCallback(async () => {
+    try {
+      const data = await api.get<AuthUser>('/root/auth/me');
+      setUser(data);
+    } catch (err) {
+      setUser(null);
+    }
+  }, []);
+
   // Hydrate auth state from HttpOnly cookies via /me endpoint
   useEffect(() => {
-    api
-      .get<AuthUser>('/root/auth/me')
-      .then((data) => {
-        setUser(data);
-      })
-      .catch(() => {
-        setUser(null);
-      })
-      .finally(() => {
-        setIsLoading(false);
-      });
-  }, []);
+    fetchUser().finally(() => {
+      setIsLoading(false);
+    });
+  }, [fetchUser]);
 
   const login = useCallback(async (email: string, password: string) => {
     const result = await api.post<AuthTokens | { requiresOrgSelection: true; organizations: unknown[] }>(
@@ -60,11 +62,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       throw new Error('Multi-org selection not yet implemented');
     }
 
-    // After login sets the cookie, fetch the user profile
-    const userData = await api.get<AuthUser>('/root/auth/me');
-    setUser(userData);
+    await fetchUser();
     router.push('/dashboard');
-  }, [router]);
+  }, [router, fetchUser]);
 
   const register = useCallback(async (data: {
     email: string;
@@ -76,11 +76,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }) => {
     await api.post<AuthTokens>('/root/auth/register', data);
     
-    // After register sets the cookie, fetch the user profile
-    const userData = await api.get<AuthUser>('/root/auth/me');
-    setUser(userData);
+    await fetchUser();
     router.push('/dashboard');
-  }, [router]);
+  }, [router, fetchUser]);
 
   const logout = useCallback(async () => {
     await api.post('/root/auth/logout', {});
@@ -90,7 +88,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   return (
     <AuthContext.Provider
-      value={{ user, isLoading, isAuthenticated: !!user, login, register, logout }}
+      value={{ user, isLoading, isAuthenticated: !!user, login, register, logout, refetchUser: fetchUser }}
     >
       {children}
     </AuthContext.Provider>
