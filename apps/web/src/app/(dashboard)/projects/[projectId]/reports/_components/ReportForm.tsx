@@ -1,6 +1,6 @@
 'use client';
 
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { createDailyReportSchema, CreateDailyReportInput } from '@pulse/validators';
 import { Button } from '@/components/ui/Button';
@@ -12,6 +12,7 @@ import { useQuery } from '@tanstack/react-query';
 import { api } from '@/core/lib/api-client';
 import { ExtensionFieldRenderer } from '@/components/ui/ExtensionFieldRenderer';
 import { useParams } from 'next/navigation';
+import DatePicker from 'react-datepicker';
 
 interface ReportFormProps {
   initialData?: any;
@@ -33,7 +34,7 @@ export function ReportForm({ initialData, onSubmit, isLoading }: ReportFormProps
     resolver: zodResolver(createDailyReportSchema),
     defaultValues: {
       projectId: activeProjectId || '',
-      date: initialData?.date ? new Date(initialData.date).toISOString().slice(0,16) : new Date().toISOString().slice(0,16),
+      date: initialData?.date ? new Date(initialData.date).toISOString() : new Date().toISOString(),
       activitiesDescription: initialData?.activitiesDescription || '',
       totalWorkerCount: initialData?.totalWorkerCount || undefined,
       notes: initialData?.notes || '',
@@ -78,10 +79,23 @@ export function ReportForm({ initialData, onSubmit, isLoading }: ReportFormProps
 
       <div className="grid grid-cols-2 gap-4">
         <FormField label="Date" error={errors.date?.message} required>
-          <Input 
-            {...form.register('date')} 
-            type="datetime-local"
-            error={!!errors.date}
+          <Controller
+            control={form.control}
+            name="date"
+            render={({ field }) => (
+              <DatePicker
+                selected={field.value ? new Date(field.value) : null}
+                onChange={(date) => field.onChange(date ? date.toISOString() : '')}
+                showTimeSelect
+                timeFormat="h:mm aa"
+                timeIntervals={15}
+                timeCaption="Time"
+                dateFormat="MMMM d, yyyy h:mm aa"
+                className={`input-base ${errors.date ? 'border-rose-300 focus:border-rose-500 focus:ring-rose-500/20' : ''}`}
+                wrapperClassName="w-full"
+                placeholderText="Select date and time"
+              />
+            )}
           />
         </FormField>
         

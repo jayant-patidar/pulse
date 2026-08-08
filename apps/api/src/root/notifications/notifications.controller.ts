@@ -3,7 +3,7 @@ import { NotificationsService } from './notifications.service'; // Service impor
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { Request } from 'express';
 
-@Controller('notifications')
+@Controller('root/notifications')
 @UseGuards(JwtAuthGuard)
 export class NotificationsController {
   constructor(private readonly notificationsService: NotificationsService) {}

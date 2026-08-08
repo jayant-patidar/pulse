@@ -1,13 +1,12 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from '../src/app.module';
 import { getModelToken } from '@nestjs/mongoose';
-import { Model, Types } from 'mongoose';
+import { Model } from 'mongoose';
 import * as argon2 from 'argon2';
 
 async function bootstrap() {
-  console.log('Starting DB Seed...');
+  console.log('Starting Safe DB Seed (Upsert)...');
   
-  // We need to set the environment to avoid conflicts, or rely on defaults
   const app = await NestFactory.createApplicationContext(AppModule);
   
   try {
@@ -25,302 +24,156 @@ async function bootstrap() {
     const ChangeOrderModel = app.get<Model<any>>(getModelToken('ChangeOrderRecord'));
     const PurchaseOrderModel = app.get<Model<any>>(getModelToken('PurchaseOrderRecord'));
 
-    console.log('Clearing existing data...');
-    await OrganizationModel.deleteMany({});
-    await UserModel.deleteMany({});
-    await MembershipModel.deleteMany({});
-    await ProjectModel.deleteMany({});
-    await TaskModel.deleteMany({});
-    await ReportModel.deleteMany({});
-    await DocumentModel.deleteMany({});
-    await EquipmentModel.deleteMany({});
-    await SafetyModel.deleteMany({});
-    await COIModel.deleteMany({});
-    await ChangeOrderModel.deleteMany({});
-    await PurchaseOrderModel.deleteMany({});
+    console.log('Creating/Updating Organization...');
+    const org = await OrganizationModel.findOneAndUpdate(
+      { slug: 'buildco-inc' },
+      {
+        $set: {
+          name: 'BuildCo Inc.',
+          industry: 'CONSTRUCTION',
+          settings: { timezone: 'America/New_York', dateFormat: 'MM/DD/YYYY' }
+        }
+      },
+      { upsert: true, new: true, setDefaultsOnInsert: true }
+    );
 
-    console.log('Creating Organization...');
-    const org = await OrganizationModel.create({
-      name: 'BuildCo Inc.',
-      slug: 'buildco-inc',
-      industry: 'CONSTRUCTION',
-      settings: { timezone: 'America/New_York', dateFormat: 'MM/DD/YYYY' }
-    });
-
-    console.log('Creating User...');
+    console.log('Creating/Updating User...');
     const passwordHash = await argon2.hash('password123', { type: argon2.argon2id });
-    const user = await UserModel.create({
-      email: 'admin@buildco.com',
-      passwordHash,
-      firstName: 'Admin',
-      lastName: 'User',
-    });
+    const user = await UserModel.findOneAndUpdate(
+      { email: 'admin@buildco.com' },
+      {
+        $set: {
+          passwordHash,
+          firstName: 'Admin',
+          lastName: 'User',
+        }
+      },
+      { upsert: true, new: true, setDefaultsOnInsert: true }
+    );
 
-    await MembershipModel.create({
-      userId: user._id,
-      organizationId: org._id,
-      role: 'OWNER',
-      status: 'ACTIVE'
-    });
+    await MembershipModel.findOneAndUpdate(
+      { userId: user._id, organizationId: org._id },
+      {
+        $set: {
+          role: 'OWNER',
+          status: 'ACTIVE'
+        }
+      },
+      { upsert: true, new: true, setDefaultsOnInsert: true }
+    );
 
-    console.log('Creating Trunk Entities...');
+    console.log('Creating/Updating Trunk Entities...');
     const commonFields = { createdBy: user._id, industry: 'CONSTRUCTION' };
 
     // Projects
-    const project1 = await ProjectModel.create({
-      organizationId: org._id,
-      ...commonFields,
-      name: 'Downtown Commercial High-Rise',
-      projectCode: 'DT-001',
-      status: 'ACTIVE',
-      address: '100 Main St, Cityville',
-      description: 'A 40-story commercial office building.',
-      extensions: {
-        buildingType: 'COMMERCIAL',
-        permitNumber: 'BLD-2026-9912'
-      }
-    });
+    const project1 = await ProjectModel.findOneAndUpdate(
+      { name: 'Downtown Commercial High-Rise' },
+      {
+        $set: {
+          organizationId: org._id,
+          ...commonFields,
+          status: 'ACTIVE',
+          address: '100 Main St, Cityville',
+          description: 'A 40-story commercial office building.',
+          extensions: {
+            buildingType: 'COMMERCIAL',
+            permitNumber: 'BLD-2026-9912'
+          }
+        }
+      },
+      { upsert: true, new: true, setDefaultsOnInsert: true }
+    );
 
-    const project2 = await ProjectModel.create({
-      organizationId: org._id,
-      ...commonFields,
-      name: 'Riverside Residential Complex',
-      projectCode: 'RS-002',
-      status: 'DRAFT',
-      address: '500 River Rd, Townsville',
-      extensions: {
-        buildingType: 'RESIDENTIAL',
-        permitNumber: 'BLD-2026-9913'
-      }
-    });
+    await ProjectModel.findOneAndUpdate(
+      { name: 'Riverside Residential Complex' },
+      {
+        $set: {
+          organizationId: org._id,
+          ...commonFields,
+          status: 'DRAFT',
+          address: '500 River Rd, Townsville',
+          extensions: {
+            buildingType: 'RESIDENTIAL',
+            permitNumber: 'BLD-2026-9913'
+          }
+        }
+      },
+      { upsert: true, new: true, setDefaultsOnInsert: true }
+    );
 
     // Tasks
-    await TaskModel.create({
-      organizationId: org._id,
-      ...commonFields,
-      projectId: project1._id,
-      title: 'Excavation Phase 1',
-      description: 'Complete the main foundation excavation.',
-      status: 'IN_PROGRESS',
-      priority: 'HIGH',
-      extensions: {
-        taskType: 'MILESTONE'
-      }
-    });
+    await TaskModel.findOneAndUpdate(
+      { title: 'Excavation Phase 1', projectId: project1._id },
+      {
+        $set: {
+          organizationId: org._id,
+          ...commonFields,
+          description: 'Complete the main foundation excavation.',
+          status: 'IN_PROGRESS',
+          priority: 'HIGH',
+          dueDate: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // Due in 7 days
+          extensions: { taskType: 'MILESTONE' }
+        }
+      },
+      { upsert: true, new: true, setDefaultsOnInsert: true }
+    );
     
-    await TaskModel.create({
-      organizationId: org._id,
-      ...commonFields,
-      projectId: project1._id,
-      title: 'Clarification on Rebar Specs',
-      description: 'Need clarification from structural engineer on grade 60 vs 75 rebar.',
-      status: 'TODO',
-      priority: 'URGENT',
-      extensions: {
-        taskType: 'RFI',
-        rfiNumber: 'RFI-001',
-        specSection: '03-20-00',
-        drawingReference: 'S-101'
-      }
-    });
+    // OVERDUE TASK FOR REMINDERS
+    await TaskModel.findOneAndUpdate(
+      { title: 'Clarification on Rebar Specs', projectId: project1._id },
+      {
+        $set: {
+          organizationId: org._id,
+          ...commonFields,
+          description: 'Need clarification from structural engineer on grade 60 vs 75 rebar.',
+          status: 'TODO',
+          priority: 'URGENT',
+          dueDate: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000), // 2 Days Overdue
+          extensions: {
+            taskType: 'RFI',
+            rfiNumber: 'RFI-001',
+            specSection: '03-20-00',
+            drawingReference: 'S-101'
+          }
+        }
+      },
+      { upsert: true, new: true, setDefaultsOnInsert: true }
+    );
+
+    // DUE TODAY TASK FOR REMINDERS
+    await TaskModel.findOneAndUpdate(
+      { title: 'Sign Safety Waiver', projectId: project1._id },
+      {
+        $set: {
+          organizationId: org._id,
+          ...commonFields,
+          description: 'All subs must sign safety waiver.',
+          status: 'TODO',
+          priority: 'HIGH',
+          dueDate: new Date(), // Due Today
+          extensions: { taskType: 'GENERAL' }
+        }
+      },
+      { upsert: true, new: true, setDefaultsOnInsert: true }
+    );
 
     // Reports
-    await ReportModel.create({
-      organizationId: org._id,
-      ...commonFields,
-      projectId: project1._id,
-      date: new Date(),
-      weather: {
-        temperature: 72,
-        conditions: 'Sunny',
-        precipitation: 0
+    await ReportModel.findOneAndUpdate(
+      { projectId: project1._id, date: { $gte: new Date(new Date().setHours(0,0,0,0)) } },
+      {
+        $set: {
+          organizationId: org._id,
+          ...commonFields,
+          weather: { temperature: 72, conditions: 'Sunny', precipitation: 0 },
+          notes: 'Good progress on the foundation today.',
+          extensions: { concretePouredVolumeYd3: 150, craneHours: 6 }
+        }
       },
-      notes: 'Good progress on the foundation today.',
-      extensions: {
-        concretePouredVolumeYd3: 150,
-        craneHours: 6
-      }
-    });
-
-    // Documents
-    await DocumentModel.create({
-      organizationId: org._id,
-      ...commonFields,
-      projectId: project1._id,
-      name: 'Foundation Plans v2',
-      title: 'Foundation Plans v2',
-      category: 'PLANS',
-      status: 'APPROVED',
-      url: 'https://pulse.dev/fake-file.pdf',
-      version: 2,
-      sizeBytes: 2500000, // 2.5 MB
-      fileType: 'application/pdf',
-      originalFilename: 'foundation_v2.pdf'
-    });
-
-    // Equipment
-    await EquipmentModel.create({
-      organizationId: org._id,
-      ...commonFields,
-      projectId: project1._id,
-      name: 'Tower Crane A',
-      assetTag: 'EQ-001',
-      status: 'IN_USE',
-      lastMaintenanceDate: new Date(),
-      extensions: {
-        equipmentClass: 'CRANE',
-        loadCapacity: '20 Tons'
-      }
-    });
-    
-    await EquipmentModel.create({
-      organizationId: org._id,
-      ...commonFields,
-      projectId: project1._id,
-      name: 'Deere 310L Backhoe',
-      assetTag: 'EQ-002',
-      status: 'AVAILABLE',
-      lastMaintenanceDate: new Date(),
-      extensions: {
-        equipmentClass: 'EXCAVATOR',
-      }
-    });
-
-    await EquipmentModel.create({
-      organizationId: org._id,
-      ...commonFields,
-      projectId: project1._id,
-      name: 'Bobcat T76 Loader',
-      assetTag: 'EQ-003',
-      status: 'UNDER_MAINTENANCE',
-      lastMaintenanceDate: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000),
-      extensions: {
-        equipmentClass: 'LOADER',
-      }
-    });
-
-    console.log('Creating Construction Entities (Branch)...');
-    
-    // Safety
-    await SafetyModel.create({
-      organizationId: org._id,
-      ...commonFields,
-      projectId: project1._id,
-      incidentType: 'INJURY',
-      severity: 'MEDIUM',
-      dateOccurred: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
-      description: 'Worker tripped over exposed rebar.',
-      status: 'OPEN',
-      oshaRecordable: true,
-      reportedBy: user._id
-    });
-
-    await SafetyModel.create({
-      organizationId: org._id,
-      ...commonFields,
-      projectId: project1._id,
-      incidentType: 'NEAR_MISS',
-      severity: 'LOW',
-      dateOccurred: new Date(Date.now() - 10 * 24 * 60 * 60 * 1000),
-      description: 'Dropped tool from scaffolding, no injuries.',
-      status: 'CLOSED',
-      oshaRecordable: false,
-      reportedBy: user._id
-    });
-
-    // Change Order
-    await ChangeOrderModel.create({
-      organizationId: org._id,
-      ...commonFields,
-      projectId: project1._id,
-      coNumber: 'CO-001',
-      title: 'Upgraded Lobby Finishes',
-      reasonCode: 'OWNER_REQUEST',
-      costImpactCents: 4500000, // $45,000
-      scheduleImpactDays: 5,
-      status: 'UNDER_REVIEW',
-      requestedBy: user._id,
-      lineItems: [
-        { description: 'Marble Flooring', quantity: 1000, unitPriceCents: 4500, totalCents: 4500000 }
-      ]
-    });
-    
-    await ChangeOrderModel.create({
-      organizationId: org._id,
-      ...commonFields,
-      projectId: project1._id,
-      coNumber: 'CO-002',
-      title: 'Structural Steel Revision',
-      reasonCode: 'DESIGN_CHANGE',
-      costImpactCents: 12000000, // $120,000
-      scheduleImpactDays: 14,
-      status: 'APPROVED',
-      requestedBy: user._id,
-      lineItems: [
-        { description: 'Additional I-Beams', quantity: 50, unitPriceCents: 240000, totalCents: 12000000 }
-      ]
-    });
-
-    // Purchase Order
-    await PurchaseOrderModel.create({
-      organizationId: org._id,
-      ...commonFields,
-      projectId: project1._id,
-      poNumber: 'PO-1001',
-      supplierName: 'Acme Steel Co.',
-      status: 'ISSUED',
-      totalAmountCents: 1250000, // $12,500
-      deliveryDateExpected: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days from now
-      issuedBy: user._id,
-      lineItems: [
-        { materialDescription: 'Grade 60 Rebar', quantity: 10, unitOfMeasure: 'TON', unitPriceCents: 125000, totalCents: 1250000, quantityReceived: 0 }
-      ]
-    });
-    
-    await PurchaseOrderModel.create({
-      organizationId: org._id,
-      ...commonFields,
-      projectId: project1._id,
-      poNumber: 'PO-1002',
-      supplierName: 'Global Concrete',
-      status: 'PARTIALLY_DELIVERED',
-      totalAmountCents: 4500000, // $45,000
-      deliveryDateExpected: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000), // 2 days ago
-      issuedBy: user._id,
-      lineItems: [
-        { materialDescription: 'Concrete Mix', quantity: 100, unitOfMeasure: 'CY', unitPriceCents: 45000, totalCents: 4500000, quantityReceived: 50 }
-      ]
-    });
-
-    // COI
-    await COIModel.create({
-      organizationId: org._id,
-      ...commonFields,
-      projectId: project1._id,
-      subcontractorName: 'Electric Corp',
-      policyType: 'GENERAL_LIABILITY',
-      carrierName: 'Travelers Insurance',
-      policyNumber: 'GL-998877',
-      status: 'COMPLIANT',
-      effectiveDate: new Date(),
-      expiryDate: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000) // 1 year
-    });
-
-    await COIModel.create({
-      organizationId: org._id,
-      ...commonFields,
-      projectId: project1._id,
-      subcontractorName: 'CoolBreeze HVAC',
-      policyType: 'WORKERS_COMP',
-      carrierName: 'State Farm',
-      policyNumber: 'WC-123456',
-      status: 'EXPIRED',
-      effectiveDate: new Date(Date.now() - 400 * 24 * 60 * 60 * 1000),
-      expiryDate: new Date(Date.now() - 35 * 24 * 60 * 60 * 1000) // Expired 35 days ago
-    });
+      { upsert: true, new: true, setDefaultsOnInsert: true }
+    );
 
     console.log('====================================');
-    console.log('✅ DB SEEDING COMPLETE');
+    console.log('✅ DB SEEDING (UPSERT) COMPLETE');
     console.log(`Login Email: admin@buildco.com`);
     console.log(`Password:    password123`);
     console.log('====================================');

@@ -24,6 +24,9 @@ import { RealtimeModule } from './root/realtime/realtime.module';
 import { SearchModule } from './root/search/search.module';
 import { BullModule } from '@nestjs/bull';
 
+import { RemindersModule } from './root/reminders/reminders.module';
+import { ScheduleModule } from '@nestjs/schedule';
+
 // ---- TRUNK MODULES ----
 import { ProjectsModule } from './trunk/projects/projects.module';
 import { TasksModule } from './trunk/tasks/tasks.module';
@@ -42,6 +45,7 @@ import { ConstructionModule } from './branches/construction/construction.module'
       envFilePath: ['.env', '../../.env'],
     }),
     EventEmitterModule.forRoot(),
+    ScheduleModule.forRoot(),
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => ({
@@ -67,6 +71,7 @@ import { ConstructionModule } from './branches/construction/construction.module'
     NotificationsModule,
     RealtimeModule,
     SearchModule,
+    RemindersModule,
 
     // ---- TRUNK LAYER ----
     ProjectsModule,

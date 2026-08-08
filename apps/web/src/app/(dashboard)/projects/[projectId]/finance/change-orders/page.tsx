@@ -1,22 +1,40 @@
 'use client';
 
-import { useQuery } from '@tanstack/react-query';
+import { useState } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/core/lib/api-client';
 import { Button } from '@/components/ui/Button';
 import { PulseLoader } from '@/components/ui/PulseLoader';
-import Link from 'next/link';
-import { ArrowLeft } from 'lucide-react';
-
+import { ArrowLeft, Plus } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { SlideOver } from '@/components/ui/SlideOver';
+import { ChangeOrderForm } from './_components/ChangeOrderForm';
+import { CreateChangeOrderInput } from '@pulse/validators';
+import { toast } from 'sonner';
 
 export default function ChangeOrdersPage({ params }: { params: { projectId: string } }) {
   const router = useRouter();
+  const queryClient = useQueryClient();
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+
   const { data: coData, isLoading } = useQuery({
     queryKey: ['change-orders', params.projectId],
     queryFn: () => api.get<any>(`/construction/change-orders?projectId=${params.projectId}`),
   });
 
   const changeOrders = Array.isArray(coData) ? coData : (coData?.data || []);
+
+  const createMutation = useMutation({
+    mutationFn: (data: CreateChangeOrderInput) => api.post('/construction/change-orders', data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['change-orders', params.projectId] });
+      setIsDrawerOpen(false);
+      toast.success('Change order created successfully');
+    },
+    onError: (err: any) => {
+      toast.error(err?.message || 'Failed to create change order');
+    }
+  });
 
   return (
     <div className="p-6 space-y-6 max-w-7xl mx-auto">
@@ -33,7 +51,10 @@ export default function ChangeOrdersPage({ params }: { params: { projectId: stri
             <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Change Orders</h1>
             <p className="text-sm text-gray-500 dark:text-gray-400">Manage financial and schedule impacts.</p>
           </div>
-          <Button variant="primary">Create Change Order</Button>
+          <Button variant="primary" onClick={() => setIsDrawerOpen(true)} className="gap-2">
+            <Plus className="w-4 h-4" />
+            Create Change Order
+          </Button>
         </div>
       </div>
 
@@ -99,6 +120,17 @@ export default function ChangeOrdersPage({ params }: { params: { projectId: stri
           </table>
         )}
       </div>
+
+      <SlideOver
+        title="Create Change Order"
+        isOpen={isDrawerOpen}
+        onClose={() => setIsDrawerOpen(false)}
+      >
+        <ChangeOrderForm
+          onSubmit={(data) => createMutation.mutate(data)}
+          isLoading={createMutation.isPending}
+        />
+      </SlideOver>
     </div>
   );
 }

@@ -1,15 +1,22 @@
 'use client';
 
+import { useState } from 'react';
 import { useProject } from '@/core/providers/project-provider';
 import { PageHeader } from '@/components/ui/PageHeader';
 import { HardHat, ShieldAlert, FileWarning, CheckCircle2, AlertTriangle, ChevronRight, Activity } from 'lucide-react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/core/lib/api-client';
+import { SlideOver } from '@/components/ui/SlideOver';
+import { CoiForm } from './_components/CoiForm';
+import { CreateCoiInput } from '@pulse/validators';
+import { toast } from 'sonner';
 
 export default function CompliancePage() {
   const { project, isLoading } = useProject();
+  const queryClient = useQueryClient();
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
   if (isLoading) {
     return (
@@ -35,6 +42,18 @@ export default function CompliancePage() {
 
   const rawCOIs = Array.isArray(coiData) ? coiData : (coiData?.data || []);
   const rawIncidents = Array.isArray(safetyData) ? safetyData : (safetyData?.data || []);
+
+  const createMutation = useMutation({
+    mutationFn: (data: CreateCoiInput) => api.post('/construction/coi', { ...data, projectId: params.projectId }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['cois', params.projectId] });
+      setIsDrawerOpen(false);
+      toast.success('COI requested successfully');
+    },
+    onError: (err: any) => {
+      toast.error(err?.message || 'Failed to request COI');
+    }
+  });
 
   const cois = rawCOIs.map((c: any) => ({
     id: c._id,
@@ -134,7 +153,7 @@ export default function CompliancePage() {
         <div className="glass rounded-2xl border border-brand-200 dark:border-brand-800 overflow-hidden flex flex-col">
           <div className="p-6 border-b border-brand-200 dark:border-brand-800 flex justify-between items-center">
             <h3 className="text-lg font-semibold text-brand-900 dark:text-brand-100">Certificates of Insurance</h3>
-            <button className="text-sm font-medium text-brand-600 dark:text-brand-400 hover:underline">Request COI</button>
+            <button onClick={() => setIsDrawerOpen(true)} className="text-sm font-medium text-brand-600 dark:text-brand-400 hover:underline">Request COI</button>
           </div>
           <div className="overflow-x-auto flex-1">
             <table className="w-full text-sm text-left">
@@ -195,6 +214,17 @@ export default function CompliancePage() {
           </div>
         </div>
       </div>
+
+      <SlideOver
+        title="Request Certificate of Insurance"
+        isOpen={isDrawerOpen}
+        onClose={() => setIsDrawerOpen(false)}
+      >
+        <CoiForm
+          onSubmit={(data) => createMutation.mutate(data)}
+          isLoading={createMutation.isPending}
+        />
+      </SlideOver>
     </div>
   );
 }
