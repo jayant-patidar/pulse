@@ -10,13 +10,14 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/core/lib/api-client';
 import { SlideOver } from '@/components/ui/SlideOver';
 import { CoiForm } from './_components/CoiForm';
-import { CreateCoiInput } from '@pulse/validators';
+import { SafetyIncidentForm } from './_components/SafetyIncidentForm';
+import { CreateCoiInput, CreateSafetyIncidentInput } from '@pulse/validators';
 import { toast } from 'sonner';
 
 export default function CompliancePage() {
   const { project, isLoading } = useProject();
   const queryClient = useQueryClient();
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [drawerMode, setDrawerMode] = useState<'NONE' | 'COI' | 'INCIDENT'>('NONE');
 
   if (isLoading) {
     return (
@@ -47,11 +48,30 @@ export default function CompliancePage() {
     mutationFn: (data: CreateCoiInput) => api.post('/construction/coi', { ...data, projectId: params.projectId }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['cois', params.projectId] });
-      setIsDrawerOpen(false);
+      setDrawerMode('NONE');
       toast.success('COI requested successfully');
     },
     onError: (err: any) => {
       toast.error(err?.message || 'Failed to request COI');
+    }
+  });
+
+  const incidentMutation = useMutation({
+    mutationFn: (data: CreateSafetyIncidentInput) => {
+      // Ensure dateOccurred is valid ISO-8601 for the backend validator
+      const payload = { ...data, projectId: params.projectId };
+      if (!payload.dateOccurred.endsWith('Z')) {
+        payload.dateOccurred = new Date(payload.dateOccurred).toISOString();
+      }
+      return api.post('/construction/safety', payload);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['safety', params.projectId] });
+      setDrawerMode('NONE');
+      toast.success('Safety incident logged successfully');
+    },
+    onError: (err: any) => {
+      toast.error(err?.message || 'Failed to log safety incident');
     }
   });
 
@@ -98,17 +118,50 @@ export default function CompliancePage() {
     <div className="max-w-7xl mx-auto space-y-8 pb-12">
       <PageHeader
         title="Compliance & Safety"
-        description="OSHA logs, safety incidents, and insurance tracking."
-        icon={<HardHat className="w-6 h-6 text-brand-500" />}
+        description="Monitor vendor compliance, certificates, and safety incidents."
+        icon={<ShieldAlert className="w-6 h-6 text-brand-500" />}
         actions={
-          <Link href={`/projects/${params.projectId}/reports/safety`}>
-            <button className="flex items-center gap-2 px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white text-sm font-semibold rounded-xl transition-colors shadow-sm">
-              <ShieldAlert className="w-4 h-4" />
-              Report Incident
+          <div className="flex items-center gap-3">
+            <button 
+              onClick={() => setDrawerMode('INCIDENT')}
+              className="flex items-center gap-2 px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white text-sm font-semibold rounded-xl transition-colors shadow-sm"
+            >
+              <AlertTriangle className="w-4 h-4" />
+              Log Incident
             </button>
-          </Link>
+            <button 
+              onClick={() => setDrawerMode('COI')}
+              className="flex items-center gap-2 px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white text-sm font-semibold rounded-xl transition-colors shadow-sm"
+            >
+              <FileWarning className="w-4 h-4" />
+              Request COI
+            </button>
+          </div>
         }
       />
+
+      <SlideOver 
+        isOpen={drawerMode === 'COI'} 
+        onClose={() => setDrawerMode('NONE')} 
+        title="Request Certificate of Insurance"
+      >
+        <CoiForm 
+          onSubmit={(data) => createMutation.mutate(data)}
+          isLoading={createMutation.isPending}
+        />
+      </SlideOver>
+
+      <SlideOver 
+        isOpen={drawerMode === 'INCIDENT'} 
+        onClose={() => setDrawerMode('NONE')} 
+        title="Log Safety Incident"
+      >
+        <SafetyIncidentForm 
+          projectId={params.projectId} 
+          onSubmit={(data) => incidentMutation.mutate(data)}
+          isLoading={incidentMutation.isPending}
+        />
+      </SlideOver>
 
       {/* KPI Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -153,7 +206,7 @@ export default function CompliancePage() {
         <div className="glass rounded-2xl border border-brand-200 dark:border-brand-800 overflow-hidden flex flex-col">
           <div className="p-6 border-b border-brand-200 dark:border-brand-800 flex justify-between items-center">
             <h3 className="text-lg font-semibold text-brand-900 dark:text-brand-100">Certificates of Insurance</h3>
-            <button onClick={() => setIsDrawerOpen(true)} className="text-sm font-medium text-brand-600 dark:text-brand-400 hover:underline">Request COI</button>
+            <button onClick={() => setDrawerMode('COI')} className="text-sm font-medium text-brand-600 dark:text-brand-400 hover:underline">Request COI</button>
           </div>
           <div className="overflow-x-auto flex-1">
             <table className="w-full text-sm text-left">
@@ -214,17 +267,6 @@ export default function CompliancePage() {
           </div>
         </div>
       </div>
-
-      <SlideOver
-        title="Request Certificate of Insurance"
-        isOpen={isDrawerOpen}
-        onClose={() => setIsDrawerOpen(false)}
-      >
-        <CoiForm
-          onSubmit={(data) => createMutation.mutate(data)}
-          isLoading={createMutation.isPending}
-        />
-      </SlideOver>
     </div>
   );
 }

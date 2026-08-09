@@ -1,14 +1,20 @@
 'use client';
 
+import { useState } from 'react';
 import { useProject } from '@/core/providers/project-provider';
 import { PageHeader } from '@/components/ui/PageHeader';
 import { Users, Mail, Phone, MessageSquare, ShieldCheck, Plus } from 'lucide-react';
 import Link from 'next/link';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/core/lib/api-client';
+import { SlideOver } from '@/components/ui/SlideOver';
+import { InviteMemberForm } from './_components/InviteMemberForm';
+import { toast } from 'sonner';
 
 export default function DirectoryPage() {
   const { project, isLoading } = useProject();
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const queryClient = useQueryClient();
 
   if (isLoading) {
     return (
@@ -21,6 +27,16 @@ export default function DirectoryPage() {
   const { data: membersData } = useQuery({
     queryKey: ['memberships'],
     queryFn: () => api.get<any>('/root/memberships'),
+  });
+
+  const inviteMutation = useMutation({
+    mutationFn: (data: { email: string; role: string }) => api.post('/root/memberships/invite', data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['memberships'] });
+      setIsDrawerOpen(false);
+      toast.success('Invitation sent successfully!');
+    },
+    onError: (err: any) => toast.error(err?.message || 'Failed to send invitation'),
   });
 
   const rawMembers = Array.isArray(membersData) ? membersData : (membersData?.data || []);
@@ -65,12 +81,26 @@ export default function DirectoryPage() {
         description="Team members, contractors, and contact information."
         icon={<Users className="w-6 h-6 text-brand-500" />}
         actions={
-          <button className="flex items-center gap-2 px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white text-sm font-semibold rounded-xl transition-colors shadow-sm">
+          <button 
+            onClick={() => setIsDrawerOpen(true)}
+            className="flex items-center gap-2 px-4 py-2 bg-brand-600 hover:bg-brand-700 text-white text-sm font-semibold rounded-xl transition-colors shadow-sm"
+          >
             <Plus className="w-4 h-4" />
             Invite Member
           </button>
         }
       />
+
+      <SlideOver 
+        isOpen={isDrawerOpen} 
+        onClose={() => setIsDrawerOpen(false)} 
+        title="Invite Team Member"
+      >
+        <InviteMemberForm 
+          onSubmit={(data) => inviteMutation.mutate(data)}
+          isLoading={inviteMutation.isPending}
+        />
+      </SlideOver>
 
       <div className="space-y-10">
         {(Object.entries(groupedDirectory) as [string, any[]][]).map(([type, users]) => (

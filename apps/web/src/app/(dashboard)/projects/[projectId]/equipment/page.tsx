@@ -2,11 +2,18 @@
 
 import { useProject } from '@/core/providers/project-provider';
 import { PageHeader } from '@/components/ui/PageHeader';
-import { Tractor, Wrench, AlertCircle, Fuel, Clock, MapPin, Gauge } from 'lucide-react';
+import { Tractor, Wrench, AlertCircle, Fuel, Clock, MapPin, Gauge, Plus } from 'lucide-react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
 import { api } from '@/core/lib/api-client';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { Button } from '@/components/ui/Button';
+import { SlideOver } from '@/components/ui/SlideOver';
+import { AssignAssetForm } from './_components/AssignAssetForm';
+import { CreateEquipmentInput } from '@pulse/validators';
+import { toast } from 'sonner';
+import { useState } from 'react';
 
 export default function EquipmentPage() {
   const { project, isLoading } = useProject();
@@ -20,11 +27,39 @@ export default function EquipmentPage() {
   }
 
   const params = useParams<{ projectId: string }>();
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const queryClient = useQueryClient();
 
   const { data: eqData } = useQuery({
     queryKey: ['equipment', params.projectId],
     queryFn: () => api.get<any>(`/trunk/equipment?projectId=${params.projectId}`),
     enabled: !!params.projectId,
+  });
+
+  const assignMutation = useMutation({
+    mutationFn: (equipmentId: string) => api.post(`/trunk/equipment/${equipmentId}/assign`, { projectId: params.projectId }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['equipment', params.projectId] });
+      queryClient.invalidateQueries({ queryKey: ['equipment', 'available'] });
+      setIsDrawerOpen(false);
+      toast.success('Asset assigned successfully!');
+    },
+    onError: (err: any) => toast.error(err?.message || 'Failed to assign asset'),
+  });
+
+  const createAndAssignMutation = useMutation({
+    mutationFn: async (data: CreateEquipmentInput) => {
+      // 1. Create global equipment
+      const newEq = await api.post<any>('/trunk/equipment', data);
+      // 2. Assign to project
+      await api.post(`/trunk/equipment/${newEq._id}/assign`, { projectId: params.projectId });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['equipment', params.projectId] });
+      setIsDrawerOpen(false);
+      toast.success('Asset created and assigned successfully!');
+    },
+    onError: (err: any) => toast.error(err?.message || 'Failed to create asset'),
   });
 
   const rawEquipment = Array.isArray(eqData) ? eqData : (eqData?.data || []);
@@ -62,7 +97,26 @@ export default function EquipmentPage() {
         title="Project Fleet"
         description="Telematics, assignments, and maintenance for heavy machinery."
         icon={<Tractor className="w-6 h-6 text-brand-500" />}
+        actions={
+          <Button variant="primary" onClick={() => setIsDrawerOpen(true)}>
+            <Plus className="w-4 h-4 mr-2" />
+            Add Asset
+          </Button>
+        }
       />
+
+      <SlideOver 
+        isOpen={isDrawerOpen} 
+        onClose={() => setIsDrawerOpen(false)} 
+        title="Project Fleet Asset"
+      >
+        <AssignAssetForm 
+          projectId={params.projectId} 
+          onAssign={(id) => assignMutation.mutate(id)}
+          onCreateAndAssign={(data) => createAndAssignMutation.mutate(data)}
+          isLoading={assignMutation.isPending || createAndAssignMutation.isPending}
+        />
+      </SlideOver>
 
       {/* KPI Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
