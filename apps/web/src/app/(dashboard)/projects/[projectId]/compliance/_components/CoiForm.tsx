@@ -100,7 +100,7 @@ export function CoiForm({ onSubmit, isLoading }: CoiFormProps) {
             render={({ field }) => (
               <DatePicker
                 selected={field.value ? new Date(field.value) : null}
-                onChange={(date) => field.onChange(date ? date.toISOString() : '')}
+                onChange={(date: Date | null) => field.onChange(date ? date.toISOString() : '')}
                 dateFormat="MMMM d, yyyy"
                 className={`input-base ${errors.effectiveDate ? 'border-rose-300 focus:border-rose-500 focus:ring-rose-500/20' : ''}`}
                 wrapperClassName="w-full"
@@ -117,7 +117,7 @@ export function CoiForm({ onSubmit, isLoading }: CoiFormProps) {
             render={({ field }) => (
               <DatePicker
                 selected={field.value ? new Date(field.value) : null}
-                onChange={(date) => field.onChange(date ? date.toISOString() : '')}
+                onChange={(date: Date | null) => field.onChange(date ? date.toISOString() : '')}
                 dateFormat="MMMM d, yyyy"
                 className={`input-base ${errors.expiryDate ? 'border-rose-300 focus:border-rose-500 focus:ring-rose-500/20' : ''}`}
                 wrapperClassName="w-full"
