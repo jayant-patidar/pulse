@@ -15,6 +15,13 @@ export class NotificationsController {
     return this.notificationsService.getUserNotifications(userId, orgId);
   }
 
+  @Patch('read-all')
+  async markAllAsRead(@Req() req: Request) {
+    const userId = (req.user as any).sub;
+    const orgId = (req.user as any).org;
+    return this.notificationsService.markAllAsRead(userId, orgId);
+  }
+
   @Patch(':id/read')
   async markAsRead(@Param('id') id: string, @Req() req: Request) {
     const userId = (req.user as any).sub;

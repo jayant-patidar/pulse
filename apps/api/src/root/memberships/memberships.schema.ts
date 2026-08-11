@@ -12,6 +12,24 @@ export class MembershipDocument extends Document {
   @Prop({ required: true, enum: ['OWNER', 'ADMIN', 'MANAGER', 'SUPERVISOR', 'WORKER', 'CONTRACTOR'] })
   declare role: string;
 
+  @Prop({ enum: ['PERMANENT', 'FIXED_CONTRACT', 'TEMP_HOURLY', 'DAILY_WAGE'] })
+  declare employmentType?: string;
+
+  @Prop()
+  declare employeeId?: string;
+
+  @Prop()
+  declare designation?: string;
+
+  @Prop({ type: MongooseSchema.Types.ObjectId, ref: 'MembershipDocument' })
+  declare reportsTo?: Types.ObjectId;
+
+  @Prop()
+  declare hourlyRateCents?: number;
+
+  @Prop()
+  declare salaryCents?: number;
+
   @Prop({ default: 'ACTIVE', enum: ['PENDING', 'ACTIVE', 'INACTIVE', 'DECLINED'] })
   declare status: string;
 

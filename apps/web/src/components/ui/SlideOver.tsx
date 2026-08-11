@@ -33,12 +33,12 @@ export function SlideOver({ isOpen, onClose, title, description, children }: Sli
         onClick={onClose}
       />
 
-      <div className="fixed inset-0 overflow-hidden">
+      <div className="fixed inset-0 overflow-hidden pointer-events-none">
         <div className="absolute inset-0 overflow-hidden">
           <div className="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10 sm:pl-16">
             {/* Slide-over panel */}
-            <div className="pointer-events-auto w-screen max-w-md transform transition ease-in-out duration-500 sm:duration-700 translate-x-0">
-              <div className="flex h-full flex-col overflow-y-scroll bg-white dark:bg-brand-950 shadow-xl border-l border-brand-200 dark:border-brand-800">
+            <div className="pointer-events-auto w-screen max-w-md h-full transform transition ease-in-out duration-500 sm:duration-700 translate-x-0">
+              <div className="flex h-full flex-col bg-white dark:bg-brand-950 shadow-xl border-l border-brand-200 dark:border-brand-800">
                 <div className="px-4 py-6 sm:px-6 border-b border-brand-200 dark:border-brand-800">
                   <div className="flex items-start justify-between">
                     <h2 className="text-lg font-semibold leading-6 text-brand-900 dark:text-brand-100" id="slide-over-title">
@@ -64,7 +64,7 @@ export function SlideOver({ isOpen, onClose, title, description, children }: Sli
                     </div>
                   )}
                 </div>
-                <div className="relative flex-1 px-4 py-6 sm:px-6">
+                <div className="relative flex-1 min-h-0 px-4 py-6 sm:px-6 overflow-y-auto">
                   {/* Content */}
                   {children}
                 </div>

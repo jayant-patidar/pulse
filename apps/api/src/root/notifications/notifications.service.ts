@@ -41,6 +41,13 @@ export class NotificationsService {
     );
   }
 
+  async markAllAsRead(userId: string, organizationId: string) {
+    return this.notificationModel.updateMany(
+      { userId, organizationId, isRead: false },
+      { $set: { isRead: true } }
+    );
+  }
+
   async sendNotification(dto: CreateNotificationDto) {
     // 1. Save to DB
     const notification = new this.notificationModel({

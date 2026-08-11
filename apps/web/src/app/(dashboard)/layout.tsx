@@ -25,7 +25,8 @@ import {
   LogOut,
   Search,
   Menu,
-  Bell
+  Bell,
+  Clock
 } from 'lucide-react';
 
 const NAV_ITEMS = [
@@ -60,6 +61,7 @@ const PROJECT_NAV_ITEMS = [
   { label: 'Field Operations', href: '/reports', icon: <ClipboardList className="w-5 h-5" /> },
   { label: 'Project Fleet', href: '/equipment', icon: <Tractor className="w-5 h-5" /> },
   { label: 'Documents', href: '/documents', icon: <FileText className="w-5 h-5" /> },
+  { label: 'Timesheets', href: '/timesheets', icon: <Clock className="w-5 h-5" /> },
   { label: 'Finance', href: '/finance', icon: <Settings className="w-5 h-5" /> },
   { label: 'Procurement', href: '/procurement', icon: <ClipboardList className="w-5 h-5" /> },
   { label: 'Compliance', href: '/compliance', icon: <HardHat className="w-5 h-5" /> },

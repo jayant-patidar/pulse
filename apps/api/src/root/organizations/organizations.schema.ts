@@ -21,6 +21,37 @@ export class OrganizationDocument extends Document {
   @Prop({ default: 'America/New_York' })
   declare timezone: string;
 
+  @Prop({ type: [String], default: [] })
+  declare allowedDomains: string[];
+
+  // Elaborated Corporate Profile Fields
+  @Prop()
+  declare taxId?: string;
+
+  @Prop()
+  declare foundedYear?: number;
+
+  @Prop()
+  declare website?: string;
+
+  @Prop({ type: Object })
+  declare headquarters?: {
+    address?: string;
+    city?: string;
+    state?: string;
+    zip?: string;
+  };
+
+  @Prop({ type: [String], default: [] })
+  declare specialties: string[];
+
+  @Prop({ type: [Object], default: [] })
+  declare licenses: Array<{
+    number: string;
+    state: string;
+    expirationDate: Date;
+  }>;
+
   @Prop({ default: 'USD' })
   declare currency: string;
 

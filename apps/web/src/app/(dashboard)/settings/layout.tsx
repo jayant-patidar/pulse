@@ -1,11 +1,12 @@
 'use client';
 
 import { PageHeader } from '@/components/ui/PageHeader';
-import { Settings as SettingsIcon, User, Shield } from 'lucide-react';
+import { Settings as SettingsIcon, User, Shield, Building2 } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
 const SETTINGS_TABS = [
+  { label: 'Company', href: '/settings/company', icon: <Building2 className="w-5 h-5" /> },
   { label: 'Profile', href: '/settings/profile', icon: <User className="w-5 h-5" /> },
   { label: 'Security', href: '/settings/security', icon: <Shield className="w-5 h-5" /> },
 ];

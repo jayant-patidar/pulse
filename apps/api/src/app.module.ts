@@ -33,6 +33,7 @@ import { TasksModule } from './trunk/tasks/tasks.module';
 import { DailyReportsModule } from './trunk/daily-reports/daily-reports.module';
 import { DocumentsModule } from './trunk/documents/documents.module';
 import { EquipmentModule } from './trunk/equipment/equipment.module';
+import { TimesheetsModule } from './branches/construction/timesheets/timesheets.module';
 
 // ---- BRANCH MODULES ----
 import { ConstructionModule } from './branches/construction/construction.module';
@@ -72,6 +73,7 @@ import { ConstructionModule } from './branches/construction/construction.module'
     RealtimeModule,
     SearchModule,
     RemindersModule,
+    TimesheetsModule,
 
     // ---- TRUNK LAYER ----
     ProjectsModule,

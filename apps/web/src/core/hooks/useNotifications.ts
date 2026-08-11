@@ -82,12 +82,21 @@ export function useNotifications() {
     });
   };
 
+  const markAllAsRead = async () => {
+    await api.patch(`/root/notifications/read-all`, { organizationId: orgId });
+    queryClient.setQueryData(['notifications', orgId], (oldData: Notification[] | undefined) => {
+      if (!oldData) return [];
+      return oldData.map(n => ({ ...n, isRead: true }));
+    });
+  };
+
   const unreadCount = notifications.filter(n => !n.isRead).length;
 
   return {
     notifications,
     unreadCount,
     isLoading,
-    markAsRead
+    markAsRead,
+    markAllAsRead,
   };
 }

@@ -22,4 +22,8 @@ export class OrganizationsService {
   async findBySlug(slug: string): Promise<OrganizationDocument | null> {
     return this.orgModel.findOne({ slug });
   }
+
+  async update(id: string, data: Partial<OrganizationDocument>): Promise<OrganizationDocument | null> {
+    return this.orgModel.findByIdAndUpdate(id, { $set: data }, { new: true });
+  }
 }

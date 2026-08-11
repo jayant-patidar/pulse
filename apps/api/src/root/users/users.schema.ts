@@ -25,6 +25,9 @@ export class UserDocument extends Document {
   declare isVerified: boolean;
 
   @Prop({ default: false })
+  declare mustChangePassword: boolean;
+
+  @Prop({ default: false })
   declare twoFactorEnabled: boolean;
 
   @Prop({ type: Object })

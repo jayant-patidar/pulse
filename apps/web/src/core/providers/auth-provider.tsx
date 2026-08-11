@@ -53,10 +53,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [fetchUser]);
 
   const login = useCallback(async (email: string, password: string) => {
-    const result = await api.post<AuthTokens | { requiresOrgSelection: true; organizations: unknown[] }>(
+    const result = await api.post<AuthTokens | { requiresOrgSelection: true; organizations: unknown[] } | { requiresPasswordChange: true; setupToken: string }>(
       '/root/auth/login',
       { email, password },
     );
+
+    if ('requiresPasswordChange' in result && result.requiresPasswordChange) {
+      // Store setupToken in sessionStorage temporarily and redirect to setup
+      sessionStorage.setItem('setupToken', result.setupToken);
+      router.push('/setup');
+      return;
+    }
 
     if ('requiresOrgSelection' in result) {
       throw new Error('Multi-org selection not yet implemented');

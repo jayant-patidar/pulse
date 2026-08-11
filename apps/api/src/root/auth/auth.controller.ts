@@ -74,6 +74,11 @@ export class AuthController {
     @Res({ passthrough: true }) res: Response,
   ) {
     const result = await this.authService.login(dto.email, dto.password);
+    
+    if ('requiresPasswordChange' in result) {
+      return result;
+    }
+    
     if ('requiresOrgSelection' in result) {
       return result;
     }
@@ -103,22 +108,34 @@ export class AuthController {
 
   @Get('me')
   @UseGuards(JwtAuthGuard)
-  async getProfile(@Req() req: Request) {
-    const jwtUser = req.user as any;
-    const user = await this.usersService.findById(jwtUser.sub);
-    
+  async getMe(@Req() req: Request) {
+    const userId = (req.user as any).sub;
+    const user = await this.usersService.findById(userId);
     if (!user) {
       throw new UnauthorizedException('User not found');
     }
 
+    const jwtUser = req.user as any;
+
     return {
       _id: user._id,
+      id: user._id,
       email: user.email,
       firstName: user.firstName,
       lastName: user.lastName,
       name: `${user.firstName} ${user.lastName}`.trim(),
       role: jwtUser.role,
       orgId: jwtUser.org,
+      avatarUrl: user.avatarUrl,
+      isVerified: user.isVerified,
+      twoFactorEnabled: user.twoFactorEnabled,
     };
+  }
+
+  @Post('reset-temp-password')
+  @HttpCode(HttpStatus.OK)
+  async resetTempPassword(@Body() dto: { setupToken: string; newPassword: string }) {
+    await this.authService.resetTempPassword(dto.setupToken, dto.newPassword);
+    return { success: true };
   }
 }

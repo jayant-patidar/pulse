@@ -65,7 +65,7 @@ export class AuthService {
   async login(
     email: string,
     password: string,
-  ): Promise<AuthTokens | { requiresOrgSelection: true; organizations: unknown[] }> {
+  ): Promise<AuthTokens | { requiresOrgSelection: true; organizations: unknown[] } | { requiresPasswordChange: true; setupToken: string }> {
     const user = await this.usersService.findByEmail(email.toLowerCase().trim());
     if (!user) {
       throw new UnauthorizedException('Invalid credentials');
@@ -74,6 +74,14 @@ export class AuthService {
     const isValid = await argon2.verify(user.passwordHash, password);
     if (!isValid) {
       throw new UnauthorizedException('Invalid credentials');
+    }
+
+    if (user.mustChangePassword) {
+      const setupToken = this.jwtService.sign(
+        { sub: user._id.toString(), setup: true },
+        { expiresIn: '15m' }
+      );
+      return { requiresPasswordChange: true, setupToken };
     }
 
     const memberships = await this.membershipsService.findByUserId(user._id.toString());
@@ -125,6 +133,28 @@ export class AuthService {
       return this.generateTokens(payload.sub, payload.org, payload.role);
     } catch (err) {
       throw new UnauthorizedException('Invalid or expired refresh token');
+    }
+  }
+
+  async resetTempPassword(setupToken: string, newPassword: string): Promise<void> {
+    try {
+      const payload = this.jwtService.verify(setupToken);
+      if (!payload.setup) {
+        throw new UnauthorizedException('Invalid setup token');
+      }
+
+      const passwordHash = await argon2.hash(newPassword, { type: argon2.argon2id });
+      await this.usersService.updatePassword(payload.sub, passwordHash, false);
+      
+      this.eventEmitter.emit('audit.log', {
+        organizationId: 'SYSTEM',
+        userId: payload.sub,
+        action: 'auth.password_reset',
+        resource: 'user',
+        resourceId: payload.sub,
+      });
+    } catch (err) {
+      throw new UnauthorizedException('Invalid or expired setup token');
     }
   }
 }

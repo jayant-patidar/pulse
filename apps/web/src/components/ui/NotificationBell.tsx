@@ -6,7 +6,7 @@ import { useNotifications, Notification } from '@/core/hooks/useNotifications';
 import Link from 'next/link';
 
 export function NotificationBell() {
-  const { notifications, unreadCount, markAsRead } = useNotifications();
+  const { notifications, unreadCount, markAsRead, markAllAsRead } = useNotifications();
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -57,9 +57,22 @@ export function NotificationBell() {
       {isOpen && (
         <div className="absolute right-0 mt-2 w-80 sm:w-96 bg-white dark:bg-slate-900 rounded-2xl shadow-xl border border-brand-100 dark:border-brand-800/50 overflow-hidden z-50 origin-top-right animate-in fade-in zoom-in-95 duration-200">
           <div className="p-4 border-b border-brand-100 dark:border-brand-800/50 flex items-center justify-between bg-brand-50/50 dark:bg-brand-900/10">
-            <h3 className="font-semibold text-brand-900 dark:text-brand-100">Notifications</h3>
+            <div className="flex items-center gap-3">
+              <h3 className="font-semibold text-brand-900 dark:text-brand-100">Notifications</h3>
+              {unreadCount > 0 && (
+                <span className="text-xs font-medium text-brand-500">{unreadCount} unread</span>
+              )}
+            </div>
             {unreadCount > 0 && (
-              <span className="text-xs font-medium text-brand-500">{unreadCount} unread</span>
+              <button 
+                onClick={(e) => {
+                  e.stopPropagation();
+                  markAllAsRead();
+                }}
+                className="text-xs font-medium text-brand-600 hover:text-brand-700 dark:text-brand-400 dark:hover:text-brand-300 transition-colors"
+              >
+                Mark all as read
+              </button>
             )}
           </div>
           
@@ -73,7 +86,10 @@ export function NotificationBell() {
                 {notifications.map((notification) => (
                   <div 
                     key={notification._id} 
-                    className={`p-4 flex gap-3 hover:bg-brand-50/50 dark:hover:bg-brand-900/20 transition-colors relative group ${!notification.isRead ? 'bg-brand-50/30 dark:bg-brand-900/10' : ''}`}
+                    onClick={() => {
+                      if (!notification.isRead) markAsRead(notification._id);
+                    }}
+                    className={`p-4 flex gap-3 hover:bg-brand-50/50 dark:hover:bg-brand-900/20 cursor-pointer transition-colors relative group ${!notification.isRead ? 'bg-brand-50/30 dark:bg-brand-900/10' : ''}`}
                   >
                     <div className="shrink-0 mt-0.5">
                       {getIcon(notification.type)}

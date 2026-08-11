@@ -14,6 +14,7 @@ export class UsersService {
     firstName: string;
     lastName: string;
     passwordHash: string;
+    mustChangePassword?: boolean;
   }): Promise<UserDocument> {
     return this.userModel.create(data);
   }
@@ -30,7 +31,7 @@ export class UsersService {
     return this.userModel.findByIdAndUpdate(id, { $set: data }, { new: true });
   }
 
-  async updatePassword(id: string, passwordHash: string): Promise<void> {
-    await this.userModel.findByIdAndUpdate(id, { $set: { passwordHash } });
+  async updatePassword(id: string, passwordHash: string, mustChangePassword = false): Promise<void> {
+    await this.userModel.findByIdAndUpdate(id, { $set: { passwordHash, mustChangePassword } });
   }
 }

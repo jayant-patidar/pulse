@@ -40,6 +40,19 @@ export class MembershipsController {
   }
 
   /**
+   * Onboard a new employee.
+   * Requires USER_INVITE permission.
+   */
+  @Post('onboard')
+  @RequirePermissions('user:invite')
+  async onboard(
+    @CurrentUser() user: JwtPayload,
+    @Body() dto: { firstName: string; lastName: string; role: string; employmentType: string; reportsTo?: string },
+  ) {
+    return this.membershipsService.onboardEmployee(user.org, user.sub, dto);
+  }
+
+  /**
    * List all members in the current organization.
    */
   @Get()
@@ -60,6 +73,19 @@ export class MembershipsController {
     @Body() dto: { role: string },
   ) {
     return this.membershipsService.updateRole(membershipId, dto.role, user.org);
+  }
+
+  /**
+   * Reset an employee's password and force them to change it on next login.
+   * Requires USER_MANAGE_ROLES permission.
+   */
+  @Patch(':membershipId/reset-password')
+  @RequirePermissions('user:manage_roles')
+  async resetPassword(
+    @CurrentUser() user: JwtPayload,
+    @Param('membershipId') membershipId: string,
+  ) {
+    return this.membershipsService.resetEmployeePassword(membershipId, user.org, user.sub);
   }
 
   /**
