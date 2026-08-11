@@ -42,6 +42,16 @@ export default function DirectoryPage() {
     onError: (err: any) => toast.error(err?.message || 'Failed to reset password'),
   });
 
+  const deleteMutation = useMutation({
+    mutationFn: (membershipId: string) => api.del(`/root/memberships/${membershipId}`),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['memberships'] });
+      toast.success('Employee removed successfully');
+      setSelectedUser(null);
+    },
+    onError: (err: any) => toast.error(err?.message || 'Failed to remove employee'),
+  });
+
   if (isLoading) {
     return (
       <div className="flex justify-center items-center h-64">
@@ -256,6 +266,25 @@ export default function DirectoryPage() {
                     className="shrink-0 px-3 py-1.5 bg-amber-600 hover:bg-amber-700 text-white text-xs font-semibold rounded-lg transition-colors"
                   >
                     {resetPasswordMutation.isPending ? 'Resetting...' : 'Reset Password'}
+                  </button>
+                </div>
+              </div>
+
+              <div className="mt-4 p-4 bg-red-50 dark:bg-red-900/20 rounded-xl border border-red-200 dark:border-red-800">
+                <div className="flex justify-between items-center">
+                  <p className="text-sm text-red-800 dark:text-red-200 pr-4">
+                    <strong>Remove Employee?</strong> This action will instantly revoke their access and cannot be undone.
+                  </p>
+                  <button 
+                    onClick={() => {
+                      if (confirm('Are you sure you want to remove this employee? They will lose all access immediately.')) {
+                        deleteMutation.mutate(selectedUser.id);
+                      }
+                    }}
+                    disabled={deleteMutation.isPending}
+                    className="shrink-0 px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white text-xs font-semibold rounded-lg transition-colors"
+                  >
+                    {deleteMutation.isPending ? 'Removing...' : 'Remove Access'}
                   </button>
                 </div>
               </div>

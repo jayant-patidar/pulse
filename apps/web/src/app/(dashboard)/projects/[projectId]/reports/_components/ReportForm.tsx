@@ -85,7 +85,7 @@ export function ReportForm({ initialData, onSubmit, isLoading }: ReportFormProps
             render={({ field }) => (
               <DatePicker
                 selected={field.value ? new Date(field.value) : null}
-                onChange={(date) => field.onChange(date ? date.toISOString() : '')}
+                onChange={(date: Date | null) => field.onChange(date ? date.toISOString() : '')}
                 showTimeSelect
                 timeFormat="h:mm aa"
                 timeIntervals={15}
