@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/Button';
 import { DataTable } from '@/components/ui/DataTable';
 import { FilterBar } from '@/components/ui/FilterBar';
 import { StatusBadge } from '@/components/ui/StatusBadge';
-import { Plus, HardHat } from 'lucide-react';
+import { Plus, HardHat, Trash2 } from 'lucide-react';
 
 import { PageHeader } from '@/components/ui/PageHeader';
 import { StatsGrid } from '@/components/ui/StatsGrid';
@@ -35,6 +35,20 @@ export default function ProjectsPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['projects'] });
       setIsDrawerOpen(false);
+    },
+  });
+
+  const updateMutation = useMutation({
+    mutationFn: (data: { id: string; status: string }) => api.patch(`/trunk/projects/${data.id}`, { status: data.status }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['projects'] });
+    },
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: (id: string) => api.del(`/trunk/projects/${id}`),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['projects'] });
     },
   });
 
@@ -70,6 +84,32 @@ export default function ProjectsPage() {
       accessorKey: 'createdAt',
       cell: (item: any) => <span className="text-brand-500 dark:text-brand-400">{new Date(item.createdAt).toLocaleDateString()}</span>,
     },
+    {
+      header: 'Actions',
+      accessorKey: '_id',
+      cell: (item: any) => (
+        <div className="flex items-center gap-2" onClick={e => e.stopPropagation()}>
+          <select 
+            value={item.status} 
+            onChange={(e) => updateMutation.mutate({ id: item._id, status: e.target.value })}
+            className="text-xs rounded-md border-brand-200 dark:border-brand-800 bg-white dark:bg-brand-900 text-brand-700 dark:text-brand-300 py-1 pl-2 pr-6 focus:ring-brand-500 cursor-pointer"
+          >
+            <option value="DRAFT">Draft</option>
+            <option value="ACTIVE">Active</option>
+            <option value="ON_HOLD">On Hold</option>
+            <option value="COMPLETED">Completed</option>
+            <option value="ARCHIVED">Archived</option>
+          </select>
+          <Button variant="ghost" size="sm" onClick={() => {
+            if (confirm('Are you sure you want to delete this project?')) {
+              deleteMutation.mutate(item._id);
+            }
+          }} className="text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 px-2 h-7">
+            <Trash2 className="w-4 h-4" />
+          </Button>
+        </div>
+      ),
+    },
   ];
 
   const filteredProjects = projects?.filter((p: any) => p.name.toLowerCase().includes(search.toLowerCase())) || [];
@@ -81,6 +121,28 @@ export default function ProjectsPage() {
     ? `$${(totalBudget / 100000000).toFixed(1)}M` 
     : `$${(totalBudget / 100).toLocaleString()}`;
   const totalProjects = projects?.length || 0;
+
+  const handleExport = () => {
+    if (!filteredProjects || filteredProjects.length === 0) return;
+    const headers = ['Project Name', 'City', 'State', 'Status', 'Budget', 'Created At'];
+    const csvData = filteredProjects.map((p: any) => [
+      `"${p.name}"`,
+      `"${p.location?.city || ''}"`,
+      `"${p.location?.state || ''}"`,
+      p.status,
+      p.budget ? (p.budget / 100).toFixed(2) : '0.00',
+      new Date(p.createdAt).toLocaleDateString()
+    ]);
+    const csvContent = [headers, ...csvData].map(e => e.join(",")).join("\n");
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.setAttribute("href", url);
+    link.setAttribute("download", "projects_export.csv");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
 
   return (
     <div className="max-w-7xl mx-auto space-y-8">
@@ -107,7 +169,7 @@ export default function ProjectsPage() {
 
       <div className="glass p-6">
         <FilterBar searchPlaceholder="Search projects..." onSearchChange={setSearch}>
-          <Button variant="outline" className="hidden sm:flex">
+          <Button variant="outline" className="hidden sm:flex" onClick={handleExport} disabled={filteredProjects.length === 0}>
             Export
           </Button>
         </FilterBar>

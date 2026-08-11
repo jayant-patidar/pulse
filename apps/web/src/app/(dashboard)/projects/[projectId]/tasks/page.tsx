@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/Button';
 import { DataTable } from '@/components/ui/DataTable';
 import { FilterBar } from '@/components/ui/FilterBar';
 import { StatusBadge } from '@/components/ui/StatusBadge';
-import { Plus, ListTodo } from 'lucide-react';
+import { Plus, ListTodo, Trash2 } from 'lucide-react';
 
 import { PageHeader } from '@/components/ui/PageHeader';
 import { StatsGrid } from '@/components/ui/StatsGrid';
@@ -41,6 +41,16 @@ export default function TasksPage() {
     },
   });
 
+  const updateMutation = useMutation({
+    mutationFn: (data: { id: string; status: string }) => api.patch(`/trunk/tasks/${data.id}`, { status: data.status }),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['tasks'] }),
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: (id: string) => api.del(`/trunk/tasks/${id}`),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['tasks'] }),
+  });
+
   const columns = [
     {
       header: 'Task Title',
@@ -66,6 +76,29 @@ export default function TasksPage() {
         <span className={item.dueDate && new Date(item.dueDate) < new Date() ? 'text-red-600 font-semibold dark:text-red-400' : 'text-brand-500 dark:text-brand-400'}>
           {item.dueDate ? new Date(item.dueDate).toLocaleDateString() : '-'}
         </span>
+      ),
+    },
+    {
+      header: 'Actions',
+      accessorKey: '_id',
+      cell: (item: any) => (
+        <div className="flex items-center gap-2" onClick={e => e.stopPropagation()}>
+          <select 
+            value={item.status} 
+            onChange={(e) => updateMutation.mutate({ id: item._id, status: e.target.value })}
+            className="text-xs rounded-md border-brand-200 dark:border-brand-800 bg-white dark:bg-brand-900 text-brand-700 dark:text-brand-300 py-1 pl-2 pr-6 focus:ring-brand-500 cursor-pointer"
+          >
+            <option value="TODO">To Do</option>
+            <option value="IN_PROGRESS">In Progress</option>
+            <option value="BLOCKED">Blocked</option>
+            <option value="ON_HOLD">On Hold</option>
+            <option value="COMPLETED">Completed</option>
+            <option value="CANCELLED">Cancelled</option>
+          </select>
+          <Button variant="ghost" size="sm" onClick={() => deleteMutation.mutate(item._id)} className="text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 px-2 h-7">
+            <Trash2 className="w-4 h-4" />
+          </Button>
+        </div>
       ),
     },
   ];

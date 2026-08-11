@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/Button';
 import { DataTable } from '@/components/ui/DataTable';
 import { FilterBar } from '@/components/ui/FilterBar';
 import { StatusBadge } from '@/components/ui/StatusBadge';
-import { Plus, ClipboardList, CloudSun } from 'lucide-react';
+import { Plus, ClipboardList, CloudSun, Trash2 } from 'lucide-react';
 
 import { PageHeader } from '@/components/ui/PageHeader';
 import { StatsGrid } from '@/components/ui/StatsGrid';
@@ -39,6 +39,20 @@ export default function DailyReportsPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['daily-reports'] });
       setIsDrawerOpen(false);
+    },
+  });
+
+  const updateMutation = useMutation({
+    mutationFn: (data: { id: string; status: string }) => api.patch(`/trunk/daily-reports/${data.id}`, { status: data.status }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['daily-reports'] });
+    },
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: (id: string) => api.del(`/trunk/daily-reports/${id}`),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['daily-reports'] });
     },
   });
 
@@ -75,6 +89,27 @@ export default function DailyReportsPage() {
       header: 'Workers',
       accessorKey: 'totalWorkerCount',
       cell: (item: any) => <span className="font-medium text-brand-700 dark:text-brand-300">{item.totalWorkerCount || 0}</span>,
+    },
+    {
+      header: 'Actions',
+      accessorKey: '_id',
+      cell: (item: any) => (
+        <div className="flex items-center gap-2" onClick={e => e.stopPropagation()}>
+          <select 
+            value={item.status} 
+            onChange={(e) => updateMutation.mutate({ id: item._id, status: e.target.value })}
+            className="text-xs rounded-md border-brand-200 dark:border-brand-800 bg-white dark:bg-brand-900 text-brand-700 dark:text-brand-300 py-1 pl-2 pr-6 focus:ring-brand-500 cursor-pointer"
+          >
+            <option value="DRAFT">Draft</option>
+            <option value="SUBMITTED">Submitted</option>
+            <option value="APPROVED">Approved</option>
+            <option value="REJECTED">Rejected</option>
+          </select>
+          <Button variant="ghost" size="sm" onClick={() => deleteMutation.mutate(item._id)} className="text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 px-2 h-7">
+            <Trash2 className="w-4 h-4" />
+          </Button>
+        </div>
+      ),
     },
   ];
 

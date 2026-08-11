@@ -5,7 +5,8 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/core/lib/api-client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
-import { ClipboardList, Plus, Truck, Package, ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Plus, Package, Truck, ClipboardList, Trash2 } from 'lucide-react';
+import { toast } from 'sonner';
 import type { PurchaseOrder } from '@pulse/types';
 import { SlideOver } from '@/components/ui/SlideOver';
 import { PurchaseOrderForm } from './_components/PurchaseOrderForm';
@@ -31,6 +32,26 @@ export default function PurchaseOrdersPage({ params }: { params: { projectId: st
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['purchase-orders', params.projectId] });
       setIsDrawerOpen(false);
+      toast.success('Purchase order created successfully');
+    },
+    onError: (err: any) => {
+      toast.error(err?.message || 'Failed to create purchase order');
+    }
+  });
+
+  const updateMutation = useMutation({
+    mutationFn: (data: { id: string; status: string }) => api.patch(`/construction/purchase-orders/${data.id}`, { status: data.status }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['purchase-orders', params.projectId] });
+      toast.success('Purchase order status updated');
+    },
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: (id: string) => api.del(`/construction/purchase-orders/${id}`),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['purchase-orders', params.projectId] });
+      toast.success('Purchase order deleted');
     },
   });
 
@@ -90,13 +111,23 @@ export default function PurchaseOrdersPage({ params }: { params: { projectId: st
                     <span className="text-xs font-mono text-brand-500">{po.poNumber}</span>
                     <CardTitle className="text-sm font-semibold mt-1">{po.supplierName}</CardTitle>
                   </div>
-                  <span className={`text-xs font-medium px-2 py-1 rounded-full ${
-                    po.status === 'DELIVERED' ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400' :
-                    po.status === 'CANCELLED' ? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400' :
-                    'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400'
-                  }`}>
-                    {po.status}
-                  </span>
+                  <div className="flex flex-col items-end gap-2">
+                    <select 
+                      value={po.status} 
+                      onChange={(e) => updateMutation.mutate({ id: po._id, status: e.target.value })}
+                      className="text-xs rounded-md border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-gray-700 dark:text-gray-300 py-1 pl-2 pr-6 focus:ring-brand-500 cursor-pointer"
+                    >
+                      <option value="DRAFT">Draft</option>
+                      <option value="ISSUED">Issued</option>
+                      <option value="PARTIALLY_RECEIVED">Partially Received</option>
+                      <option value="DELIVERED">Delivered</option>
+                      <option value="CANCELLED">Cancelled</option>
+                      <option value="CLOSED">Closed</option>
+                    </select>
+                    <Button variant="ghost" size="sm" onClick={() => deleteMutation.mutate(po._id)} className="text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 px-2 h-6">
+                      <Trash2 className="w-3 h-3" />
+                    </Button>
+                  </div>
                 </div>
               </CardHeader>
               <CardContent>

@@ -5,7 +5,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/core/lib/api-client';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
-import { HardHat, Plus, AlertTriangle, CheckCircle2, Clock } from 'lucide-react';
+import { HardHat, Plus, AlertTriangle, CheckCircle2, Clock, Trash2 } from 'lucide-react';
 import type { SafetyIncident } from '@pulse/types';
 import { SlideOver } from '@/components/ui/SlideOver';
 import { IncidentForm } from './_components/IncidentForm';
@@ -30,6 +30,20 @@ export default function SafetyIncidentsPage({ params }: { params: { projectId: s
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['safety-incidents', params.projectId] });
       setIsDrawerOpen(false);
+    },
+  });
+
+  const updateMutation = useMutation({
+    mutationFn: (data: { id: string; status: string }) => api.patch(`/construction/safety/${data.id}/status`, { status: data.status }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['safety-incidents', params.projectId] });
+    },
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: (id: string) => api.del(`/construction/safety/${id}`),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['safety-incidents', params.projectId] });
     },
   });
 
@@ -96,9 +110,21 @@ export default function SafetyIncidentsPage({ params }: { params: { projectId: s
                     </div>
                     <CardTitle className="text-sm font-semibold">{incident.incidentType}</CardTitle>
                   </div>
-                  <span className="text-xs font-medium px-2 py-1 rounded-full bg-brand-100 dark:bg-brand-800 text-brand-600 dark:text-brand-300">
-                    {incident.status}
-                  </span>
+                  <div className="flex items-center gap-2" onClick={e => e.stopPropagation()}>
+                    <select 
+                      value={incident.status} 
+                      onChange={(e) => updateMutation.mutate({ id: incident._id, status: e.target.value })}
+                      className="text-xs font-medium px-2 py-1 rounded-md border border-brand-200 dark:border-brand-800 bg-brand-50 dark:bg-brand-900 text-brand-700 dark:text-brand-300 focus:ring-brand-500 cursor-pointer"
+                    >
+                      <option value="OPEN">Open</option>
+                      <option value="UNDER_INVESTIGATION">Investigating</option>
+                      <option value="RESOLVED">Resolved</option>
+                      <option value="CLOSED">Closed</option>
+                    </select>
+                    <Button variant="ghost" size="sm" onClick={() => deleteMutation.mutate(incident._id)} className="text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 px-2 h-7">
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
+                  </div>
                 </div>
               </CardHeader>
               <CardContent>

@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useProject } from '@/core/providers/project-provider';
 import { useAuth } from '@/core/providers/auth-provider';
 import { PageHeader } from '@/components/ui/PageHeader';
-import { Clock, Plus, CheckCircle, XCircle, Edit2, X } from 'lucide-react';
+import { Clock, Plus, CheckCircle, XCircle, Edit2, X, Trash2 } from 'lucide-react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/core/lib/api-client';
 import { toast } from 'sonner';
@@ -50,6 +50,20 @@ export default function TimesheetsPage({ params }: { params: { projectId: string
       toast.success('Timesheet updated successfully!');
     },
     onError: (err: any) => toast.error(err?.message || 'Failed to update timesheet'),
+  });
+
+  const deleteTimeMutation = useMutation({
+    mutationFn: (timesheetId: string) => api.del(`/branches/construction/timesheets/${timesheetId}`),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['timesheets', params.projectId] });
+      toast.success('Timesheet deleted');
+      if (editingId) {
+        setEditingId(null);
+        setHours('');
+        setCostCode('');
+      }
+    },
+    onError: (err: any) => toast.error(err?.message || 'Failed to delete timesheet'),
   });
 
   const updateStatusMutation = useMutation({
@@ -180,19 +194,32 @@ export default function TimesheetsPage({ params }: { params: { projectId: string
                       </span>
                       
                       {ts.membershipId?.userId?._id === (user as any)?.id && ts.status !== 'APPROVED' && (
-                        <button 
-                          onClick={() => {
-                            setEditingId(ts._id as string);
-                            setDate(new Date(ts.date).toISOString().split('T')[0] as string);
-                            setHours(String(ts.hoursWorked));
-                            setCostCode((ts.costCode as string) || '');
-                            window.scrollTo({ top: 0, behavior: 'smooth' });
-                          }}
-                          className="p-1.5 rounded hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-500 transition-colors ml-2"
-                          title="Edit"
-                        >
-                          <Edit2 className="w-4 h-4" />
-                        </button>
+                        <div className="flex items-center gap-1 ml-2">
+                          <button 
+                            onClick={() => {
+                              setEditingId(ts._id as string);
+                              setDate(new Date(ts.date).toISOString().split('T')[0] as string);
+                              setHours(String(ts.hoursWorked));
+                              setCostCode((ts.costCode as string) || '');
+                              window.scrollTo({ top: 0, behavior: 'smooth' });
+                            }}
+                            className="p-1.5 rounded hover:bg-zinc-100 dark:hover:bg-zinc-800 text-zinc-500 transition-colors"
+                            title="Edit"
+                          >
+                            <Edit2 className="w-4 h-4" />
+                          </button>
+                          <button 
+                            onClick={() => {
+                              if (confirm('Are you sure you want to delete this timesheet?')) {
+                                deleteTimeMutation.mutate(ts._id as string);
+                              }
+                            }}
+                            className="p-1.5 rounded hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-900/20 text-zinc-500 transition-colors"
+                            title="Delete"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
                       )}
 
                       {isManager && ts.status === 'PENDING' && ts.membershipId?.userId?._id !== (user as any)?.id && (

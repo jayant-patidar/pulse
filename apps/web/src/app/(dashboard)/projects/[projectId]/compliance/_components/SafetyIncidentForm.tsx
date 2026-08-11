@@ -1,6 +1,7 @@
 'use client';
 
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
+import DatePicker from 'react-datepicker';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { createSafetyIncidentSchema, CreateSafetyIncidentInput } from '@pulse/validators';
 import { Button } from '@/components/ui/Button';
@@ -62,10 +63,22 @@ export function SafetyIncidentForm({ projectId, onSubmit, isLoading }: SafetyInc
       </FormField>
 
       <FormField label="Date Occurred" error={errors.dateOccurred?.message} required>
-        <Input 
-          type="datetime-local"
-          {...form.register('dateOccurred')} 
-          error={!!errors.dateOccurred}
+        <Controller
+          control={form.control}
+          name="dateOccurred"
+          render={({ field }) => (
+            <DatePicker
+              selected={field.value ? new Date(field.value) : null}
+              onChange={(date: Date | null) => field.onChange(date ? date.toISOString() : '')}
+              showTimeSelect
+              timeFormat="HH:mm"
+              timeIntervals={15}
+              dateFormat="MMMM d, yyyy h:mm aa"
+              className="w-full h-11 px-3 py-2 bg-white dark:bg-slate-900 border border-brand-200 dark:border-brand-800 rounded-xl text-brand-900 dark:text-brand-100 focus:outline-none focus:ring-2 focus:ring-brand-500/50"
+              placeholderText="Select date and time"
+              wrapperClassName="w-full"
+            />
+          )}
         />
       </FormField>
 

@@ -5,7 +5,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/core/lib/api-client';
 import { Button } from '@/components/ui/Button';
 import { PulseLoader } from '@/components/ui/PulseLoader';
-import { ArrowLeft, Plus } from 'lucide-react';
+import { ArrowLeft, Plus, Trash2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { SlideOver } from '@/components/ui/SlideOver';
 import { ChangeOrderForm } from './_components/ChangeOrderForm';
@@ -34,6 +34,22 @@ export default function ChangeOrdersPage({ params }: { params: { projectId: stri
     onError: (err: any) => {
       toast.error(err?.message || 'Failed to create change order');
     }
+  });
+
+  const updateMutation = useMutation({
+    mutationFn: (data: { id: string; status: string }) => api.patch(`/construction/change-orders/${data.id}`, { status: data.status }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['change-orders', params.projectId] });
+      toast.success('Change order status updated');
+    },
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: (id: string) => api.del(`/construction/change-orders/${id}`),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['change-orders', params.projectId] });
+      toast.success('Change order deleted');
+    },
   });
 
   return (
@@ -111,7 +127,21 @@ export default function ChangeOrdersPage({ params }: { params: { projectId: stri
                       )}
                     </td>
                     <td className="p-4">
-                      <Button variant="outline" size="sm">Review</Button>
+                      <div className="flex items-center gap-2">
+                        <select 
+                          value={co.status} 
+                          onChange={(e) => updateMutation.mutate({ id: co._id, status: e.target.value })}
+                          className="text-xs rounded-md border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-gray-700 dark:text-gray-300 py-1 pl-2 pr-6 focus:ring-brand-500 cursor-pointer"
+                        >
+                          <option value="DRAFT">Draft</option>
+                          <option value="PENDING_APPROVAL">Pending</option>
+                          <option value="APPROVED">Approved</option>
+                          <option value="REJECTED">Rejected</option>
+                        </select>
+                        <Button variant="ghost" size="sm" onClick={() => deleteMutation.mutate(co._id)} className="text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 px-2 h-7">
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      </div>
                     </td>
                   </tr>
                 ))

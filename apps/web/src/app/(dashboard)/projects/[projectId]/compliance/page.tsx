@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useProject } from '@/core/providers/project-provider';
 import { PageHeader } from '@/components/ui/PageHeader';
-import { HardHat, ShieldAlert, FileWarning, CheckCircle2, AlertTriangle, ChevronRight, Activity } from 'lucide-react';
+import { HardHat, ShieldAlert, FileWarning, CheckCircle2, AlertTriangle, ChevronRight, Activity, Check, Trash2 } from 'lucide-react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
@@ -19,13 +19,7 @@ export default function CompliancePage() {
   const queryClient = useQueryClient();
   const [drawerMode, setDrawerMode] = useState<'NONE' | 'COI' | 'INCIDENT'>('NONE');
 
-  if (isLoading) {
-    return (
-      <div className="flex justify-center items-center h-64">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-500" />
-      </div>
-    );
-  }
+
 
   const params = useParams<{ projectId: string }>();
 
@@ -75,6 +69,32 @@ export default function CompliancePage() {
     }
   });
 
+  const updateIncidentMutation = useMutation({
+    mutationFn: (data: { id: string; status: string }) => api.patch(`/construction/safety/${data.id}`, { status: data.status }),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['safety', params.projectId] }),
+  });
+
+  const updateCoiMutation = useMutation({
+    mutationFn: (data: { id: string; status: string }) => api.patch(`/construction/coi/${data.id}`, { status: data.status }),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['cois', params.projectId] }),
+  });
+
+  const deleteCoiMutation = useMutation({
+    mutationFn: (id: string) => api.del(`/construction/coi/${id}`),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['cois', params.projectId] });
+      toast.success('COI removed successfully');
+    },
+  });
+
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-500" />
+      </div>
+    );
+  }
+
   const cois = rawCOIs.map((c: any) => ({
     id: c._id,
     vendor: c.subcontractorName,
@@ -84,6 +104,7 @@ export default function CompliancePage() {
   }));
 
   const incidents = rawIncidents.map((inc: any) => ({
+    _id: inc._id,
     id: inc._id.substring(inc._id.length - 6).toUpperCase(),
     type: inc.incidentType,
     date: new Date(inc.dateOccurred || Date.now()).toISOString().split('T')[0],
@@ -216,6 +237,7 @@ export default function CompliancePage() {
                   <th className="px-6 py-4">Policy Type</th>
                   <th className="px-6 py-4">Expiration</th>
                   <th className="px-6 py-4">Status</th>
+                  <th className="px-6 py-4">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-brand-100 dark:divide-brand-800/50">
@@ -225,6 +247,31 @@ export default function CompliancePage() {
                     <td className="px-6 py-4 text-brand-700 dark:text-brand-300">{coi.type}</td>
                     <td className="px-6 py-4 font-medium">{coi.expiration}</td>
                     <td className="px-6 py-4">{getStatusBadge(coi.status)}</td>
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-2">
+                        <select 
+                          value={coi.status} 
+                          onChange={(e) => updateCoiMutation.mutate({ id: coi.id, status: e.target.value })}
+                          className="text-xs rounded-md border-brand-200 dark:border-brand-800 bg-white dark:bg-brand-900 text-brand-700 dark:text-brand-300 py-1 pl-2 pr-6 focus:ring-brand-500 cursor-pointer"
+                        >
+                          <option value="PENDING">Pending</option>
+                          <option value="VALID">Valid</option>
+                          <option value="EXPIRED">Expired</option>
+                          <option value="EXPIRING_SOON">Expiring Soon</option>
+                        </select>
+                        <button 
+                          onClick={() => {
+                            if (confirm('Are you sure you want to delete this COI?')) {
+                              deleteCoiMutation.mutate(coi.id);
+                            }
+                          }}
+                          className="p-1.5 rounded hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-900/20 text-brand-500 transition-colors"
+                          title="Delete COI"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -236,7 +283,7 @@ export default function CompliancePage() {
         <div className="glass rounded-2xl border border-brand-200 dark:border-brand-800 p-6 flex flex-col">
           <div className="flex justify-between items-center mb-6">
             <h3 className="text-lg font-semibold text-brand-900 dark:text-brand-100">Recent Incidents</h3>
-            <Link href="/construction/safety" className="text-sm font-medium text-brand-600 dark:text-brand-400 hover:underline">View Log</Link>
+            <Link href={`/projects/${params.projectId}/reports/safety`} className="text-sm font-medium text-brand-600 dark:text-brand-400 hover:underline">View Log</Link>
           </div>
           
           <div className="space-y-4 flex-1">
@@ -251,14 +298,21 @@ export default function CompliancePage() {
                     <span className="text-xs font-medium text-brand-500 whitespace-nowrap">{inc.date}</span>
                   </div>
                   <p className="text-sm text-brand-600 dark:text-brand-400 line-clamp-2 mb-2">{inc.desc}</p>
-                  <div className="flex items-center gap-2">
-                    <span className={`text-[10px] uppercase tracking-wider font-bold px-2 py-0.5 rounded-full ${
-                      inc.status === 'OPEN' ? 'bg-rose-100 text-rose-700 dark:bg-rose-900/50 dark:text-rose-400' :
-                      inc.status === 'REVIEWED' ? 'bg-amber-100 text-amber-700 dark:bg-amber-900/50 dark:text-amber-400' :
-                      'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-400'
+                  <div className="mt-3 flex items-center justify-between">
+                    <span className={`text-xs font-semibold px-2 py-1 rounded-full ${
+                      inc.status === 'OPEN' ? 'bg-rose-100 text-rose-700 dark:bg-rose-900/30 dark:text-rose-400' : 'bg-brand-100 text-brand-700 dark:bg-brand-900/30 dark:text-brand-400'
                     }`}>
                       {inc.status}
                     </span>
+                    {inc.status === 'OPEN' && (
+                      <button 
+                        onClick={() => updateIncidentMutation.mutate({ id: inc._id, status: 'CLOSED' })}
+                        className="text-xs font-medium text-brand-600 dark:text-brand-400 hover:underline flex items-center gap-1"
+                      >
+                        <Check className="w-3 h-3" />
+                        Mark Resolved
+                      </button>
+                    )}
                   </div>
                 </div>
                 <ChevronRight className="w-5 h-5 text-brand-300 group-hover:text-brand-500 self-center shrink-0 transition-colors" />

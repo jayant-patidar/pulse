@@ -4,7 +4,7 @@ export const createSafetyIncidentSchema = z.object({
   projectId: z.string().min(1, 'Project ID is required'),
   incidentType: z.enum(['INJURY', 'NEAR_MISS', 'PROPERTY_DAMAGE', 'ENVIRONMENTAL', 'EQUIPMENT_FAILURE']),
   severity: z.enum(['LOW', 'MEDIUM', 'HIGH', 'CRITICAL']),
-  dateOccurred: z.string().datetime({ message: 'Valid date is required' }),
+  dateOccurred: z.string().refine((val) => !isNaN(Date.parse(val)), { message: 'Valid date is required' }),
   timeOccurred: z.string().optional(),
   locationOnSite: z.string().optional(),
   description: z.string().min(1, 'Description is required').max(5000),

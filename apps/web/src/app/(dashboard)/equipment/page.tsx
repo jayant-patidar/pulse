@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/Button';
 import { DataTable } from '@/components/ui/DataTable';
 import { FilterBar } from '@/components/ui/FilterBar';
 import { StatusBadge } from '@/components/ui/StatusBadge';
-import { Plus, Tractor } from 'lucide-react';
+import { Plus, Tractor, Trash2 } from 'lucide-react';
 
 import { PageHeader } from '@/components/ui/PageHeader';
 import { StatsGrid } from '@/components/ui/StatsGrid';
@@ -33,6 +33,20 @@ export default function EquipmentPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['equipment'] });
       setIsDrawerOpen(false);
+    },
+  });
+
+  const updateMutation = useMutation({
+    mutationFn: (data: { id: string; status: string }) => api.patch(`/trunk/equipment/${data.id}`, { status: data.status }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['equipment'] });
+    },
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: (id: string) => api.del(`/trunk/equipment/${id}`),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['equipment'] });
     },
   });
 
@@ -66,6 +80,27 @@ export default function EquipmentPage() {
         <span className="font-medium text-brand-700 dark:text-brand-300">
           {item.hourlyInternalCostCents ? `$${(item.hourlyInternalCostCents / 100).toFixed(2)}/hr` : '-'}
         </span>
+      ),
+    },
+    {
+      header: 'Actions',
+      accessorKey: '_id',
+      cell: (item: any) => (
+        <div className="flex items-center gap-2" onClick={e => e.stopPropagation()}>
+          <select 
+            value={item.status} 
+            onChange={(e) => updateMutation.mutate({ id: item._id, status: e.target.value })}
+            className="text-xs rounded-md border-brand-200 dark:border-brand-800 bg-white dark:bg-brand-900 text-brand-700 dark:text-brand-300 py-1 pl-2 pr-6 focus:ring-brand-500 cursor-pointer"
+          >
+            <option value="AVAILABLE">Available</option>
+            <option value="IN_USE">In Use</option>
+            <option value="UNDER_MAINTENANCE">Maintenance</option>
+            <option value="RETIRED">Retired</option>
+          </select>
+          <Button variant="ghost" size="sm" onClick={() => deleteMutation.mutate(item._id)} className="text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 px-2 h-7">
+            <Trash2 className="w-4 h-4" />
+          </Button>
+        </div>
       ),
     },
   ];

@@ -1,4 +1,5 @@
 import * as React from "react"
+import { createPortal } from "react-dom"
 import { cn } from "@/core/lib/utils"
 import { X } from "lucide-react"
 
@@ -11,21 +12,16 @@ export interface SlideOverProps {
 }
 
 export function SlideOver({ isOpen, onClose, title, description, children }: SlideOverProps) {
-  // Prevent body scroll when open
+  // Removed manual body scroll lock as it causes layout truncation bugs on Windows/Chrome when scrolled
+  const [mounted, setMounted] = React.useState(false);
+  
   React.useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "unset";
-    }
-    return () => {
-      document.body.style.overflow = "unset";
-    };
-  }, [isOpen]);
+    setMounted(true);
+  }, []);
 
-  if (!isOpen) return null;
+  if (!isOpen || !mounted) return null;
 
-  return (
+  return createPortal(
     <div className="relative z-50" aria-labelledby="slide-over-title" role="dialog" aria-modal="true">
       {/* Background overlay */}
       <div 
@@ -73,6 +69,7 @@ export function SlideOver({ isOpen, onClose, title, description, children }: Sli
           </div>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

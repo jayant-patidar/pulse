@@ -2,7 +2,7 @@
 
 import { useProject } from '@/core/providers/project-provider';
 import { PageHeader } from '@/components/ui/PageHeader';
-import { Tractor, Wrench, AlertCircle, Fuel, Clock, MapPin, Gauge, Plus } from 'lucide-react';
+import { Tractor, Wrench, AlertCircle, Fuel, Clock, MapPin, Gauge, Plus, Trash2 } from 'lucide-react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
@@ -60,6 +60,24 @@ export default function EquipmentPage() {
       toast.success('Asset created and assigned successfully!');
     },
     onError: (err: any) => toast.error(err?.message || 'Failed to create asset'),
+  });
+
+  const updateMutation = useMutation({
+    mutationFn: (data: { id: string; status: string }) => api.patch(`/trunk/equipment/${data.id}`, { status: data.status }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['equipment', params.projectId] });
+      toast.success('Status updated');
+    },
+    onError: (err: any) => toast.error(err?.message || 'Failed to update status'),
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: (id: string) => api.del(`/trunk/equipment/${id}`),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['equipment', params.projectId] });
+      toast.success('Asset removed');
+    },
+    onError: (err: any) => toast.error(err?.message || 'Failed to remove asset'),
   });
 
   const rawEquipment = Array.isArray(eqData) ? eqData : (eqData?.data || []);
@@ -168,6 +186,7 @@ export default function EquipmentPage() {
                   <th className="px-6 py-4">Operator</th>
                   <th className="px-6 py-4">Fuel</th>
                   <th className="px-6 py-4 text-right">Engine Hrs</th>
+                  <th className="px-6 py-4 text-right">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-brand-100 dark:divide-brand-800/50">
@@ -186,6 +205,22 @@ export default function EquipmentPage() {
                       </div>
                     </td>
                     <td className="px-6 py-4 text-right font-medium text-brand-900 dark:text-brand-100">{eq.hours.toLocaleString()}</td>
+                    <td className="px-6 py-4 text-right">
+                      <div className="flex items-center justify-end gap-2" onClick={e => e.stopPropagation()}>
+                        <select 
+                          value={eq.status === 'ACTIVE' ? 'IN_USE' : eq.status === 'IDLE' ? 'AVAILABLE' : 'UNDER_MAINTENANCE'} 
+                          onChange={(e) => updateMutation.mutate({ id: eq.id, status: e.target.value })}
+                          className="text-xs font-medium px-2 py-1 rounded-md border border-brand-200 dark:border-brand-800 bg-brand-50 dark:bg-brand-900 text-brand-700 dark:text-brand-300 focus:ring-brand-500 cursor-pointer"
+                        >
+                          <option value="AVAILABLE">Idle</option>
+                          <option value="IN_USE">Active</option>
+                          <option value="UNDER_MAINTENANCE">Maintenance</option>
+                        </select>
+                        <Button variant="ghost" size="sm" onClick={() => deleteMutation.mutate(rawEquipment.find((r:any) => r.assetTag === eq.id || r._id.endsWith(eq.id.toLowerCase()))?._id || eq.id)} className="text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 px-2 h-7">
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    </td>
                   </tr>
                 ))}
               </tbody>

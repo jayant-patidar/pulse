@@ -157,24 +157,24 @@ export default function DirectoryPage() {
                       {user.company}
                     </div>
                     
-                    <div className="flex items-center gap-2 text-sm text-brand-600 dark:text-brand-400">
+                    <div className="flex items-center gap-2 text-sm text-brand-600 dark:text-brand-400" onClick={e => e.stopPropagation()}>
                       <Mail className="w-4 h-4" />
                       <a href={`mailto:${user.email}`} className="hover:underline">{user.email}</a>
                     </div>
                     
-                    <div className="flex items-center gap-2 text-sm text-brand-600 dark:text-brand-400">
+                    <div className="flex items-center gap-2 text-sm text-brand-600 dark:text-brand-400" onClick={e => e.stopPropagation()}>
                       <Phone className="w-4 h-4" />
                       <a href={`tel:${user.phone}`} className="hover:underline">{user.phone}</a>
                     </div>
                   </div>
 
-                  <div className="flex gap-2 pt-4 border-t border-brand-100 dark:border-brand-800/50">
-                    <button className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg bg-brand-50 dark:bg-brand-900/30 text-brand-700 dark:text-brand-300 text-sm font-medium hover:bg-brand-100 dark:hover:bg-brand-900/60 transition-colors">
+                  <div className="flex gap-2 pt-4 border-t border-brand-100 dark:border-brand-800/50" onClick={e => e.stopPropagation()}>
+                    <a href={`mailto:${user.email}`} className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg bg-brand-50 dark:bg-brand-900/30 text-brand-700 dark:text-brand-300 text-sm font-medium hover:bg-brand-100 dark:hover:bg-brand-900/60 transition-colors">
                       <Mail className="w-4 h-4" /> Email
-                    </button>
-                    <button className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg bg-brand-50 dark:bg-brand-900/30 text-brand-700 dark:text-brand-300 text-sm font-medium hover:bg-brand-100 dark:hover:bg-brand-900/60 transition-colors">
+                    </a>
+                    <a href={`tel:${user.phone}`} className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-lg bg-brand-50 dark:bg-brand-900/30 text-brand-700 dark:text-brand-300 text-sm font-medium hover:bg-brand-100 dark:hover:bg-brand-900/60 transition-colors">
                       <MessageSquare className="w-4 h-4" /> Message
-                    </button>
+                    </a>
                   </div>
                 </div>
               ))}
