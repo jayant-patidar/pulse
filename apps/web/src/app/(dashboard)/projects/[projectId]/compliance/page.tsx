@@ -87,6 +87,14 @@ export default function CompliancePage() {
     },
   });
 
+  const deleteIncidentMutation = useMutation({
+    mutationFn: (id: string) => api.del(`/construction/safety/${id}`),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['safety', params.projectId] });
+      toast.success('Incident deleted successfully');
+    },
+  });
+
   if (isLoading) {
     return (
       <div className="flex justify-center items-center h-64">
@@ -313,6 +321,18 @@ export default function CompliancePage() {
                         Mark Resolved
                       </button>
                     )}
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        if (confirm('Are you sure you want to delete this safety incident?')) {
+                          deleteIncidentMutation.mutate(inc._id);
+                        }
+                      }}
+                      className="p-1.5 rounded hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-900/20 text-brand-500 transition-colors ml-auto"
+                      title="Delete Incident"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
                   </div>
                 </div>
                 <ChevronRight className="w-5 h-5 text-brand-300 group-hover:text-brand-500 self-center shrink-0 transition-colors" />
