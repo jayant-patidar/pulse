@@ -21,6 +21,7 @@ export const createProjectSchema = z.object({
     coordinates: z.tuple([z.number(), z.number()]).optional(),
   }).optional(),
   managerIds: z.array(z.string()).optional(),
+  industry: z.enum(['CONSTRUCTION', 'AGRICULTURE', 'ENERGY', 'MAINTENANCE', 'GOVERNMENT', 'INSPECTION']).default('CONSTRUCTION'),
   extensions: z.record(z.unknown()).optional(),
 });
 

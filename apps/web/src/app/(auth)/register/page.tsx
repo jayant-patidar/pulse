@@ -7,7 +7,7 @@ import { Logo } from '@/components/ui/Logo';
 
 const INDUSTRIES = [
   { value: 'CONSTRUCTION', label: 'Construction', icon: '🏗️', disabled: false },
-  { value: 'AGRICULTURE', label: 'Agriculture', icon: '🌾', disabled: true },
+  { value: 'AGRICULTURE', label: 'Agriculture', icon: '🌾', disabled: false },
   { value: 'ENERGY', label: 'Energy', icon: '⚡', disabled: true },
   { value: 'HVAC', label: 'HVAC', icon: '❄️', disabled: true },
 ] as const;

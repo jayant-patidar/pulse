@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { useQuery } from '@tanstack/react-query';
@@ -14,6 +14,7 @@ import { ThemeProvider } from '@/core/providers/theme-provider';
 import { ThemeToggle } from '@/components/ui/ThemeToggle';
 import { Logo } from '@/components/ui/Logo';
 import { NotificationBell } from '@/components/ui/NotificationBell';
+import { useVocabulary } from '@/core/lib/vocabulary';
 import {
   LayoutDashboard,
   HardHat,
@@ -29,7 +30,7 @@ import {
   Clock
 } from 'lucide-react';
 
-const NAV_ITEMS = [
+const BASE_NAV_ITEMS = [
   {
     label: 'Portfolio Dashboard',
     href: '/dashboard',
@@ -68,17 +69,37 @@ const PROJECT_NAV_ITEMS = [
   { label: 'Directory', href: '/directory', icon: <Settings className="w-5 h-5" /> },
 ];
 
+const AGRICULTURE_PROJECT_NAV_ITEMS = [
+  { label: 'Overview', href: '/dashboard', icon: <LayoutDashboard className="w-5 h-5" /> },
+  { label: 'Tasks & Activities', href: '/tasks', icon: <ListTodo className="w-5 h-5" /> },
+  { label: 'Field Reports', href: '/reports', icon: <ClipboardList className="w-5 h-5" /> },
+  { label: 'Farm Equipment', href: '/equipment', icon: <Tractor className="w-5 h-5" /> },
+  { label: 'Documents', href: '/documents', icon: <FileText className="w-5 h-5" /> },
+  { label: 'Timesheets', href: '/timesheets', icon: <Clock className="w-5 h-5" /> },
+  { label: 'Crop Cycles', href: '/crop-cycles', icon: <ClipboardList className="w-5 h-5" /> },
+  { label: 'Scouting', href: '/scouting', icon: <HardHat className="w-5 h-5" /> },
+  { label: 'Harvests', href: '/harvests', icon: <Settings className="w-5 h-5" /> },
+  { label: 'Compliance', href: '/agr-compliance', icon: <FileText className="w-5 h-5" /> },
+  { label: 'Directory', href: '/directory', icon: <Settings className="w-5 h-5" /> },
+];
+
 function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
   const pathname = usePathname();
   const { user, logout } = useAuth();
+  const vocabulary = useVocabulary();
   
   // Detect if we are inside a project workspace
   const projectMatch = pathname.match(/^\/projects\/([a-f\d]{24})\//i);
   const projectId = projectMatch ? projectMatch[1] : null;
   
-  const currentNavItems = projectId 
-    ? PROJECT_NAV_ITEMS.map(item => ({ ...item, href: `/projects/${projectId}${item.href}` }))
-    : NAV_ITEMS;
+  const { data: organization } = useQuery({
+    queryKey: ['organization', user?.orgId],
+    queryFn: async () => {
+      const res = await api.get<any>(`/root/organizations/${user?.orgId}`);
+      return res;
+    },
+    enabled: !!user?.orgId,
+  });
 
   const { data: project } = useQuery({
     queryKey: ['project', projectId],
@@ -88,6 +109,29 @@ function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) 
     },
     enabled: !!projectId,
   });
+
+  let activeProjectNavItems = PROJECT_NAV_ITEMS;
+  if (project?.industry === 'AGRICULTURE') {
+    activeProjectNavItems = AGRICULTURE_PROJECT_NAV_ITEMS;
+  }
+
+  const mappedBaseNav = BASE_NAV_ITEMS.map(item => 
+    item.href === '/projects' ? { ...item, label: vocabulary.projects } : item
+  );
+
+  const baseNavWithAddons = [...mappedBaseNav];
+  if (organization?.industry === 'AGRICULTURE') {
+    baseNavWithAddons.push({
+      label: 'Inputs Inventory',
+      href: '/inputs',
+      icon: <ClipboardList className="w-5 h-5" />,
+    });
+  }
+
+  const currentNavItems = projectId 
+    ? activeProjectNavItems.map(item => ({ ...item, href: `/projects/${projectId}${item.href}` }))
+    : baseNavWithAddons;
+
 
   return (
     <>
@@ -218,6 +262,7 @@ function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) 
 
 function TopBar({ onMenuToggle }: { onMenuToggle: () => void }) {
   const pathname = usePathname();
+  const vocabulary = useVocabulary();
   
   // Detect if we are inside a project workspace
   const projectMatch = pathname.match(/^\/projects\/([a-f\d]{24})/i);
@@ -238,7 +283,11 @@ function TopBar({ onMenuToggle }: { onMenuToggle: () => void }) {
     ? PROJECT_NAV_ITEMS.map(item => ({ ...item, href: `/projects/${projectId}${item.href}` }))
     : [];
     
-  const allNavItems = [...projectNavItems, ...NAV_ITEMS].sort((a, b) => b.href.length - a.href.length);
+  const mappedBaseNav = BASE_NAV_ITEMS.map(item => 
+    item.href === '/projects' ? { ...item, label: vocabulary.projects } : item
+  );
+  
+  const allNavItems = [...projectNavItems, ...mappedBaseNav].sort((a, b) => b.href.length - a.href.length);
   const pageTitle = allNavItems.find(i => pathname.includes(i.href))?.label || 'Dashboard';
 
   return (
@@ -283,10 +332,42 @@ function TopBar({ onMenuToggle }: { onMenuToggle: () => void }) {
 function DashboardShell({ children }: { children: React.ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [cmdOpen, setCmdOpen] = useState(false);
+  const pathname = usePathname();
+  const { user } = useAuth();
+  
+  // Detect if we are inside a project workspace
+  const projectMatch = pathname.match(/^\/projects\/([a-f\d]{24})/i);
+  const projectId = projectMatch ? projectMatch[1] : null;
 
-  // Expose setCmdOpen to the search buttons via a custom event listener
+  const { data: organization } = useQuery({
+    queryKey: ['organization', user?.orgId],
+    queryFn: async () => {
+      const res = await api.get<any>(`/root/organizations/${user?.orgId}`);
+      return res;
+    },
+    enabled: !!user?.orgId,
+  });
+
+  const { data: project } = useQuery({
+    queryKey: ['project', projectId],
+    queryFn: async () => {
+      const res = await api.get<any>(`/trunk/projects/${projectId}`);
+      return res;
+    },
+    enabled: !!projectId,
+  });
+
+  const activeIndustry = project?.industry || organization?.industry;
+
+  useEffect(() => {
+    if (activeIndustry) {
+      localStorage.setItem('pulse-industry', activeIndustry);
+      document.documentElement.setAttribute('data-industry', activeIndustry);
+    }
+  }, [activeIndustry]);
+
   import('react').then((React) => {
-    // We already use the useEffect pattern inside CommandPalette, but to open it via click we can just listen to the same shortcut
+    // expose setCmdOpen
   });
 
   return (

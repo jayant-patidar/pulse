@@ -27,6 +27,18 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`${inter.variable} ${outfit.variable}`} suppressHydrationWarning>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              try {
+                var ind = localStorage.getItem('pulse-industry');
+                if (ind) document.documentElement.setAttribute('data-industry', ind);
+              } catch (e) {}
+            `,
+          }}
+        />
+      </head>
       <body className={`${inter.className} bg-gray-50 text-brand-900 dark:bg-slate-950 dark:text-slate-50 antialiased selection:bg-accent-500/30 selection:text-accent-700`} suppressHydrationWarning>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
           {children}

@@ -11,11 +11,14 @@ import { api } from '@/core/lib/api-client';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import { StatusBadge } from '@/components/ui/StatusBadge';
+import { useVocabulary } from '@/core/lib/vocabulary';
+import { AgricultureDashboard } from './AgricultureDashboard';
 
 export default function ProjectDashboardPage() {
   const { project, isLoading: isProjectLoading } = useProject();
   const params = useParams<{ projectId: string }>();
   const pId = params?.projectId;
+  const vocabulary = useVocabulary();
 
   const { data: tasksData } = useQuery({ queryKey: ['tasks', pId], queryFn: () => api.get<any>(`/trunk/tasks?projectId=${pId}&limit=100`), enabled: !!pId });
   const { data: reportsData } = useQuery({ queryKey: ['reports', pId], queryFn: () => api.get<any>(`/trunk/daily-reports?projectId=${pId}&limit=100`), enabled: !!pId });
@@ -24,6 +27,10 @@ export default function ProjectDashboardPage() {
   const { data: safetyData } = useQuery({ queryKey: ['safety', pId], queryFn: () => api.get<any>(`/construction/safety?projectId=${pId}`), enabled: !!pId });
 
   if (isProjectLoading) return <PulseLoader size="lg" text="Loading project..." />;
+
+  if (project?.industry === 'AGRICULTURE') {
+    return <AgricultureDashboard project={project} pId={pId as string} />;
+  }
 
   const tasks = tasksData || [];
   const reports = reportsData || [];
@@ -52,8 +59,8 @@ export default function ProjectDashboardPage() {
   return (
     <div className="max-w-7xl mx-auto space-y-8 pb-12">
       <PageHeader
-        title={project?.name || 'Project Overview'}
-        description={`Dashboard and high-level metrics for ${project?.name || 'this project'}.`}
+        title={project?.name || vocabulary.projectDashboard}
+        description={`Dashboard and high-level metrics for ${project?.name || `this ${vocabulary.project.toLowerCase()}`}.`}
         icon={<LayoutDashboard className="w-6 h-6 text-brand-500" />}
       />
 

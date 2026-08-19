@@ -39,6 +39,23 @@ const statusStyles: Record<string, string> = {
   MEDIUM: "bg-sky-100 dark:bg-sky-900/50 text-sky-800 dark:text-sky-400 border-sky-300 dark:border-sky-800",
   HIGH: "bg-accent-100 dark:bg-accent-900/50 text-accent-800 dark:text-accent-400 border-accent-300 dark:border-accent-800 font-semibold",
   URGENT: "bg-red-600 text-white border-red-700 font-bold shadow-sm shadow-red-500/30",
+  CRITICAL: "bg-red-600 text-white border-red-700 font-bold shadow-sm shadow-red-500/30 animate-pulse",
+
+  // Agriculture - Inventory
+  IN_STOCK: "bg-emerald-100 dark:bg-emerald-900/50 text-emerald-800 dark:text-emerald-400 border-emerald-300 dark:border-emerald-800",
+  LOW_STOCK: "bg-amber-100 dark:bg-amber-900/50 text-amber-800 dark:text-amber-400 border-amber-300 dark:border-amber-800",
+  OUT_OF_STOCK: "bg-red-100 dark:bg-red-900/50 text-red-800 dark:text-red-400 border-red-300 dark:border-red-800",
+
+  // Agriculture - Crop Cycles
+  PLANNED: "bg-brand-100 dark:bg-brand-900/50 text-brand-700 dark:text-brand-300 border-brand-200 dark:border-brand-800",
+  PLANTED: "bg-amber-100 dark:bg-amber-900/50 text-amber-800 dark:text-amber-400 border-amber-300 dark:border-amber-800",
+  GROWING: "bg-emerald-100 dark:bg-emerald-900/50 text-emerald-800 dark:text-emerald-400 border-emerald-300 dark:border-emerald-800",
+  HARVESTING: "bg-purple-100 dark:bg-purple-900/50 text-purple-800 dark:text-purple-400 border-purple-300 dark:border-purple-800",
+  ABANDONED: "bg-red-100 dark:bg-red-900/50 text-red-800 dark:text-red-400 border-red-300 dark:border-red-800",
+
+  // Agriculture - Scouting
+  TREATED: "bg-sky-100 dark:bg-sky-900/50 text-sky-800 dark:text-sky-400 border-sky-300 dark:border-sky-800",
+  RESOLVED: "bg-emerald-100 dark:bg-emerald-900/50 text-emerald-800 dark:text-emerald-400 border-emerald-300 dark:border-emerald-800",
 };
 
 export function StatusBadge({ status, className }: StatusBadgeProps) {

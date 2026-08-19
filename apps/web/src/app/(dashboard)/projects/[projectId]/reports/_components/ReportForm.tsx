@@ -44,6 +44,10 @@ export function ReportForm({ initialData, onSubmit, isLoading }: ReportFormProps
 
   const { formState: { errors } } = form;
 
+  const selectedProjectId = form.watch('projectId');
+  const activeProject = projects.find((p: any) => p._id === selectedProjectId);
+  const activeIndustry = activeProject?.industry || 'CONSTRUCTION';
+
   const handleSubmit = form.handleSubmit((data) => {
     const formattedData = {
       ...data,
@@ -126,7 +130,7 @@ export function ReportForm({ initialData, onSubmit, isLoading }: ReportFormProps
       </FormField>
 
       <ExtensionFieldRenderer
-        industry="CONSTRUCTION" // Placeholder for Phase 2
+        industry={activeIndustry}
         entityType="daily_report"
         extensions={form.watch('extensions') || {}}
         onChange={(ext) => form.setValue('extensions', ext, { shouldDirty: true })}

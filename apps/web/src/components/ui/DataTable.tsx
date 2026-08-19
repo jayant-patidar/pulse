@@ -4,7 +4,8 @@ import { cn } from "@/core/lib/utils";
 
 interface Column<T> {
   header: string;
-  accessorKey?: keyof T;
+  accessorKey?: keyof T | string;
+  id?: string;
   cell?: (item: T) => React.ReactNode;
   className?: string;
 }
@@ -20,6 +21,7 @@ interface DataTableProps<T> {
     totalPages: number;
     onPageChange: (page: number) => void;
   };
+  emptyMessage?: string;
 }
 
 export function DataTable<T>({
@@ -29,6 +31,7 @@ export function DataTable<T>({
   onRowClick,
   isLoading,
   pagination,
+  emptyMessage,
 }: DataTableProps<T>) {
   return (
     <div className="w-full glass-subtle overflow-hidden">
@@ -56,7 +59,7 @@ export function DataTable<T>({
             ) : data.length === 0 ? (
               <tr>
                 <td colSpan={columns.length} className="px-6 py-12 text-center text-brand-400">
-                  No results found.
+                  {emptyMessage || "No results found."}
                 </td>
               </tr>
             ) : (

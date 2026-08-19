@@ -37,6 +37,7 @@ import { TimesheetsModule } from './branches/construction/timesheets/timesheets.
 
 // ---- BRANCH MODULES ----
 import { ConstructionModule } from './branches/construction/construction.module';
+import { AgricultureModule } from './branches/agriculture/agriculture.module';
 
 @Module({
   imports: [
@@ -85,6 +86,7 @@ import { ConstructionModule } from './branches/construction/construction.module'
     // ---- BRANCH LAYER ----
     // Adding a new industry = adding ONE line here + the branch module files.
     ConstructionModule,
+    AgricultureModule,
   ],
 })
 export class AppModule {}

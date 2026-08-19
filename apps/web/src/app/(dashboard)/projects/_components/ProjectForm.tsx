@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Textarea } from '@/components/ui/Textarea';
 import { FormField } from '@/components/ui/FormField';
+import { useVocabulary } from '@/core/lib/vocabulary';
 
 interface ProjectFormProps {
   initialData?: any;
@@ -15,6 +16,7 @@ interface ProjectFormProps {
 }
 
 export function ProjectForm({ initialData, onSubmit, isLoading }: ProjectFormProps) {
+  const vocabulary = useVocabulary();
   const form = useForm<CreateProjectInput>({
     resolver: zodResolver(createProjectSchema),
     defaultValues: {
@@ -25,6 +27,7 @@ export function ProjectForm({ initialData, onSubmit, isLoading }: ProjectFormPro
         city: initialData?.location?.city || '',
         state: initialData?.location?.state || '',
       },
+      industry: initialData?.industry || 'CONSTRUCTION',
     },
   });
 
@@ -41,10 +44,10 @@ export function ProjectForm({ initialData, onSubmit, isLoading }: ProjectFormPro
 
   return (
     <form id="project-form" onSubmit={handleSubmit} className="space-y-6">
-      <FormField label="Project Name" error={errors.name?.message} required>
+      <FormField label={vocabulary.projectName} error={errors.name?.message} required>
         <Input 
           {...form.register('name')} 
-          placeholder="e.g. Downtown Commercial High-Rise" 
+          placeholder={vocabulary.projectName} 
           error={!!errors.name}
         />
       </FormField>
@@ -52,10 +55,26 @@ export function ProjectForm({ initialData, onSubmit, isLoading }: ProjectFormPro
       <FormField label="Description" error={errors.description?.message}>
         <Textarea 
           {...form.register('description')} 
-          placeholder="Brief description of the project..."
+          placeholder="Brief description..."
           error={!!errors.description}
         />
       </FormField>
+
+      <div className="grid grid-cols-2 gap-4">
+        <FormField label="Industry" error={errors.industry?.message} required>
+          <select 
+            {...form.register('industry')} 
+            className={`w-full rounded-xl border border-brand-200 dark:border-brand-800 bg-transparent px-3 py-2 text-sm outline-none transition-all placeholder:text-brand-400 dark:placeholder:text-brand-600 focus:border-accent-500 focus:ring-1 focus:ring-accent-500 dark:focus:border-accent-400 dark:focus:ring-accent-400 ${errors.industry ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : ''}`}
+          >
+            <option value="CONSTRUCTION">Construction</option>
+            <option value="AGRICULTURE">Agriculture</option>
+            <option value="ENERGY">Energy</option>
+            <option value="MAINTENANCE">Maintenance</option>
+            <option value="GOVERNMENT">Government</option>
+            <option value="INSPECTION">Inspection</option>
+          </select>
+        </FormField>
+      </div>
 
       <div className="grid grid-cols-2 gap-4">
         <FormField label="City" error={errors.location?.city?.message}>
@@ -92,7 +111,7 @@ export function ProjectForm({ initialData, onSubmit, isLoading }: ProjectFormPro
 
       <div className="pt-4 flex justify-end gap-3 border-t border-brand-200 dark:border-brand-800">
         <Button type="submit" variant="primary" isLoading={isLoading}>
-          {initialData ? 'Update Project' : 'Create Project'}
+          {initialData ? `Update` : vocabulary.newProject}
         </Button>
       </div>
     </form>

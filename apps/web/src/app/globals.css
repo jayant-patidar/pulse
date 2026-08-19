@@ -11,7 +11,63 @@
 
 @layer base {
   :root {
+    /* Base construction / default theme (Steel Blue) */
+    --brand-50: 240 244 248;
+    --brand-100: 217 226 236;
+    --brand-200: 188 204 220;
+    --brand-300: 159 179 200;
+    --brand-400: 130 154 177;
+    --brand-500: 98 125 152;
+    --brand-600: 72 101 129;
+    --brand-700: 51 78 104;
+    --brand-800: 36 59 83;
+    --brand-900: 16 42 67;
+    --brand-950: 10 25 47;
+
+    /* Base construction / default accent (Safety Orange) */
+    --accent-50: 255 243 234;
+    --accent-100: 255 228 200;
+    --accent-200: 255 203 155;
+    --accent-300: 255 171 101;
+    --accent-400: 255 130 42;
+    --accent-500: 252 99 0;
+    --accent-600: 237 76 0;
+    --accent-700: 197 54 0;
+    --accent-800: 156 42 0;
+    --accent-900: 126 36 4;
+    --accent-950: 68 15 0;
+
     --accent-glow: 252 99 0; /* Safety Orange for glow effects */
+  }
+
+  [data-industry="AGRICULTURE"] {
+    /* Agriculture Theme (Forest Green) */
+    --brand-50: 242 247 244;
+    --brand-100: 228 239 233;
+    --brand-200: 200 220 208;
+    --brand-300: 164 196 177;
+    --brand-400: 126 168 144;
+    --brand-500: 95 138 113;
+    --brand-600: 73 110 89;
+    --brand-700: 59 88 72;
+    --brand-800: 48 71 58;
+    --brand-900: 40 58 48;
+    --brand-950: 21 33 26;
+
+    /* Agriculture Accent (Amber/Gold) */
+    --accent-50: 255 251 235;
+    --accent-100: 254 243 199;
+    --accent-200: 253 230 138;
+    --accent-300: 252 211 77;
+    --accent-400: 251 191 36;
+    --accent-500: 245 158 11;
+    --accent-600: 217 119 6;
+    --accent-700: 180 83 9;
+    --accent-800: 146 64 14;
+    --accent-900: 120 53 15;
+    --accent-950: 69 26 3;
+
+    --accent-glow: 245 158 11; /* Amber glow */
   }
 
   body {

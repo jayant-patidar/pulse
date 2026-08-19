@@ -9,33 +9,33 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        // Industry-relevant "Steel Blue" brand palette
+        // Dynamic Brand Palette (maps to CSS variables in globals.css)
         brand: {
-          50: '#f0f4f8',
-          100: '#d9e2ec',
-          200: '#bcccdc',
-          300: '#9fb3c8',
-          400: '#829ab1',
-          500: '#627d98', 
-          600: '#486581',
-          700: '#334e68', // Primary Deep Steel
-          800: '#243b53',
-          900: '#102a43',
-          950: '#0a192f',
+          50: 'rgb(var(--brand-50) / <alpha-value>)',
+          100: 'rgb(var(--brand-100) / <alpha-value>)',
+          200: 'rgb(var(--brand-200) / <alpha-value>)',
+          300: 'rgb(var(--brand-300) / <alpha-value>)',
+          400: 'rgb(var(--brand-400) / <alpha-value>)',
+          500: 'rgb(var(--brand-500) / <alpha-value>)', 
+          600: 'rgb(var(--brand-600) / <alpha-value>)',
+          700: 'rgb(var(--brand-700) / <alpha-value>)',
+          800: 'rgb(var(--brand-800) / <alpha-value>)',
+          900: 'rgb(var(--brand-900) / <alpha-value>)',
+          950: 'rgb(var(--brand-950) / <alpha-value>)',
         },
-        // "Safety Orange" accent palette for actions/alerts
+        // Dynamic Accent Palette
         accent: {
-          50: '#fff3ea',
-          100: '#ffe4c8',
-          200: '#ffcb9b',
-          300: '#ffab65',
-          400: '#ff822a',
-          500: '#fc6300', // Primary High-Vis Orange
-          600: '#ed4c00',
-          700: '#c53600',
-          800: '#9c2a00',
-          900: '#7e2404',
-          950: '#440f00',
+          50: 'rgb(var(--accent-50) / <alpha-value>)',
+          100: 'rgb(var(--accent-100) / <alpha-value>)',
+          200: 'rgb(var(--accent-200) / <alpha-value>)',
+          300: 'rgb(var(--accent-300) / <alpha-value>)',
+          400: 'rgb(var(--accent-400) / <alpha-value>)',
+          500: 'rgb(var(--accent-500) / <alpha-value>)',
+          600: 'rgb(var(--accent-600) / <alpha-value>)',
+          700: 'rgb(var(--accent-700) / <alpha-value>)',
+          800: 'rgb(var(--accent-800) / <alpha-value>)',
+          900: 'rgb(var(--accent-900) / <alpha-value>)',
+          950: 'rgb(var(--accent-950) / <alpha-value>)',
         },
       },
       fontFamily: {

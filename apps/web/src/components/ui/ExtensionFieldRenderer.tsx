@@ -106,6 +106,126 @@ export function ExtensionFieldRenderer({ industry, entityType, extensions, onCha
     }
   }
 
+  // Phase 3: Agriculture specific UI
+  if (industry === 'AGRICULTURE') {
+    if (entityType === 'project') {
+      return (
+        <div className="space-y-4 p-4 border border-brand-200 dark:border-brand-800 rounded-xl bg-brand-50/30 dark:bg-brand-900/10">
+          <h4 className="text-sm font-semibold text-brand-900 dark:text-brand-100 flex items-center gap-2">
+            🌱 Agriculture Facility Details
+          </h4>
+          <div className="grid grid-cols-2 gap-4">
+            <FormField label="Facility Type">
+              <select 
+                className="w-full h-10 px-3 text-sm rounded-md border border-gray-200 dark:border-slate-800 bg-white dark:bg-slate-950"
+                value={extensions?.facilityType || ''} 
+                onChange={(e) => updateField('facilityType', e.target.value)}
+              >
+                <option value="">Select...</option>
+                <option value="FARM">Farm</option>
+                <option value="PROCESSING_PLANT">Processing Plant</option>
+                <option value="STORAGE">Storage / Silo</option>
+                <option value="GREENHOUSE">Greenhouse</option>
+              </select>
+            </FormField>
+            <FormField label="Total Acres">
+              <Input 
+                type="number" 
+                value={extensions?.totalAcres || ''} 
+                onChange={(e) => updateField('totalAcres', Number(e.target.value))} 
+                placeholder="e.g. 1500"
+              />
+            </FormField>
+            <FormField label="Primary Crop Focus">
+              <Input 
+                value={extensions?.primaryCropFocus || ''} 
+                onChange={(e) => updateField('primaryCropFocus', e.target.value)} 
+                placeholder="e.g. Corn, Soybeans"
+              />
+            </FormField>
+          </div>
+        </div>
+      );
+    }
+    
+    if (entityType === 'task') {
+      return (
+        <div className="space-y-4 p-4 border border-brand-200 dark:border-brand-800 rounded-xl bg-brand-50/30 dark:bg-brand-900/10">
+          <h4 className="text-sm font-semibold text-brand-900 dark:text-brand-100 flex items-center gap-2">
+            🌱 Agriculture Task Extensions
+          </h4>
+          <div className="grid grid-cols-2 gap-4">
+            <FormField label="Task Type">
+              <select 
+                className="w-full h-10 px-3 text-sm rounded-md border border-gray-200 dark:border-slate-800 bg-white dark:bg-slate-950"
+                value={extensions?.taskType || ''} 
+                onChange={(e) => updateField('taskType', e.target.value)}
+              >
+                <option value="">Select...</option>
+                <option value="PLANTING">Planting</option>
+                <option value="SPRAYING">Spraying</option>
+                <option value="HARVESTING">Harvesting</option>
+                <option value="SCOUTING">Scouting</option>
+                <option value="MAINTENANCE">Maintenance</option>
+              </select>
+            </FormField>
+            <FormField label="Crop Cycle ID (Optional)">
+              <Input 
+                value={extensions?.cropCycleId || ''} 
+                onChange={(e) => updateField('cropCycleId', e.target.value)} 
+                placeholder="e.g. CC-2026-WHEAT"
+              />
+            </FormField>
+            <FormField label="Field Name">
+              <Input 
+                value={extensions?.fieldName || ''} 
+                onChange={(e) => updateField('fieldName', e.target.value)} 
+                placeholder="e.g. North-East 40"
+              />
+            </FormField>
+          </div>
+        </div>
+      );
+    }
+
+    if (entityType === 'daily_report') {
+      return (
+        <div className="space-y-4 p-4 border border-brand-200 dark:border-brand-800 rounded-xl bg-brand-50/30 dark:bg-brand-900/10">
+          <h4 className="text-sm font-semibold text-brand-900 dark:text-brand-100 flex items-center gap-2">
+            🌱 Field Conditions (Agriculture)
+          </h4>
+          <div className="grid grid-cols-2 gap-4">
+            <FormField label="Soil Moisture">
+              <select 
+                className="w-full h-10 px-3 text-sm rounded-md border border-gray-200 dark:border-slate-800 bg-white dark:bg-slate-950"
+                value={extensions?.soilMoisture || ''} 
+                onChange={(e) => updateField('soilMoisture', e.target.value)}
+              >
+                <option value="">Select...</option>
+                <option value="DRY">Dry</option>
+                <option value="OPTIMAL">Optimal</option>
+                <option value="SATURATED">Saturated</option>
+              </select>
+            </FormField>
+            <FormField label="Pest Pressure">
+              <select 
+                className="w-full h-10 px-3 text-sm rounded-md border border-gray-200 dark:border-slate-800 bg-white dark:bg-slate-950"
+                value={extensions?.pestPressure || ''} 
+                onChange={(e) => updateField('pestPressure', e.target.value)}
+              >
+                <option value="">Select...</option>
+                <option value="NONE">None</option>
+                <option value="LOW">Low</option>
+                <option value="MODERATE">Moderate</option>
+                <option value="HIGH">High</option>
+              </select>
+            </FormField>
+          </div>
+        </div>
+      );
+    }
+  }
+
   // Fallback to JSON editor for unknown industries
   const handleJsonChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     try {

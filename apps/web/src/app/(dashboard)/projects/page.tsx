@@ -14,11 +14,13 @@ import { StatsGrid } from '@/components/ui/StatsGrid';
 import { SlideOver } from '@/components/ui/SlideOver';
 import { ProjectForm } from './_components/ProjectForm';
 import { CreateProjectInput } from '@pulse/validators';
+import { useVocabulary } from '@/core/lib/vocabulary';
 
 export default function ProjectsPage() {
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const vocabulary = useVocabulary();
   
   const queryClient = useQueryClient();
 
@@ -54,7 +56,7 @@ export default function ProjectsPage() {
 
   const columns = [
     {
-      header: 'Project Name',
+      header: vocabulary.projectName,
       accessorKey: 'name',
       cell: (item: any) => (
         <div>
@@ -124,7 +126,7 @@ export default function ProjectsPage() {
 
   const handleExport = () => {
     if (!filteredProjects || filteredProjects.length === 0) return;
-    const headers = ['Project Name', 'City', 'State', 'Status', 'Budget', 'Created At'];
+    const headers = [vocabulary.projectName, 'City', 'State', 'Status', 'Budget', 'Created At'];
     const csvData = filteredProjects.map((p: any) => [
       `"${p.name}"`,
       `"${p.location?.city || ''}"`,
@@ -147,23 +149,23 @@ export default function ProjectsPage() {
   return (
     <div className="max-w-7xl mx-auto space-y-8">
       <PageHeader
-        title="Projects"
-        description="Manage all construction projects and their lifecycles."
+        title={vocabulary.projectListTitle}
+        description={vocabulary.projectListDescription}
         icon={<HardHat className="w-6 h-6" />}
         actions={
           <Button variant="primary" onClick={() => setIsDrawerOpen(true)}>
             <Plus className="w-4 h-4 mr-2" />
-            New Project
+            {vocabulary.newProject}
           </Button>
         }
       />
 
       <StatsGrid
         stats={[
-          { label: "Active Projects", value: activeProjects.toString() },
+          { label: `Active ${vocabulary.projectListTitle}`, value: activeProjects.toString() },
           { label: "Total Budget", value: formattedBudget },
-          { label: "Projects On Hold", value: projectsOnHold.toString() },
-          { label: "Total Projects", value: totalProjects.toString() },
+          { label: `${vocabulary.projectListTitle} On Hold`, value: projectsOnHold.toString() },
+          { label: `Total ${vocabulary.projectListTitle}`, value: totalProjects.toString() },
         ]}
       />
 
@@ -186,8 +188,8 @@ export default function ProjectsPage() {
       <SlideOver
         isOpen={isDrawerOpen}
         onClose={() => setIsDrawerOpen(false)}
-        title="Create New Project"
-        description="Enter the basic details to initialize a new project workspace."
+        title={vocabulary.addProjectTitle}
+        description={vocabulary.addProjectDesc}
       >
         <ProjectForm
           onSubmit={(data) => createMutation.mutate(data)}

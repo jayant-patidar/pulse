@@ -44,6 +44,10 @@ export function TaskForm({ initialData, onSubmit, isLoading }: TaskFormProps) {
 
   const { formState: { errors } } = form;
 
+  const selectedProjectId = form.watch('projectId');
+  const activeProject = projects.find((p: any) => p._id === selectedProjectId);
+  const activeIndustry = activeProject?.industry || 'CONSTRUCTION';
+
   const handleSubmit = form.handleSubmit((data) => {
     onSubmit(data);
   });
@@ -110,7 +114,7 @@ export function TaskForm({ initialData, onSubmit, isLoading }: TaskFormProps) {
       </div>
 
       <ExtensionFieldRenderer
-        industry="CONSTRUCTION" // Placeholder for Phase 2
+        industry={activeIndustry}
         entityType="task"
         extensions={form.watch('extensions') || {}}
         onChange={(ext) => form.setValue('extensions', ext, { shouldDirty: true })}

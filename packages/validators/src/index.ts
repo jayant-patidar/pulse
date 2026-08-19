@@ -15,3 +15,11 @@ export * from './branches/construction/safety.validators';
 export * from './branches/construction/change-order.validators';
 export * from './branches/construction/purchase-order.validators';
 export * from './branches/construction/coi.validators';
+
+// ---- BRANCH VALIDATORS (Agriculture) ----
+export * from './branches/agriculture/extensions.validators';
+export * from './branches/agriculture/crop-cycle.validators';
+export * from './branches/agriculture/scouting.validators';
+export * from './branches/agriculture/harvest.validators';
+export * from './branches/agriculture/input-inventory.validators';
+export * from './branches/agriculture/compliance.validators';
