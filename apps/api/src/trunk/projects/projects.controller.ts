@@ -24,10 +24,10 @@ export class ProjectsController {
   @UsePipes(new ZodValidationPipe(createProjectSchema))
   @HttpCode(HttpStatus.CREATED)
   async create(
-    @CurrentUser() user: JwtPayload,
+    @CurrentUser() user: JwtPayload & { ind: string },
     @Body() dto: Record<string, unknown>,
   ) {
-    return this.projectsService.create(user.org, user.sub, user.role === 'OWNER' ? 'CONSTRUCTION' : 'CONSTRUCTION', dto);
+    return this.projectsService.create(user.org, user.sub, user.ind, dto);
   }
 
   @Get()

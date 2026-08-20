@@ -36,7 +36,11 @@ export function ScoutingForm({ projectId, initialData, onSubmit, isLoading }: Sc
   const { formState: { errors } } = form;
 
   const handleSubmit = form.handleSubmit((data) => {
-    onSubmit(data);
+    const cleanedData = { ...data };
+    if (!cleanedData.cropCycleId) {
+      delete cleanedData.cropCycleId;
+    }
+    onSubmit(cleanedData);
   });
 
   return (

@@ -83,6 +83,7 @@ export default function EquipmentPage() {
   const rawEquipment = Array.isArray(eqData) ? eqData : (eqData?.data || []);
 
   const equipment = rawEquipment.map((eq: any) => ({
+    _id: eq._id,
     id: eq.assetTag || eq._id.substring(eq._id.length - 6).toUpperCase(),
     name: eq.name,
     status: eq.status === 'IN_USE' ? 'ACTIVE' : eq.status === 'AVAILABLE' ? 'IDLE' : 'MAINTENANCE',
@@ -209,14 +210,14 @@ export default function EquipmentPage() {
                       <div className="flex items-center justify-end gap-2" onClick={e => e.stopPropagation()}>
                         <select 
                           value={eq.status === 'ACTIVE' ? 'IN_USE' : eq.status === 'IDLE' ? 'AVAILABLE' : 'UNDER_MAINTENANCE'} 
-                          onChange={(e) => updateMutation.mutate({ id: eq.id, status: e.target.value })}
+                          onChange={(e) => updateMutation.mutate({ id: eq._id, status: e.target.value })}
                           className="text-xs font-medium px-2 py-1 rounded-md border border-brand-200 dark:border-brand-800 bg-brand-50 dark:bg-brand-900 text-brand-700 dark:text-brand-300 focus:ring-brand-500 cursor-pointer"
                         >
                           <option value="AVAILABLE">Idle</option>
                           <option value="IN_USE">Active</option>
                           <option value="UNDER_MAINTENANCE">Maintenance</option>
                         </select>
-                        <Button variant="ghost" size="sm" onClick={() => deleteMutation.mutate(rawEquipment.find((r:any) => r.assetTag === eq.id || r._id.endsWith(eq.id.toLowerCase()))?._id || eq.id)} className="text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 px-2 h-7">
+                        <Button variant="ghost" size="sm" onClick={() => deleteMutation.mutate(eq._id)} className="text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 px-2 h-7">
                           <Trash2 className="w-4 h-4" />
                         </Button>
                       </div>

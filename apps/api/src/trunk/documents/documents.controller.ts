@@ -23,8 +23,8 @@ export class DocumentsController {
   @RequirePermissions('document:upload')
   @UsePipes(new ZodValidationPipe(createDocumentSchema))
   @HttpCode(HttpStatus.CREATED)
-  async create(@CurrentUser() user: JwtPayload, @Body() dto: Record<string, unknown>) {
-    return this.documentsService.create(user.org, user.sub, 'CONSTRUCTION', dto);
+  async create(@CurrentUser() user: JwtPayload & { ind: string }, @Body() dto: Record<string, unknown>) {
+    return this.documentsService.create(user.org, user.sub, user.ind, dto);
   }
 
   @Get()

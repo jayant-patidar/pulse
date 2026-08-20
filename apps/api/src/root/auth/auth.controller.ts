@@ -126,6 +126,7 @@ export class AuthController {
       name: `${user.firstName} ${user.lastName}`.trim(),
       role: jwtUser.role,
       orgId: jwtUser.org,
+      industry: jwtUser.ind,
       avatarUrl: user.avatarUrl,
       isVerified: user.isVerified,
       twoFactorEnabled: user.twoFactorEnabled,

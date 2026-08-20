@@ -11,9 +11,14 @@ export class ScoutingController {
   constructor(private readonly scoutingService: ScoutingService) {}
 
   @Post()
-  create(@Body() createDto: CreateScoutingReportDto, @Req() req: Request) {
-    const orgId = (req.user as any).org;
-    return this.scoutingService.create(createDto, orgId);
+  async create(@Body() createDto: CreateScoutingReportDto, @Req() req: Request) {
+    try {
+      const orgId = (req.user as any).org;
+      return await this.scoutingService.create(createDto, orgId);
+    } catch (err: any) {
+      require('fs').writeFileSync('scouting_error.log', err.stack || err.message);
+      throw err;
+    }
   }
 
   @Get()

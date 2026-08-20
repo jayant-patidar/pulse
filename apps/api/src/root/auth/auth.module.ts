@@ -7,6 +7,7 @@ import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { UsersModule } from '../users/users.module';
 import { MembershipsModule } from '../memberships/memberships.module';
+import { OrganizationsModule } from '../organizations/organizations.module';
 import { JwtStrategy } from './strategies/jwt.strategy';
 
 @Module({
@@ -22,6 +23,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
     }),
     UsersModule,
     MembershipsModule,
+    OrganizationsModule,
   ],
   controllers: [AuthController],
   providers: [AuthService, JwtStrategy],

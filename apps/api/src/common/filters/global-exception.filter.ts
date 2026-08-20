@@ -48,6 +48,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
     // Log 5xx errors at error level, 4xx at warn level
     if (status >= 500) {
       this.logger.error(`${request.method} ${request.url} → ${status}`, (exception as Error)?.stack);
+      require('fs').appendFileSync('error.log', `${new Date().toISOString()} - ${(exception as Error)?.stack}\n`);
     } else {
       this.logger.warn(`${request.method} ${request.url} → ${status}: ${message}`);
     }

@@ -23,8 +23,8 @@ export class EquipmentController {
   @RequirePermissions('equipment:manage')
   @UsePipes(new ZodValidationPipe(createEquipmentSchema))
   @HttpCode(HttpStatus.CREATED)
-  async create(@CurrentUser() user: JwtPayload, @Body() dto: Record<string, unknown>) {
-    return this.equipmentService.create(user.org, user.sub, 'CONSTRUCTION', dto);
+  async create(@CurrentUser() user: JwtPayload & { ind: string }, @Body() dto: Record<string, unknown>) {
+    return this.equipmentService.create(user.org, user.sub, user.ind, dto);
   }
 
   @Get()

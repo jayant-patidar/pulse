@@ -23,8 +23,8 @@ export class TasksController {
   @RequirePermissions('task:create')
   @UsePipes(new ZodValidationPipe(createTaskSchema))
   @HttpCode(HttpStatus.CREATED)
-  async create(@CurrentUser() user: JwtPayload, @Body() dto: Record<string, unknown>) {
-    return this.tasksService.create(user.org, user.sub, 'CONSTRUCTION', dto);
+  async create(@CurrentUser() user: JwtPayload & { ind: string }, @Body() dto: Record<string, unknown>) {
+    return this.tasksService.create(user.org, user.sub, user.ind, dto);
   }
 
   @Get()

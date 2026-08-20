@@ -5,6 +5,7 @@ import { EventEmitter2 } from '@nestjs/event-emitter';
 import * as argon2 from 'argon2';
 import { UsersService } from '../users/users.service';
 import { MembershipsService } from '../memberships/memberships.service';
+import { OrganizationsService } from '../organizations/organizations.service';
 import type { AuthTokens } from '@pulse/types';
 
 @Injectable()
@@ -14,6 +15,7 @@ export class AuthService {
   constructor(
     private readonly usersService: UsersService,
     private readonly membershipsService: MembershipsService,
+    private readonly organizationsService: OrganizationsService,
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
     private readonly eventEmitter: EventEmitter2,
@@ -59,6 +61,7 @@ export class AuthService {
       user._id.toString(),
       membership.organizationId.toString(),
       'OWNER',
+      dto.industry,
     );
   }
 
@@ -92,6 +95,11 @@ export class AuthService {
     if (memberships.length === 1) {
       const m = memberships[0]!;
 
+      const org = await this.organizationsService.findById(m.organizationId.toString());
+      if (!org) {
+        throw new UnauthorizedException('Organization not found');
+      }
+
       this.eventEmitter.emit('audit.log', {
         organizationId: m.organizationId.toString(),
         userId: user._id.toString(),
@@ -100,7 +108,7 @@ export class AuthService {
         resourceId: user._id.toString(),
       });
 
-      return this.generateTokens(user._id.toString(), m.organizationId.toString(), m.role);
+      return this.generateTokens(user._id.toString(), m.organizationId.toString(), m.role, org.industry);
     }
 
     return {
@@ -112,8 +120,8 @@ export class AuthService {
     };
   }
 
-  private generateTokens(userId: string, orgId: string, role: string): AuthTokens {
-    const payload = { sub: userId, org: orgId, role };
+  private generateTokens(userId: string, orgId: string, role: string, industry: string): AuthTokens {
+    const payload = { sub: userId, org: orgId, role, ind: industry };
 
     const accessToken = this.jwtService.sign(payload);
     const refreshToken = this.jwtService.sign(payload, {
@@ -129,8 +137,12 @@ export class AuthService {
       const payload = this.jwtService.verify(refreshToken, {
         secret: this.configService.get<string>('JWT_REFRESH_SECRET', 'dev-refresh-secret'),
       });
-      // Important: don't pass the exp/iat from the old token payload, just extract what we need
-      return this.generateTokens(payload.sub, payload.org, payload.role);
+      let industry = payload.ind;
+      if (!industry) {
+        const org = await this.organizationsService.findById(payload.org);
+        industry = org?.industry || 'CONSTRUCTION';
+      }
+      return this.generateTokens(payload.sub, payload.org, payload.role, industry);
     } catch (err) {
       throw new UnauthorizedException('Invalid or expired refresh token');
     }
