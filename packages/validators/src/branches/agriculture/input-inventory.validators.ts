@@ -7,7 +7,7 @@ export const createInputInventorySchema = z.object({
   quantityOnHand: z.number().nonnegative(),
   unit: z.string().min(1, 'Unit is required'),
   costPerUnitCents: z.number().nonnegative().optional(),
-  expirationDate: z.string().refine((val) => !isNaN(Date.parse(val)), { message: 'Valid date is required' }).optional(),
+  expirationDate: z.string().refine((val) => !isNaN(Date.parse(val)), { message: 'Valid date is required' }).transform((val) => new Date(val).toISOString()).optional(),
   epaRegistrationNumber: z.string().optional(),
   status: z.enum(['IN_STOCK', 'LOW_STOCK', 'OUT_OF_STOCK']).optional(),
   notes: z.string().optional(),

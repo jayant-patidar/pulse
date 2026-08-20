@@ -27,12 +27,6 @@ export function PurchaseOrderForm({ initialData, onSubmit, isLoading }: Purchase
   });
   const projects = projectsData|| [];
 
-  const { data: usersData } = useQuery({
-    queryKey: ['users'],
-    queryFn: () => api.get<any>('/root/memberships'),
-  });
-  const users = usersData || [];
-
   const form = useForm<CreatePurchaseOrderInput>({
     resolver: zodResolver(createPurchaseOrderSchema),
     defaultValues: {
@@ -44,7 +38,7 @@ export function PurchaseOrderForm({ initialData, onSubmit, isLoading }: Purchase
       deliveryDateExpected: initialData?.deliveryDateExpected ? new Date(initialData.deliveryDateExpected).toISOString().slice(0, 16) : '',
       deliveryLocation: initialData?.deliveryLocation || '',
       paymentTerms: initialData?.paymentTerms || 'Net 30',
-      issuedBy: initialData?.issuedBy || '',
+      lineItems: initialData?.lineItems || [],
     },
   });
 
@@ -146,18 +140,6 @@ export function PurchaseOrderForm({ initialData, onSubmit, isLoading }: Purchase
           placeholder="e.g. Site Entrance B" 
           error={!!errors.deliveryLocation}
         />
-      </FormField>
-
-      <FormField label="Issued By" error={errors.issuedBy?.message} required>
-        <Select 
-          {...form.register('issuedBy')} 
-          error={!!errors.issuedBy}
-        >
-          <option value="" disabled>Select a user</option>
-          {users.map((u: any) => (
-            <option key={u.userId?._id} value={u.userId?._id}>{u.userId?.firstName} {u.userId?.lastName}</option>
-          ))}
-        </Select>
       </FormField>
 
       <div className="pt-4 flex justify-end gap-3 border-t border-brand-200 dark:border-brand-800">

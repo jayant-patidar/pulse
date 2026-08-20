@@ -14,7 +14,7 @@ export const createDocumentSchema = z.object({
   tags: z.array(z.string()).optional().default([]),
   metadata: z.object({
     gpsCoordinates: z.tuple([z.number(), z.number()]).optional(),
-    captureDate: z.string().datetime().optional(),
+    captureDate: z.string().refine((val) => !isNaN(Date.parse(val)), 'Invalid datetime').transform((val) => new Date(val).toISOString()).optional(),
     cameraMake: z.string().max(200).optional(),
   }).optional(),
   extensions: z.record(z.unknown()).optional(),

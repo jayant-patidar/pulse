@@ -10,8 +10,8 @@ import { z } from 'zod';
 export const conProjectExtensionsSchema = z.object({
   phases: z.array(z.object({
     name: z.string().min(1),
-    startDate: z.string().datetime().optional(),
-    endDate: z.string().datetime().optional(),
+    startDate: z.string().refine((val) => !isNaN(Date.parse(val)), 'Invalid datetime').transform((val) => new Date(val).toISOString()).optional(),
+    endDate: z.string().refine((val) => !isNaN(Date.parse(val)), 'Invalid datetime').transform((val) => new Date(val).toISOString()).optional(),
     status: z.string().optional(),
   })).optional(),
   buildingType: z.enum(['COMMERCIAL', 'RESIDENTIAL', 'INDUSTRIAL', 'INFRASTRUCTURE']).optional(),
@@ -45,7 +45,7 @@ export const conTaskExtensionsSchema = z.object({
   rfiNumber: z.string().optional(),
   specSection: z.string().optional(),
   drawingReference: z.string().optional(),
-  responseRequiredBy: z.string().datetime().optional(),
+  responseRequiredBy: z.string().refine((val) => !isNaN(Date.parse(val)), 'Invalid datetime').transform((val) => new Date(val).toISOString()).optional(),
   rfiResponse: z.string().optional(),
   locationOnSite: z.string().optional(),
   tradeResponsible: z.string().optional(),
@@ -61,7 +61,7 @@ export const conEquipmentExtensionsSchema = z.object({
     isRented: z.boolean(),
     vendor: z.string().optional(),
     dailyRateCents: z.number().nonnegative().optional(),
-    rentalEndDate: z.string().datetime().optional(),
+    rentalEndDate: z.string().refine((val) => !isNaN(Date.parse(val)), 'Invalid datetime').transform((val) => new Date(val).toISOString()).optional(),
   }).optional(),
 }).passthrough();
 

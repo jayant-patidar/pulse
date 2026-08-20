@@ -41,10 +41,6 @@ export class CreatePurchaseOrderDto {
   @IsString()
   supplierContact?: string;
 
-  @IsOptional()
-  @IsEnum(PurchaseOrderStatus)
-  status?: PurchaseOrderStatus;
-
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => PurchaseOrderLineItemDto)

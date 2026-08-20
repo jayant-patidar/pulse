@@ -6,7 +6,7 @@ export const createInspectionSchema = z.object({
     'STRUCTURAL', 'ELECTRICAL', 'PLUMBING', 'FIRE_SAFETY',
     'ENVIRONMENTAL', 'ELEVATOR', 'HEALTH', 'CODE_ENFORCEMENT',
   ]),
-  scheduledDate: z.string().refine((val) => !isNaN(Date.parse(val)), { message: 'Valid date is required' }),
+  scheduledDate: z.string().refine((val) => !isNaN(Date.parse(val)), { message: 'Valid date is required' }).transform((val) => new Date(val).toISOString()),
   scope: z.string().optional(),
   inspectorNotes: z.string().optional(),
   checklistId: z.string().optional(),

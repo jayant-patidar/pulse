@@ -25,7 +25,7 @@ const delaySchema = z.object({
 
 export const createDailyReportSchema = z.object({
   projectId: z.string().min(1, 'Project ID is required'),
-  date: z.string().datetime({ message: 'Valid date is required' }),
+  date: z.string().refine((val) => !isNaN(Date.parse(val)), 'Valid date is required').transform((val) => new Date(val).toISOString()),
   weather: weatherSchema,
   totalWorkerCount: z.number().int().nonnegative().optional(),
   totalHoursWorked: z.number().nonnegative().optional(),

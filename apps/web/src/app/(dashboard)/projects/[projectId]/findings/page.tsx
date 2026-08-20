@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/Button';
 import { SlideOver } from '@/components/ui/SlideOver';
 import { DataTable } from '@/components/ui/DataTable';
 import { EmptyState } from '@/components/ui/EmptyState';
-import { Plus, Search, AlertTriangle, Info, AlertCircle, AlertOctagon, CheckCircle2 } from 'lucide-react';
+import { Plus, Search, AlertTriangle, Info, AlertCircle, AlertOctagon, CheckCircle2, Trash2 } from 'lucide-react';
 import { FindingForm } from './_components/FindingForm';
 import { CreateFindingInput } from '@pulse/validators';
 
@@ -36,6 +36,14 @@ export default function FindingsPage({ params }: { params: { projectId: string }
   const updateMutation = useMutation({
     mutationFn: ({ id, data }: { id: string; data: Partial<CreateFindingInput> }) => 
       api.patch(`/branches/inspection/findings/${id}`, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['findings', params.projectId] });
+      setIsSlideOverOpen(false);
+    },
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: (id: string) => api.del(`/branches/inspection/findings/${id}`),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['findings', params.projectId] });
       setIsSlideOverOpen(false);
@@ -106,6 +114,16 @@ export default function FindingsPage({ params }: { params: { projectId: string }
       header: 'Status',
       accessorKey: 'status',
       cell: (item: any) => getStatusBadge(item.status),
+    },
+    {
+      header: '', id: 'actions',
+      cell: (item: any) => (
+        <div className="flex justify-end" onClick={(e) => e.stopPropagation()}>
+          <Button variant="ghost" size="sm" onClick={() => deleteMutation.mutate(item._id)} className="text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 px-2 h-7">
+            <Trash2 className="w-4 h-4" />
+          </Button>
+        </div>
+      ),
     },
   ];
 

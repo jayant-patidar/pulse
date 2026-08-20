@@ -3,7 +3,7 @@ import { z } from 'zod';
 export const createScoutingReportSchema = z.object({
   projectId: z.string().min(1, 'Project ID is required'),
   cropCycleId: z.string().optional(),
-  scoutDate: z.string().refine((val) => !isNaN(Date.parse(val)), { message: 'Valid date is required' }),
+  scoutDate: z.string().refine((val) => !isNaN(Date.parse(val)), { message: 'Valid date is required' }).transform((val) => new Date(val).toISOString()),
   fieldZone: z.string().optional(),
   observationType: z.enum(['PEST', 'DISEASE', 'WEED', 'NUTRIENT_DEFICIENCY', 'WEATHER_DAMAGE']),
   severity: z.enum(['LOW', 'MEDIUM', 'HIGH', 'CRITICAL']),

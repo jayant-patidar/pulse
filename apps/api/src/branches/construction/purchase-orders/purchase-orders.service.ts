@@ -17,7 +17,7 @@ export class PurchaseOrdersService {
       ...createDto,
       organizationId: orgId,
       issuedBy: userId,
-      status: createDto.status || PurchaseOrderStatus.DRAFT,
+      status: PurchaseOrderStatus.DRAFT,
     });
     return createdPo.save();
   }

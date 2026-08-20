@@ -13,6 +13,7 @@ import { useParams } from 'next/navigation';
 import { StatusBadge } from '@/components/ui/StatusBadge';
 import { useVocabulary } from '@/core/lib/vocabulary';
 import { AgricultureDashboard } from './AgricultureDashboard';
+import { InspectionDashboard } from './InspectionDashboard';
 
 export default function ProjectDashboardPage() {
   const { project, isLoading: isProjectLoading } = useProject();
@@ -30,6 +31,10 @@ export default function ProjectDashboardPage() {
 
   if (project?.industry === 'AGRICULTURE') {
     return <AgricultureDashboard project={project} pId={pId as string} />;
+  }
+  
+  if (project?.industry === 'INSPECTION_SERVICES') {
+    return <InspectionDashboard project={project} pId={pId as string} />;
   }
 
   const tasks = tasksData || [];

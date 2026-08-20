@@ -7,8 +7,8 @@ export const createCoiSchema = z.object({
   policyNumber: z.string().min(1, 'Policy Number is required').max(100),
   perOccurrenceLimitCents: z.number().int().nonnegative().optional(),
   aggregateLimitCents: z.number().int().nonnegative().optional(),
-  effectiveDate: z.string().datetime({ message: 'Valid date is required' }),
-  expiryDate: z.string().datetime({ message: 'Valid date is required' }),
+  effectiveDate: z.string().refine((val) => !isNaN(Date.parse(val)), 'Valid date is required').transform((val) => new Date(val).toISOString()),
+  expiryDate: z.string().refine((val) => !isNaN(Date.parse(val)), 'Valid date is required').transform((val) => new Date(val).toISOString()),
 });
 
 export const updateCoiSchema = createCoiSchema.partial().extend({

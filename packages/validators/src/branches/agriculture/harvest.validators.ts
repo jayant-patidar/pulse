@@ -3,7 +3,7 @@ import { z } from 'zod';
 export const createHarvestLogSchema = z.object({
   projectId: z.string().min(1, 'Project ID is required'),
   cropCycleId: z.string().optional(),
-  harvestDate: z.string().refine((val) => !isNaN(Date.parse(val)), { message: 'Valid date is required' }),
+  harvestDate: z.string().refine((val) => !isNaN(Date.parse(val)), { message: 'Valid date is required' }).transform((val) => new Date(val).toISOString()),
   fieldZone: z.string().optional(),
   acresHarvested: z.number().nonnegative(),
   yieldBushelsPerAcre: z.number().nonnegative().optional(),

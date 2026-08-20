@@ -5,8 +5,8 @@ export const createAgrComplianceSchema = z.object({
   complianceType: z.enum(['ORGANIC_CERTIFICATION', 'EPA_REPORT', 'WATER_USE_PERMIT', 'SOIL_CONSERVATION_PLAN', 'CROP_INSURANCE', 'OTHER']),
   issuingAuthority: z.string().min(1, 'Issuing Authority is required'),
   certificationNumber: z.string().optional(),
-  effectiveDate: z.string().refine((val) => !isNaN(Date.parse(val)), { message: 'Valid date is required' }),
-  expiryDate: z.string().refine((val) => !isNaN(Date.parse(val)), { message: 'Valid date is required' }).optional(),
+  effectiveDate: z.string().refine((val) => !isNaN(Date.parse(val)), { message: 'Valid date is required' }).transform((val) => new Date(val).toISOString()),
+  expiryDate: z.string().refine((val) => !isNaN(Date.parse(val)), { message: 'Valid date is required' }).transform((val) => new Date(val).toISOString()).optional(),
   status: z.enum(['ACTIVE', 'EXPIRED', 'PENDING_RENEWAL', 'SUSPENDED']).optional(),
   notes: z.string().optional(),
 });

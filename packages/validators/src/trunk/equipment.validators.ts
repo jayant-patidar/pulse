@@ -7,7 +7,7 @@ import { z } from 'zod';
 const maintenanceScheduleSchema = z.object({
   intervalType: z.enum(['CALENDAR_DAYS', 'ENGINE_HOURS', 'MILEAGE']),
   intervalValue: z.number().positive(),
-  lastMaintenanceDate: z.string().datetime().optional(),
+  lastMaintenanceDate: z.string().refine((val) => !isNaN(Date.parse(val)), 'Invalid datetime').transform((val) => new Date(val).toISOString()).optional(),
   lastMaintenanceMetric: z.number().nonnegative().optional(),
 }).optional();
 
@@ -18,7 +18,7 @@ export const createEquipmentSchema = z.object({
   modelName: z.string().max(100).optional(),
   year: z.number().int().min(1900).max(2100).optional(),
   serialNumber: z.string().max(200).optional(),
-  purchaseDate: z.string().datetime().optional(),
+  purchaseDate: z.string().refine((val) => !isNaN(Date.parse(val)), 'Invalid datetime').transform((val) => new Date(val).toISOString()).optional(),
   purchasePriceCents: z.number().int().nonnegative().optional(),
   hourlyInternalCostCents: z.number().int().nonnegative().optional(),
   maintenanceSchedule: maintenanceScheduleSchema,

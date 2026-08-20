@@ -13,7 +13,7 @@ export const createTaskSchema = z.object({
   teamId: z.string().optional(),
   parentTaskId: z.string().optional(),
   dependencies: z.array(z.string()).optional().default([]),
-  dueDate: z.string().datetime().optional(),
+  dueDate: z.string().refine((val) => !isNaN(Date.parse(val)), 'Invalid datetime').transform((val) => new Date(val).toISOString()).optional(),
   estimatedHours: z.number().nonnegative().optional(),
   tags: z.array(z.string()).optional().default([]),
   extensions: z.record(z.unknown()).optional(),
@@ -21,8 +21,8 @@ export const createTaskSchema = z.object({
 
 export const updateTaskSchema = createTaskSchema.partial().omit({ projectId: true }).extend({
   status: z.enum(['TODO', 'IN_PROGRESS', 'BLOCKED', 'ON_HOLD', 'COMPLETED', 'CANCELLED']).optional(),
-  actualStartDate: z.string().datetime().optional(),
-  actualEndDate: z.string().datetime().optional(),
+  actualStartDate: z.string().refine((val) => !isNaN(Date.parse(val)), 'Invalid datetime').transform((val) => new Date(val).toISOString()).optional(),
+  actualEndDate: z.string().refine((val) => !isNaN(Date.parse(val)), 'Invalid datetime').transform((val) => new Date(val).toISOString()).optional(),
   actualHours: z.number().nonnegative().optional(),
   blockedReason: z.string().max(2000).optional(),
 });

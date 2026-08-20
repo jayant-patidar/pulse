@@ -7,8 +7,8 @@ export const createCertificationSchema = z.object({
     'ELEVATOR_CERT', 'ENVIRONMENTAL_CLEARANCE', 'CODE_COMPLIANCE', 'OTHER'
   ]),
   certificationNumber: z.string().optional(),
-  issuedDate: z.string().refine((val) => !isNaN(Date.parse(val)), { message: 'Valid date is required' }),
-  expiryDate: z.string().refine((val) => !isNaN(Date.parse(val)), { message: 'Valid expiry date is required' }).optional(),
+  issuedDate: z.string().refine((val) => !isNaN(Date.parse(val)), { message: 'Valid date is required' }).transform((val) => new Date(val).toISOString()),
+  expiryDate: z.string().refine((val) => !isNaN(Date.parse(val)), { message: 'Valid expiry date is required' }).transform((val) => new Date(val).toISOString()).optional(),
   issuedBy: z.string().min(1, 'Issuing authority is required'),
   conditions: z.string().optional(),
   documents: z.array(z.string()).optional(),

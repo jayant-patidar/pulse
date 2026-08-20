@@ -6,7 +6,7 @@ export const createCorrectiveActionSchema = z.object({
   projectId: z.string().min(1, 'Site ID is required'),
   assignedTo: z.string().optional(),
   description: z.string().min(1, 'Description of action is required'),
-  deadline: z.string().refine((val) => !isNaN(Date.parse(val)), { message: 'Valid deadline is required' }),
+  deadline: z.string().refine((val) => !isNaN(Date.parse(val)), { message: 'Valid deadline is required' }).transform((val) => new Date(val).toISOString()),
   status: z.enum(['PENDING', 'IN_PROGRESS', 'COMPLETED', 'OVERDUE', 'WAIVED']).optional(),
   resolutionNotes: z.string().optional(),
   verifiedDate: z.string().optional(),

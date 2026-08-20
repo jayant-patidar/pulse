@@ -109,6 +109,26 @@
     color-scheme: dark;
   }
 
+  .dark input[type="date"],
+  .dark input[type="datetime-local"],
+  .dark input[type="time"] {
+    color-scheme: dark !important;
+  }
+
+  /* Make the native calendar icon invisible but stretch it over the custom Lucide icon */
+  input[type="date"]::-webkit-calendar-picker-indicator,
+  input[type="datetime-local"]::-webkit-calendar-picker-indicator,
+  input[type="time"]::-webkit-calendar-picker-indicator {
+    position: absolute;
+    right: 0;
+    width: 2.5rem;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    opacity: 0 !important;
+    cursor: pointer;
+  }
+
   /* Headings use Outfit for a solid, structural feel */
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-outfit), system-ui, sans-serif;

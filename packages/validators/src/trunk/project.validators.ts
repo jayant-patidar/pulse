@@ -10,8 +10,8 @@ import { z } from 'zod';
 export const createProjectSchema = z.object({
   name: z.string().min(1, 'Project name is required').max(200),
   description: z.string().max(5000).optional(),
-  startDate: z.string().datetime().optional(),
-  targetEndDate: z.string().datetime().optional(),
+  startDate: z.string().refine((val) => !isNaN(Date.parse(val)), 'Invalid datetime').transform((val) => new Date(val).toISOString()).optional(),
+  targetEndDate: z.string().refine((val) => !isNaN(Date.parse(val)), 'Invalid datetime').transform((val) => new Date(val).toISOString()).optional(),
   budget: z.number().int().nonnegative().optional(),
   location: z.object({
     address: z.string().optional(),

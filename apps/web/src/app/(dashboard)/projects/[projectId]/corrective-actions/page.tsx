@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/Button';
 import { SlideOver } from '@/components/ui/SlideOver';
 import { DataTable } from '@/components/ui/DataTable';
 import { EmptyState } from '@/components/ui/EmptyState';
-import { Plus, Search, CheckCircle2, Clock, AlertCircle, PlayCircle } from 'lucide-react';
+import { Plus, Search, CheckCircle2, Clock, AlertCircle, PlayCircle, Trash2 } from 'lucide-react';
 import { format, isPast } from 'date-fns';
 import { CorrectiveActionForm } from './_components/CorrectiveActionForm';
 import { CreateCorrectiveActionInput } from '@pulse/validators';
@@ -37,6 +37,14 @@ export default function CorrectiveActionsPage({ params }: { params: { projectId:
   const updateMutation = useMutation({
     mutationFn: ({ id, data }: { id: string; data: Partial<CreateCorrectiveActionInput> }) => 
       api.patch(`/branches/inspection/corrective-actions/${id}`, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['corrective-actions', params.projectId] });
+      setIsSlideOverOpen(false);
+    },
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: (id: string) => api.del(`/branches/inspection/corrective-actions/${id}`),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['corrective-actions', params.projectId] });
       setIsSlideOverOpen(false);
@@ -100,6 +108,16 @@ export default function CorrectiveActionsPage({ params }: { params: { projectId:
       header: 'Status',
       accessorKey: 'status',
       cell: (item: any) => getStatusBadge(item.status, item.deadline),
+    },
+    {
+      header: '', id: 'actions',
+      cell: (item: any) => (
+        <div className="flex justify-end" onClick={(e) => e.stopPropagation()}>
+          <Button variant="ghost" size="sm" onClick={() => deleteMutation.mutate(item._id)} className="text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 px-2 h-7">
+            <Trash2 className="w-4 h-4" />
+          </Button>
+        </div>
+      ),
     },
   ];
 

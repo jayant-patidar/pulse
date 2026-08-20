@@ -329,6 +329,62 @@ export function ExtensionFieldRenderer({ industry, entityType, extensions, onCha
         </div>
       );
     }
+
+    if (entityType === 'equipment') {
+      return (
+        <div className="space-y-4 p-4 border border-brand-200 dark:border-brand-800 rounded-xl bg-brand-50/30 dark:bg-brand-900/10">
+          <h4 className="text-sm font-semibold text-brand-900 dark:text-brand-100 flex items-center gap-2">
+            🔍 Inspection Kit Details
+          </h4>
+          <div className="grid grid-cols-2 gap-4">
+            <FormField label="Instrument Type">
+              <select 
+                className="w-full h-10 px-3 text-sm rounded-md border border-gray-200 dark:border-slate-800 bg-white dark:bg-slate-950"
+                value={extensions?.instrumentType || ''} 
+                onChange={(e) => updateField('instrumentType', e.target.value)}
+              >
+                <option value="">Select...</option>
+                <option value="THERMAL_CAMERA">Thermal Camera</option>
+                <option value="MOISTURE_METER">Moisture Meter</option>
+                <option value="GAS_DETECTOR">Gas Detector</option>
+                <option value="LOAD_TESTER">Load Tester</option>
+                <option value="MANOMETER">Manometer</option>
+                <option value="MULTIMETER">Multimeter</option>
+                <option value="OTHER">Other</option>
+              </select>
+            </FormField>
+            <FormField label="Accuracy Rating">
+              <Input 
+                value={extensions?.accuracyRating || ''} 
+                onChange={(e) => updateField('accuracyRating', e.target.value)} 
+                placeholder="e.g. ±1% Full Scale"
+              />
+            </FormField>
+            <FormField label="Calibration Date">
+              <Input 
+                type="date"
+                value={extensions?.calibrationDate || ''} 
+                onChange={(e) => updateField('calibrationDate', e.target.value)} 
+              />
+            </FormField>
+            <FormField label="Calibration Due Date">
+              <Input 
+                type="date"
+                value={extensions?.calibrationDueDate || ''} 
+                onChange={(e) => updateField('calibrationDueDate', e.target.value)} 
+              />
+            </FormField>
+            <FormField label="Certification / Serial #" className="col-span-2">
+              <Input 
+                value={extensions?.certificationNumber || ''} 
+                onChange={(e) => updateField('certificationNumber', e.target.value)} 
+                placeholder="e.g. CERT-2026-999"
+              />
+            </FormField>
+          </div>
+        </div>
+      );
+    }
   }
 
   // Fallback to JSON editor for unknown industries
