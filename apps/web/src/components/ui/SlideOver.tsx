@@ -1,7 +1,6 @@
-import * as React from "react"
-import { createPortal } from "react-dom"
-import { cn } from "@/core/lib/utils"
-import { X } from "lucide-react"
+import { X } from "lucide-react";
+import * as React from "react";
+import { createPortal } from "react-dom";
 
 export interface SlideOverProps {
   isOpen: boolean;

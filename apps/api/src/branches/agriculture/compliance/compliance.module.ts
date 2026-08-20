@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
+import { AgrComplianceRecord, AgrComplianceSchema } from './agr-compliance.schema';
 import { ComplianceController } from './compliance.controller';
 import { ComplianceService } from './compliance.service';
-import { AgrComplianceRecord, AgrComplianceSchema } from './agr-compliance.schema';
 
 @Module({
   imports: [

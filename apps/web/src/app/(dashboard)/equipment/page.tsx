@@ -1,19 +1,19 @@
 'use client';
 
-import { useState } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { api } from '@/core/lib/api-client';
 import { Button } from '@/components/ui/Button';
 import { DataTable } from '@/components/ui/DataTable';
 import { FilterBar } from '@/components/ui/FilterBar';
 import { StatusBadge } from '@/components/ui/StatusBadge';
+import { api } from '@/core/lib/api-client';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Plus, Tractor, Trash2 } from 'lucide-react';
+import { useState } from 'react';
 
 import { PageHeader } from '@/components/ui/PageHeader';
-import { StatsGrid } from '@/components/ui/StatsGrid';
 import { SlideOver } from '@/components/ui/SlideOver';
-import { EquipmentForm } from './_components/EquipmentForm';
+import { StatsGrid } from '@/components/ui/StatsGrid';
 import { CreateEquipmentInput } from '@pulse/validators';
+import { EquipmentForm } from './_components/EquipmentForm';
 
 export default function EquipmentPage() {
   const [search, setSearch] = useState('');

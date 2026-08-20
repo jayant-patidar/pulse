@@ -1,14 +1,14 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { api } from '@/core/lib/api-client';
-import { useAuth } from '@/core/providers/auth-provider';
-import { PageHeader } from '@/components/ui/PageHeader';
-import { Building2, Save } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { FormField } from '@/components/ui/FormField';
 import { Input } from '@/components/ui/Input';
+import { PageHeader } from '@/components/ui/PageHeader';
+import { api } from '@/core/lib/api-client';
+import { useAuth } from '@/core/providers/auth-provider';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { Building2, Save } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
 export default function CompanySettingsPage() {

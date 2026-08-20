@@ -1,5 +1,5 @@
-import React from 'react';
 import { ProjectProvider } from '@/core/providers/project-provider';
+import React from 'react';
 
 export default function ProjectLayout({
   children,

@@ -1,17 +1,17 @@
 'use client';
 
-import { useProject } from '@/core/providers/project-provider';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { PageHeader } from '@/components/ui/PageHeader';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
-import { LayoutDashboard, Clock, ClipboardList, HardHat, AlertTriangle, ShieldAlert, CheckCircle2, ChevronRight, CloudSun, MapPin, Search } from 'lucide-react';
 import { PulseLoader } from '@/components/ui/PulseLoader';
 import { StatsGrid } from '@/components/ui/StatsGrid';
-import { useQuery } from '@tanstack/react-query';
+import { StatusBadge } from '@/components/ui/StatusBadge';
 import { api } from '@/core/lib/api-client';
+import { useVocabulary } from '@/core/lib/vocabulary';
+import { useProject } from '@/core/providers/project-provider';
+import { useQuery } from '@tanstack/react-query';
+import { ChevronRight, ClipboardList, Clock, CloudSun, HardHat, LayoutDashboard, Search, ShieldAlert } from 'lucide-react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
-import { StatusBadge } from '@/components/ui/StatusBadge';
-import { useVocabulary } from '@/core/lib/vocabulary';
 import { AgricultureDashboard } from './AgricultureDashboard';
 import { InspectionDashboard } from './InspectionDashboard';
 

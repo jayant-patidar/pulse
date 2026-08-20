@@ -1,5 +1,5 @@
-import { IsString, IsEnum, IsOptional, IsNumber, IsArray, ValidateNested, IsBoolean } from 'class-validator';
 import { Type } from 'class-transformer';
+import { IsArray, IsBoolean, IsEnum, IsNumber, IsOptional, IsString, ValidateNested } from 'class-validator';
 import { ChangeOrderReason, ChangeOrderStatus } from '../change-order.schema';
 
 class ChangeOrderLineItemDto {

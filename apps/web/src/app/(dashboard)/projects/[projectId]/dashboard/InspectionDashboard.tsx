@@ -1,13 +1,13 @@
 'use client';
 
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { PageHeader } from '@/components/ui/PageHeader';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
-import { Search, AlertTriangle, ShieldCheck, ListTodo, ChevronRight, Calendar, AlertOctagon } from 'lucide-react';
 import { StatCard } from '@/components/ui/StatCard';
-import Link from 'next/link';
-import { useQuery } from '@tanstack/react-query';
 import { api } from '@/core/lib/api-client';
+import { useQuery } from '@tanstack/react-query';
 import { format, isPast, isToday } from 'date-fns';
+import { AlertOctagon, AlertTriangle, Calendar, ChevronRight, ListTodo, Search, ShieldCheck } from 'lucide-react';
+import Link from 'next/link';
 
 export function InspectionDashboard({ project, pId }: { project: any, pId: string }) {
   // Fetch real data for this project

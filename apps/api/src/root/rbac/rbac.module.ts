@@ -1,6 +1,6 @@
-import { Module, Global, forwardRef } from '@nestjs/common';
-import { RbacService } from './rbac.service';
+import { Global, Module, forwardRef } from '@nestjs/common';
 import { MembershipsModule } from '../memberships/memberships.module';
+import { RbacService } from './rbac.service';
 
 @Global()
 @Module({

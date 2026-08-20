@@ -1,33 +1,32 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { usePathname } from 'next/navigation';
-import Link from 'next/link';
-import { useQuery } from '@tanstack/react-query';
+import { CommandPalette } from '@/components/ui/CommandPalette';
 import { api } from '@/core/lib/api-client';
 import { AuthProvider, useAuth } from '@/core/providers/auth-provider';
 import { QueryProvider } from '@/core/providers/query-provider';
 import { SocketProvider } from '@/core/providers/socket-provider';
-import { CommandPalette } from '@/components/ui/CommandPalette';
+import { useQuery } from '@tanstack/react-query';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
-import { ThemeProvider } from '@/core/providers/theme-provider';
-import { ThemeToggle } from '@/components/ui/ThemeToggle';
 import { Logo } from '@/components/ui/Logo';
 import { NotificationBell } from '@/components/ui/NotificationBell';
+import { ThemeToggle } from '@/components/ui/ThemeToggle';
 import { useVocabulary } from '@/core/lib/vocabulary';
+import { ThemeProvider } from '@/core/providers/theme-provider';
 import {
-  LayoutDashboard,
-  HardHat,
-  ListTodo,
   ClipboardList,
+  Clock,
   FileText,
-  Tractor,
-  Settings,
+  HardHat,
+  LayoutDashboard,
+  ListTodo,
   LogOut,
-  Search,
   Menu,
-  Bell,
-  Clock
+  Search,
+  Settings,
+  Tractor
 } from 'lucide-react';
 
 const BASE_NAV_ITEMS = [

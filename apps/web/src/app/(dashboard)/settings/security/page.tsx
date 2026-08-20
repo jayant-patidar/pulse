@@ -1,16 +1,16 @@
 'use client';
 
-import { useMutation } from '@tanstack/react-query';
-import { api } from '@/core/lib/api-client';
 import { Button } from '@/components/ui/Button';
-import { Input } from '@/components/ui/Input';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { FormField } from '@/components/ui/FormField';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
-import { useForm } from 'react-hook-form';
+import { Input } from '@/components/ui/Input';
+import { api } from '@/core/lib/api-client';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { ShieldCheck, KeyRound } from 'lucide-react';
+import { useMutation } from '@tanstack/react-query';
+import { KeyRound, ShieldCheck } from 'lucide-react';
+import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
+import { z } from 'zod';
 
 const securitySchema = z.object({
   currentPassword: z.string().min(1, 'Current password is required'),

@@ -2,17 +2,25 @@
 // Daily Reports Controller — TRUNK Layer
 // ============================================================
 import {
-  Controller, Get, Post, Patch, Delete,
-  Body, Param, Query, UseGuards, UsePipes,
-  HttpCode, HttpStatus, Res,
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpCode, HttpStatus,
+  Param,
+  Patch,
+  Post,
+  Query,
+  Res,
+  UseGuards, UsePipes,
 } from '@nestjs/common';
+import type { JwtPayload } from '@pulse/types';
+import { createDailyReportSchema, updateDailyReportSchema } from '@pulse/validators';
 import { Response } from 'express';
-import { JwtAuthGuard, RbacGuard } from '../../common/guards';
 import { CurrentUser, RequirePermissions } from '../../common/decorators';
+import { JwtAuthGuard, RbacGuard } from '../../common/guards';
 import { ZodValidationPipe } from '../../common/pipes';
 import { DailyReportsService } from './daily-reports.service';
-import { createDailyReportSchema, updateDailyReportSchema } from '@pulse/validators';
-import type { JwtPayload } from '@pulse/types';
 
 @Controller('trunk/daily-reports')
 @UseGuards(JwtAuthGuard, RbacGuard)

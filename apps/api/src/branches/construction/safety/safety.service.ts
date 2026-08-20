@@ -1,10 +1,10 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { SafetyIncidentRecord, IncidentStatus } from './safety.schema';
 import { CreateSafetyIncidentDto } from './dto/create-safety-incident.dto';
 import { UpdateSafetyIncidentDto } from './dto/update-safety-incident.dto';
-import { EventEmitter2 } from '@nestjs/event-emitter';
+import { IncidentStatus, SafetyIncidentRecord } from './safety.schema';
 
 const SAFETY_STATUS_TRANSITIONS: Record<IncidentStatus, IncidentStatus[]> = {
   [IncidentStatus.OPEN]: [IncidentStatus.UNDER_INVESTIGATION, IncidentStatus.CLOSED],

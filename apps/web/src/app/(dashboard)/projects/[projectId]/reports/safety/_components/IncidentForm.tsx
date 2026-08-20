@@ -1,18 +1,17 @@
 'use client';
 
-import { useForm, Controller } from 'react-hook-form';
-import DatePicker from 'react-datepicker';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { createSafetyIncidentSchema, CreateSafetyIncidentInput } from '@pulse/validators';
 import { Button } from '@/components/ui/Button';
-import { Input } from '@/components/ui/Input';
-import { Textarea } from '@/components/ui/Textarea';
-import { Select } from '@/components/ui/Select';
-import { ExtensionFieldRenderer } from '@/components/ui/ExtensionFieldRenderer';
-import { useParams } from 'next/navigation';
 import { FormField } from '@/components/ui/FormField';
-import { useQuery } from '@tanstack/react-query';
+import { Input } from '@/components/ui/Input';
+import { Select } from '@/components/ui/Select';
+import { Textarea } from '@/components/ui/Textarea';
 import { api } from '@/core/lib/api-client';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { CreateSafetyIncidentInput, createSafetyIncidentSchema } from '@pulse/validators';
+import { useQuery } from '@tanstack/react-query';
+import { useParams } from 'next/navigation';
+import DatePicker from 'react-datepicker';
+import { Controller, useForm } from 'react-hook-form';
 
 interface IncidentFormProps {
   initialData?: any;

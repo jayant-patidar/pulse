@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
+import { InputInventoryRecord, InputInventorySchema } from './input-inventory.schema';
 import { InputsController } from './inputs.controller';
 import { InputsService } from './inputs.service';
-import { InputInventoryRecord, InputInventorySchema } from './input-inventory.schema';
 
 @Module({
   imports: [

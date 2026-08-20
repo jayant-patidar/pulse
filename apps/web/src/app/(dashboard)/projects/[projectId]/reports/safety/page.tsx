@@ -1,17 +1,16 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { api } from '@/core/lib/api-client';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
-import { HardHat, Plus, AlertTriangle, CheckCircle2, Clock, Trash2 } from 'lucide-react';
-import type { SafetyIncident } from '@pulse/types';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/Card';
 import { SlideOver } from '@/components/ui/SlideOver';
-import { IncidentForm } from './_components/IncidentForm';
+import { api } from '@/core/lib/api-client';
+import type { SafetyIncident } from '@pulse/types';
 import { CreateSafetyIncidentInput } from '@pulse/validators';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { AlertTriangle, ArrowLeft, CheckCircle2, Clock, Plus, Trash2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft } from 'lucide-react';
+import { useState } from 'react';
+import { IncidentForm } from './_components/IncidentForm';
 
 export default function SafetyIncidentsPage({ params }: { params: { projectId: string } }) {
   const router = useRouter();

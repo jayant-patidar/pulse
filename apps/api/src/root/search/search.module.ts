@@ -3,10 +3,10 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { SearchController } from './search.controller';
 import { SearchService } from './search.service';
 
-import { ProjectDocument, ProjectSchema } from '../../trunk/projects/projects.schema';
-import { TaskDocument, TaskSchema } from '../../trunk/tasks/tasks.schema';
 import { DocumentRecord, DocumentSchema } from '../../trunk/documents/documents.schema';
 import { EquipmentDocument, EquipmentSchema } from '../../trunk/equipment/equipment.schema';
+import { ProjectDocument, ProjectSchema } from '../../trunk/projects/projects.schema';
+import { TaskDocument, TaskSchema } from '../../trunk/tasks/tasks.schema';
 
 @Module({
   imports: [

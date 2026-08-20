@@ -1,15 +1,14 @@
 'use client';
 
-import { useState } from 'react';
-import { useProject } from '@/core/providers/project-provider';
 import { PageHeader } from '@/components/ui/PageHeader';
-import { Users, Mail, Phone, MessageSquare, ShieldCheck, Plus } from 'lucide-react';
-import Link from 'next/link';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { api } from '@/core/lib/api-client';
 import { SlideOver } from '@/components/ui/SlideOver';
-import { InviteMemberForm } from './_components/InviteMemberForm';
+import { api } from '@/core/lib/api-client';
+import { useProject } from '@/core/providers/project-provider';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { Mail, MessageSquare, Phone, Plus, ShieldCheck, Users } from 'lucide-react';
+import { useState } from 'react';
 import { toast } from 'sonner';
+import { InviteMemberForm } from './_components/InviteMemberForm';
 
 export default function DirectoryPage() {
   const { project, isLoading } = useProject();

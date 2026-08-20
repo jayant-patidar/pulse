@@ -1,12 +1,12 @@
-import { Injectable, NotFoundException, ConflictException, BadRequestException } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model, Types } from 'mongoose';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { MembershipDocument } from './memberships.schema';
+import { InjectModel } from '@nestjs/mongoose';
+import * as argon2 from 'argon2';
+import { randomBytes } from 'crypto';
+import { Model, Types } from 'mongoose';
 import { OrganizationsService } from '../organizations/organizations.service';
 import { UsersService } from '../users/users.service';
-import { randomBytes } from 'crypto';
-import * as argon2 from 'argon2';
+import { MembershipDocument } from './memberships.schema';
 
 @Injectable()
 export class MembershipsService {

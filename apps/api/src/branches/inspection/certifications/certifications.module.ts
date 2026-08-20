@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
+import { CertificationRecord, CertificationSchema } from './certification.schema';
 import { CertificationsController } from './certifications.controller';
 import { CertificationsService } from './certifications.service';
-import { CertificationRecord, CertificationSchema } from './certification.schema';
 
 @Module({
   imports: [

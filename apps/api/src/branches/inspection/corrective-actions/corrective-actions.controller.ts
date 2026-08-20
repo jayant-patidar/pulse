@@ -1,10 +1,10 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
+import type { JwtPayload } from '@pulse/types';
+import { CurrentUser } from '../../../common/decorators';
+import { JwtAuthGuard } from '../../../root/auth/guards/jwt-auth.guard';
 import { CorrectiveActionsService } from './corrective-actions.service';
 import { CreateCorrectiveActionDto } from './dto/create-corrective-action.dto';
 import { UpdateCorrectiveActionDto } from './dto/update-corrective-action.dto';
-import { JwtAuthGuard } from '../../../root/auth/guards/jwt-auth.guard';
-import { CurrentUser } from '../../../common/decorators';
-import type { JwtPayload } from '@pulse/types';
 
 @UseGuards(JwtAuthGuard)
 @Controller('branches/inspection/corrective-actions')

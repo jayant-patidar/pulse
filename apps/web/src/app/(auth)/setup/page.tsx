@@ -1,10 +1,10 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { api } from '@/core/lib/api-client';
-import { Logo } from '@/components/ui/Logo';
 import { Button } from '@/components/ui/Button';
+import { Logo } from '@/components/ui/Logo';
+import { api } from '@/core/lib/api-client';
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 export default function SetupPage() {
   const router = useRouter();

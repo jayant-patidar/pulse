@@ -1,8 +1,8 @@
-import { Injectable, CanActivate, ExecutionContext, ForbiddenException } from '@nestjs/common';
+import { CanActivate, ExecutionContext, ForbiddenException, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
+import type { JwtPayload } from '@pulse/types';
 import { PERMISSIONS_KEY } from '../../common/decorators';
 import { RbacService } from './rbac.service';
-import type { JwtPayload } from '@pulse/types';
 
 @Injectable()
 export class RbacGuard implements CanActivate {

@@ -5,11 +5,11 @@
 // by the @RequirePermissions() decorator.
 // Usage: @UseGuards(JwtAuthGuard, RbacGuard)
 // ============================================================
-import { Injectable, CanActivate, ExecutionContext, ForbiddenException } from '@nestjs/common';
+import { CanActivate, ExecutionContext, ForbiddenException, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { PERMISSIONS_KEY } from '../decorators';
-import { RbacService } from '../../root/rbac/rbac.service';
 import type { JwtPayload } from '@pulse/types';
+import { RbacService } from '../../root/rbac/rbac.service';
+import { PERMISSIONS_KEY } from '../decorators';
 
 @Injectable()
 export class RbacGuard implements CanActivate {

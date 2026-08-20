@@ -1,18 +1,18 @@
 'use client';
 
-import { useState } from 'react';
-import { PageHeader } from '@/components/ui/PageHeader';
 import { Button } from '@/components/ui/Button';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { DataTable } from '@/components/ui/DataTable';
+import { PageHeader } from '@/components/ui/PageHeader';
 import { SlideOver } from '@/components/ui/SlideOver';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { api } from '@/core/lib/api-client';
-import { ScoutingForm } from './_components/ScoutingForm';
-import { CreateScoutingReportInput, UpdateScoutingReportInput } from '@pulse/validators';
-import { AlertTriangle, Info, MapPin, Plus, Edit, Trash2 } from 'lucide-react';
 import { StatusBadge } from '@/components/ui/StatusBadge';
+import { api } from '@/core/lib/api-client';
+import { CreateScoutingReportInput, UpdateScoutingReportInput } from '@pulse/validators';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { AlertTriangle, Edit, MapPin, Plus, Trash2 } from 'lucide-react';
 import { useParams } from 'next/navigation';
+import { useState } from 'react';
+import { ScoutingForm } from './_components/ScoutingForm';
 
 export default function ScoutingPage() {
   const params = useParams<{ projectId: string }>();

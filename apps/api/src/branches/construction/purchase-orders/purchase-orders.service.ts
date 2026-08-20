@@ -1,9 +1,9 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { PurchaseOrderRecord, PurchaseOrderStatus } from './purchase-order.schema';
 import { CreatePurchaseOrderDto } from './dto/create-purchase-order.dto';
 import { UpdatePurchaseOrderDto } from './dto/update-purchase-order.dto';
+import { PurchaseOrderRecord, PurchaseOrderStatus } from './purchase-order.schema';
 
 @Injectable()
 export class PurchaseOrdersService {

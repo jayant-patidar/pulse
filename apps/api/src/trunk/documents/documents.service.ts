@@ -1,13 +1,13 @@
 // ============================================================
 // Documents Service — TRUNK Layer
 // ============================================================
-import { Injectable, NotFoundException, Logger } from '@nestjs/common';
-import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { EventEmitter2 } from '@nestjs/event-emitter';
-import { DocumentRecord } from './documents.schema';
-import { parsePaginationQuery, buildPaginatedMeta, type PaginationQuery } from '../../common/helpers';
+import { InjectModel } from '@nestjs/mongoose';
 import { randomUUID } from 'crypto';
+import { Model } from 'mongoose';
+import { buildPaginatedMeta, parsePaginationQuery, type PaginationQuery } from '../../common/helpers';
+import { DocumentRecord } from './documents.schema';
 
 @Injectable()
 export class DocumentsService {

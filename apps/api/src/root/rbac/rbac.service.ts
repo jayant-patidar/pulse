@@ -1,11 +1,11 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { MembershipsService } from '../memberships/memberships.service';
 import {
+  CONSTRUCTION_PERMISSIONS,
   ROOT_PERMISSIONS,
   TRUNK_PERMISSIONS,
-  CONSTRUCTION_PERMISSIONS,
   type Permission,
 } from '@pulse/types';
+import { MembershipsService } from '../memberships/memberships.service';
 
 /**
  * Default role → permissions mapping.

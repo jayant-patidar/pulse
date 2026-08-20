@@ -1,6 +1,6 @@
-import { Injectable, BadRequestException } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
+import { ConReportExtensions, conReportExtensionsSchema } from '@pulse/validators';
 import { ExtensionPlugin } from '../../../common/interfaces';
-import { conReportExtensionsSchema, ConReportExtensions } from '@pulse/validators';
 
 @Injectable()
 export class ConReportPlugin implements ExtensionPlugin<ConReportExtensions> {

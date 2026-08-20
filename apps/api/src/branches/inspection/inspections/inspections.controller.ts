@@ -1,10 +1,10 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query, UseGuards } from '@nestjs/common';
-import { InspectionsService } from './inspections.service';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UseGuards } from '@nestjs/common';
+import type { JwtPayload } from '@pulse/types';
+import { CurrentUser } from '../../../common/decorators';
+import { JwtAuthGuard } from '../../../root/auth/guards/jwt-auth.guard';
 import { CreateInspectionDto } from './dto/create-inspection.dto';
 import { UpdateInspectionDto } from './dto/update-inspection.dto';
-import { JwtAuthGuard } from '../../../root/auth/guards/jwt-auth.guard';
-import { CurrentUser } from '../../../common/decorators';
-import type { JwtPayload } from '@pulse/types';
+import { InspectionsService } from './inspections.service';
 
 @UseGuards(JwtAuthGuard)
 @Controller('branches/inspection/inspections')

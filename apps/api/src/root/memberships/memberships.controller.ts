@@ -5,21 +5,21 @@
 // Protected by JwtAuthGuard + RbacGuard.
 // ============================================================
 import {
-  Controller,
-  Post,
-  Get,
-  Patch,
-  Delete,
   Body,
-  Param,
-  UseGuards,
+  Controller,
+  Delete,
+  Get,
   HttpCode,
   HttpStatus,
+  Param,
+  Patch,
+  Post,
+  UseGuards,
 } from '@nestjs/common';
-import { JwtAuthGuard, RbacGuard } from '../../common/guards';
-import { CurrentUser, RequirePermissions } from '../../common/decorators';
-import { MembershipsService } from './memberships.service';
 import type { JwtPayload } from '@pulse/types';
+import { CurrentUser, RequirePermissions } from '../../common/decorators';
+import { JwtAuthGuard, RbacGuard } from '../../common/guards';
+import { MembershipsService } from './memberships.service';
 
 @Controller('root/memberships')
 @UseGuards(JwtAuthGuard, RbacGuard)

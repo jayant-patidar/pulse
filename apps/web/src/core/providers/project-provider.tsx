@@ -1,8 +1,8 @@
 'use client';
 
-import React, { createContext, useContext } from 'react';
-import { useQuery } from '@tanstack/react-query';
 import { api } from '@/core/lib/api-client';
+import { useQuery } from '@tanstack/react-query';
+import React, { createContext, useContext } from 'react';
 
 interface ProjectContextType {
   project: any | null;

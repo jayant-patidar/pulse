@@ -1,26 +1,26 @@
 import { Module, OnApplicationBootstrap } from '@nestjs/common';
-import { ProjectExtensionRegistry } from '../../trunk/projects/projects.registry';
-import { TaskExtensionRegistry } from '../../trunk/tasks/tasks.registry';
 import { ReportExtensionRegistry } from '../../trunk/daily-reports/daily-reports.registry';
 import { EquipmentExtensionRegistry } from '../../trunk/equipment/equipment.registry';
+import { ProjectExtensionRegistry } from '../../trunk/projects/projects.registry';
+import { TaskExtensionRegistry } from '../../trunk/tasks/tasks.registry';
 
 // Inspection Sub-Modules
-import { InspectionsModule } from './inspections/inspections.module';
-import { FindingsModule } from './findings/findings.module';
 import { CertificationsModule } from './certifications/certifications.module';
 import { CorrectiveActionsModule } from './corrective-actions/corrective-actions.module';
+import { FindingsModule } from './findings/findings.module';
+import { InspectionsModule } from './inspections/inspections.module';
 
 // Inspection Extension Plugins
-import { InsProjectPlugin } from './extensions/ins-project.plugin';
-import { InsTaskPlugin } from './extensions/ins-task.plugin';
-import { InsReportPlugin } from './extensions/ins-report.plugin';
 import { InsEquipmentPlugin } from './extensions/ins-equipment.plugin';
+import { InsProjectPlugin } from './extensions/ins-project.plugin';
+import { InsReportPlugin } from './extensions/ins-report.plugin';
+import { InsTaskPlugin } from './extensions/ins-task.plugin';
 
 // Trunk Modules to access Registries
-import { ProjectsModule } from '../../trunk/projects/projects.module';
-import { TasksModule } from '../../trunk/tasks/tasks.module';
 import { DailyReportsModule } from '../../trunk/daily-reports/daily-reports.module';
 import { EquipmentModule } from '../../trunk/equipment/equipment.module';
+import { ProjectsModule } from '../../trunk/projects/projects.module';
+import { TasksModule } from '../../trunk/tasks/tasks.module';
 
 @Module({
   imports: [

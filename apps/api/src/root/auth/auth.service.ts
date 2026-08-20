@@ -1,12 +1,12 @@
-import { Injectable, UnauthorizedException, ConflictException, Logger } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
+import { ConflictException, Injectable, Logger, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { EventEmitter2 } from '@nestjs/event-emitter';
+import { JwtService } from '@nestjs/jwt';
+import type { AuthTokens } from '@pulse/types';
 import * as argon2 from 'argon2';
-import { UsersService } from '../users/users.service';
 import { MembershipsService } from '../memberships/memberships.service';
 import { OrganizationsService } from '../organizations/organizations.service';
-import type { AuthTokens } from '@pulse/types';
+import { UsersService } from '../users/users.service';
 
 @Injectable()
 export class AuthService {

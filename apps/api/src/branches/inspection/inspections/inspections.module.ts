@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
+import { InspectionRecord, InspectionSchema } from './inspection.schema';
 import { InspectionsController } from './inspections.controller';
 import { InspectionsService } from './inspections.service';
-import { InspectionRecord, InspectionSchema } from './inspection.schema';
 
 @Module({
   imports: [

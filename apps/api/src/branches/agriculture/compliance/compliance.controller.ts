@@ -1,9 +1,9 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Req, UseGuards, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query, Req, UseGuards } from '@nestjs/common';
+import { Request } from 'express';
+import { JwtAuthGuard } from '../../../common/guards/jwt-auth.guard';
 import { ComplianceService } from './compliance.service';
 import { CreateComplianceDto } from './dto/create-compliance.dto';
 import { UpdateComplianceDto } from './dto/update-compliance.dto';
-import { Request } from 'express';
-import { JwtAuthGuard } from '../../../common/guards/jwt-auth.guard';
 
 @Controller('branches/agriculture/compliance')
 @UseGuards(JwtAuthGuard)

@@ -5,7 +5,6 @@
 // that get injected into Trunk forms (e.g., Daily Reports, Projects).
 // It acts as the frontend equivalent to the API plugins.
 
-import { z } from 'zod';
 import { FormFieldDefinition } from '@/core/types/forms';
 
 export const constructionProjectFields: FormFieldDefinition[] = [

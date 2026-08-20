@@ -1,12 +1,11 @@
 'use client';
 
-import { useQuery } from '@tanstack/react-query';
-import { api } from '@/core/lib/api-client';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { PageHeader } from '@/components/ui/PageHeader';
 import { StatsGrid } from '@/components/ui/StatsGrid';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
-import { Button } from '@/components/ui/Button';
-import { LayoutDashboard, Plus, ClipboardList, UploadCloud, Tractor, HardHat, ChevronRight } from 'lucide-react';
+import { api } from '@/core/lib/api-client';
+import { useQuery } from '@tanstack/react-query';
+import { ClipboardList, HardHat, LayoutDashboard } from 'lucide-react';
 
 export default function DashboardPage() {
   const { data: projectsData } = useQuery({ queryKey: ['projects', 1], queryFn: () => api.get<any>(`/trunk/projects?page=1&limit=100`) });

@@ -1,7 +1,7 @@
 'use client';
 
 import { PageHeader } from '@/components/ui/PageHeader';
-import { Settings as SettingsIcon, User, Shield, Building2 } from 'lucide-react';
+import { Building2, Settings as SettingsIcon, Shield, User } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 

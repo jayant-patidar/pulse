@@ -1,20 +1,20 @@
 'use client';
 
-import { useState } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { api } from '@/core/lib/api-client';
 import { Button } from '@/components/ui/Button';
 import { DataTable } from '@/components/ui/DataTable';
 import { FilterBar } from '@/components/ui/FilterBar';
 import { StatusBadge } from '@/components/ui/StatusBadge';
-import { Plus, HardHat, Trash2 } from 'lucide-react';
+import { api } from '@/core/lib/api-client';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { HardHat, Plus, Trash2 } from 'lucide-react';
+import { useState } from 'react';
 
 import { PageHeader } from '@/components/ui/PageHeader';
-import { StatsGrid } from '@/components/ui/StatsGrid';
 import { SlideOver } from '@/components/ui/SlideOver';
-import { ProjectForm } from './_components/ProjectForm';
-import { CreateProjectInput } from '@pulse/validators';
+import { StatsGrid } from '@/components/ui/StatsGrid';
 import { useVocabulary } from '@/core/lib/vocabulary';
+import { CreateProjectInput } from '@pulse/validators';
+import { ProjectForm } from './_components/ProjectForm';
 
 export default function ProjectsPage() {
   const [search, setSearch] = useState('');

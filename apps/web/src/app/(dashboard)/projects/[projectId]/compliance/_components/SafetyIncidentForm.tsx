@@ -1,12 +1,11 @@
 'use client';
 
-import { useForm, Controller } from 'react-hook-form';
-import DatePicker from 'react-datepicker';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { createSafetyIncidentSchema, CreateSafetyIncidentInput } from '@pulse/validators';
 import { Button } from '@/components/ui/Button';
-import { Input } from '@/components/ui/Input';
 import { FormField } from '@/components/ui/FormField';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { CreateSafetyIncidentInput, createSafetyIncidentSchema } from '@pulse/validators';
+import DatePicker from 'react-datepicker';
+import { Controller, useForm } from 'react-hook-form';
 
 interface SafetyIncidentFormProps {
   projectId: string;

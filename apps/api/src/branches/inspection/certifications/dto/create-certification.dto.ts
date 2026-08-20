@@ -1,5 +1,5 @@
-import { IsString, IsEnum, IsOptional, IsDateString, IsArray } from 'class-validator';
-import { CertificationType, CertificationStatus } from '../certification.schema';
+import { IsArray, IsDateString, IsEnum, IsOptional, IsString } from 'class-validator';
+import { CertificationStatus, CertificationType } from '../certification.schema';
 
 export class CreateCertificationDto {
   @IsString()

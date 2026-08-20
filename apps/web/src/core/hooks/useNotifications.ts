@@ -1,10 +1,10 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { io, Socket } from 'socket.io-client';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/core/lib/api-client';
 import { useAuth } from '@/core/providers/auth-provider';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useEffect, useState } from 'react';
+import { io, Socket } from 'socket.io-client';
 import { toast } from 'sonner';
 
 export interface Notification {

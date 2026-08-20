@@ -1,10 +1,10 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { InputInventoryRecord, InputStatus } from './input-inventory.schema';
 import { CreateInputDto } from './dto/create-input.dto';
 import { UpdateInputDto } from './dto/update-input.dto';
-import { EventEmitter2 } from '@nestjs/event-emitter';
+import { InputInventoryRecord, InputStatus } from './input-inventory.schema';
 
 @Injectable()
 export class InputsService {

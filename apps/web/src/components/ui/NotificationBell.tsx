@@ -1,9 +1,9 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
-import { Bell, CheckCircle2, AlertTriangle, ShieldAlert, Info, Check } from 'lucide-react';
-import { useNotifications, Notification } from '@/core/hooks/useNotifications';
+import { useNotifications } from '@/core/hooks/useNotifications';
+import { AlertTriangle, Bell, Check, CheckCircle2, Info, ShieldAlert } from 'lucide-react';
 import Link from 'next/link';
+import { useEffect, useRef, useState } from 'react';
 
 export function NotificationBell() {
   const { notifications, unreadCount, markAsRead, markAllAsRead } = useNotifications();

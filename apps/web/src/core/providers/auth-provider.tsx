@@ -1,9 +1,9 @@
 'use client';
 
-import { createContext, useContext, useCallback, useEffect, useState, type ReactNode } from 'react';
-import { useRouter } from 'next/navigation';
-import { api } from '../lib/api-client';
 import type { AuthTokens } from '@pulse/types';
+import { useRouter } from 'next/navigation';
+import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from 'react';
+import { api } from '../lib/api-client';
 
 interface AuthUser {
   userId: string;

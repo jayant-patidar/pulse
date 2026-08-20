@@ -1,5 +1,5 @@
-import { IsString, IsEnum, IsOptional, IsDateString } from 'class-validator';
-import { InspectionType, InspectionResult, InspectionStatus } from '../inspection.schema';
+import { IsDateString, IsEnum, IsOptional, IsString } from 'class-validator';
+import { InspectionResult, InspectionStatus, InspectionType } from '../inspection.schema';
 
 export class CreateInspectionDto {
   @IsString()

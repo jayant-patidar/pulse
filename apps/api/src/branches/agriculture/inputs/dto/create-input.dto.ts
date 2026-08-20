@@ -1,5 +1,5 @@
-import { IsString, IsEnum, IsNumber, IsOptional, IsDateString } from 'class-validator';
-import { InputType, InputStatus } from '../input-inventory.schema';
+import { IsDateString, IsEnum, IsNumber, IsOptional, IsString } from 'class-validator';
+import { InputStatus, InputType } from '../input-inventory.schema';
 
 export class CreateInputDto {
   @IsEnum(InputType)

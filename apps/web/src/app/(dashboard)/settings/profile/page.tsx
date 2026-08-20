@@ -1,19 +1,19 @@
 'use client';
 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { api } from '@/core/lib/api-client';
 import { Button } from '@/components/ui/Button';
-import { Input } from '@/components/ui/Input';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { FormField } from '@/components/ui/FormField';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import { User, Save, Upload } from 'lucide-react';
-import { toast } from 'sonner';
+import { Input } from '@/components/ui/Input';
 import { PulseLoader } from '@/components/ui/PulseLoader';
-import { useEffect } from 'react';
+import { api } from '@/core/lib/api-client';
 import { useAuth } from '@/core/providers/auth-provider';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { Save, Upload, User } from 'lucide-react';
+import { useEffect } from 'react';
+import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
+import { z } from 'zod';
 
 const profileSchema = z.object({
   firstName: z.string().min(2, 'First name must be at least 2 characters'),

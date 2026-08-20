@@ -1,5 +1,5 @@
-import { Controller, Get, Param, UseGuards, Patch, Req, Body } from '@nestjs/common';
-import { JwtAuthGuard, RbacGuard } from '../../common/guards';
+import { Body, Controller, Get, Param, Patch, Req, UseGuards } from '@nestjs/common';
+import { JwtAuthGuard } from '../../common/guards';
 import { OrganizationsService } from './organizations.service';
 
 @Controller('root/organizations')

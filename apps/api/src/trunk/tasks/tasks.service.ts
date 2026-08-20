@@ -1,13 +1,13 @@
 // ============================================================
 // Tasks Service — TRUNK Layer
 // ============================================================
-import { Injectable, NotFoundException, BadRequestException, Logger } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
-import { EventEmitter2 } from '@nestjs/event-emitter';
-import { TaskDocument } from './tasks.schema';
-import { parsePaginationQuery, buildPaginatedMeta, type PaginationQuery } from '../../common/helpers';
+import { buildPaginatedMeta, parsePaginationQuery, type PaginationQuery } from '../../common/helpers';
 import { TaskExtensionRegistry } from './tasks.registry';
+import { TaskDocument } from './tasks.schema';
 
 // Valid status transitions (state machine)
 const STATUS_TRANSITIONS: Record<string, string[]> = {

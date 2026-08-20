@@ -1,18 +1,18 @@
 'use client';
 
-import { useState } from 'react';
-import { useProject } from '@/core/providers/project-provider';
 import { PageHeader } from '@/components/ui/PageHeader';
-import { HardHat, ShieldAlert, FileWarning, CheckCircle2, AlertTriangle, ChevronRight, Activity, Check, Trash2 } from 'lucide-react';
+import { SlideOver } from '@/components/ui/SlideOver';
+import { api } from '@/core/lib/api-client';
+import { useProject } from '@/core/providers/project-provider';
+import { CreateCoiInput, CreateSafetyIncidentInput } from '@pulse/validators';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { Activity, AlertTriangle, Check, CheckCircle2, ChevronRight, FileWarning, ShieldAlert, Trash2 } from 'lucide-react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { api } from '@/core/lib/api-client';
-import { SlideOver } from '@/components/ui/SlideOver';
+import { useState } from 'react';
+import { toast } from 'sonner';
 import { CoiForm } from './_components/CoiForm';
 import { SafetyIncidentForm } from './_components/SafetyIncidentForm';
-import { CreateCoiInput, CreateSafetyIncidentInput } from '@pulse/validators';
-import { toast } from 'sonner';
 
 export default function CompliancePage() {
   const { project, isLoading } = useProject();

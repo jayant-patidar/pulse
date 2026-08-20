@@ -1,10 +1,10 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { ChangeOrderRecord, ChangeOrderStatus } from './change-order.schema';
 import { CreateChangeOrderDto } from './dto/create-change-order.dto';
 import { UpdateChangeOrderDto } from './dto/update-change-order.dto';
-import { EventEmitter2 } from '@nestjs/event-emitter';
 
 const CO_STATUS_TRANSITIONS: Record<ChangeOrderStatus, ChangeOrderStatus[]> = {
   [ChangeOrderStatus.DRAFT]: [ChangeOrderStatus.SUBMITTED],

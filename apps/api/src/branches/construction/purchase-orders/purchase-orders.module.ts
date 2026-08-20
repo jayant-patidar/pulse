@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
+import { PurchaseOrderRecord, PurchaseOrderSchema } from './purchase-order.schema';
 import { PurchaseOrdersController } from './purchase-orders.controller';
 import { PurchaseOrdersService } from './purchase-orders.service';
-import { PurchaseOrderRecord, PurchaseOrderSchema } from './purchase-order.schema';
 
 @Module({
   imports: [

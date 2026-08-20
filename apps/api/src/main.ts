@@ -1,15 +1,15 @@
 // ============================================================
 // Pulse API — Application Entry Point
 // ============================================================
-import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
-import helmet from 'helmet';
-import cookieParser from 'cookie-parser';
-import { ResponseEnvelopeInterceptor } from './common/interceptors';
-import { GlobalExceptionFilter } from './common/filters/global-exception.filter';
-import { RedisIoAdapter } from './root/realtime/redis.adapter';
 import { ConfigService } from '@nestjs/config';
+import { NestFactory } from '@nestjs/core';
+import cookieParser from 'cookie-parser';
+import helmet from 'helmet';
+import { AppModule } from './app.module';
+import { GlobalExceptionFilter } from './common/filters/global-exception.filter';
+import { ResponseEnvelopeInterceptor } from './common/interceptors';
+import { RedisIoAdapter } from './root/realtime/redis.adapter';
 
 async function bootstrap(): Promise<void> {
   const app = await NestFactory.create(AppModule);

@@ -1,10 +1,10 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { Cron, CronExpression } from '@nestjs/schedule';
 import { InjectModel } from '@nestjs/mongoose';
+import { Cron, CronExpression } from '@nestjs/schedule';
 import { Model } from 'mongoose';
 import { TaskDocument } from '../../trunk/tasks/tasks.schema';
-import { NotificationsService } from '../notifications/notifications.service';
 import { NotificationType } from '../notifications/notifications.schema';
+import { NotificationsService } from '../notifications/notifications.service';
 
 @Injectable()
 export class RemindersService {

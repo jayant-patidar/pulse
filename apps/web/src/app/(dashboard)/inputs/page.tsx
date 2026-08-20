@@ -1,17 +1,17 @@
 'use client';
 
-import { useState } from 'react';
-import { PageHeader } from '@/components/ui/PageHeader';
 import { Button } from '@/components/ui/Button';
 import { DataTable } from '@/components/ui/DataTable';
+import { PageHeader } from '@/components/ui/PageHeader';
 import { SlideOver } from '@/components/ui/SlideOver';
 import { StatsGrid } from '@/components/ui/StatsGrid';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { api } from '@/core/lib/api-client';
-import { InventoryForm } from './_components/InventoryForm';
-import { CreateInputInventoryInput, UpdateInputInventoryInput } from '@pulse/validators';
-import { Plus, Package, AlertTriangle, DollarSign, Edit, Trash2, Sprout, TestTubes, Fuel, Droplet } from 'lucide-react';
 import { StatusBadge } from '@/components/ui/StatusBadge';
+import { api } from '@/core/lib/api-client';
+import { CreateInputInventoryInput, UpdateInputInventoryInput } from '@pulse/validators';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { AlertTriangle, DollarSign, Droplet, Edit, Fuel, Package, Plus, Sprout, TestTubes, Trash2 } from 'lucide-react';
+import { useState } from 'react';
+import { InventoryForm } from './_components/InventoryForm';
 
 export default function InputsPage() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);

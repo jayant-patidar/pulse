@@ -1,12 +1,12 @@
 'use client';
 
-import { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { api } from '@/core/lib/api-client';
 import { Button } from '@/components/ui/Button';
-import { Tractor, Plus, Link as LinkIcon } from 'lucide-react';
-import { EquipmentForm } from '../../../../equipment/_components/EquipmentForm';
+import { api } from '@/core/lib/api-client';
 import { CreateEquipmentInput } from '@pulse/validators';
+import { useQuery } from '@tanstack/react-query';
+import { Link as LinkIcon, Plus } from 'lucide-react';
+import { useState } from 'react';
+import { EquipmentForm } from '../../../../equipment/_components/EquipmentForm';
 
 interface AssignAssetFormProps {
   projectId: string;

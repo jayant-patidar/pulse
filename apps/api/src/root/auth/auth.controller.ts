@@ -1,9 +1,9 @@
-import { Controller, Post, Body, HttpCode, HttpStatus, Res, Get, Req, UseGuards, UnauthorizedException } from '@nestjs/common';
-import { Response, Request } from 'express';
-import { AuthService } from './auth.service';
-import { UsersService } from '../users/users.service';
-import { JwtAuthGuard } from '../../common/guards';
+import { Body, Controller, Get, HttpCode, HttpStatus, Post, Req, Res, UnauthorizedException, UseGuards } from '@nestjs/common';
 import { IsEmail, IsString, MinLength } from 'class-validator';
+import { Request, Response } from 'express';
+import { JwtAuthGuard } from '../../common/guards';
+import { UsersService } from '../users/users.service';
+import { AuthService } from './auth.service';
 
 export class RegisterDto {
   @IsEmail()

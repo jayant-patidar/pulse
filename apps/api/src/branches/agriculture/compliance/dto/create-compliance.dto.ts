@@ -1,5 +1,5 @@
-import { IsString, IsEnum, IsOptional, IsDateString } from 'class-validator';
-import { ComplianceType, ComplianceStatus } from '../agr-compliance.schema';
+import { IsDateString, IsEnum, IsOptional, IsString } from 'class-validator';
+import { ComplianceStatus, ComplianceType } from '../agr-compliance.schema';
 
 export class CreateComplianceDto {
   @IsString()

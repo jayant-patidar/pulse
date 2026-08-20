@@ -1,7 +1,7 @@
-import { PageHeader } from '@/components/ui/PageHeader';
 import { Button } from '@/components/ui/Button';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
-import { FileCheck, Beaker, ShieldCheck } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
+import { PageHeader } from '@/components/ui/PageHeader';
+import { Beaker, ShieldCheck } from 'lucide-react';
 
 export default function CompliancePage() {
   const certifications = [

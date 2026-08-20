@@ -1,16 +1,16 @@
 'use client';
 
-import { useForm, Controller } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { createCorrectiveActionSchema, CreateCorrectiveActionInput } from '@pulse/validators';
 import { Button } from '@/components/ui/Button';
+import { FormField } from '@/components/ui/FormField';
 import { Input } from '@/components/ui/Input';
 import { Select } from '@/components/ui/Select';
-import { FormField } from '@/components/ui/FormField';
 import { Textarea } from '@/components/ui/Textarea';
-import DatePicker from 'react-datepicker';
-import { useQuery } from '@tanstack/react-query';
 import { api } from '@/core/lib/api-client';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { CreateCorrectiveActionInput, createCorrectiveActionSchema } from '@pulse/validators';
+import { useQuery } from '@tanstack/react-query';
+import DatePicker from 'react-datepicker';
+import { Controller, useForm } from 'react-hook-form';
 
 interface CorrectiveActionFormProps {
   projectId: string;

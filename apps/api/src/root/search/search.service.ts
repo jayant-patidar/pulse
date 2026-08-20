@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { ProjectDocument } from '../../trunk/projects/projects.schema';
-import { TaskDocument } from '../../trunk/tasks/tasks.schema';
 import { DocumentRecord } from '../../trunk/documents/documents.schema';
 import { EquipmentDocument } from '../../trunk/equipment/equipment.schema';
+import { ProjectDocument } from '../../trunk/projects/projects.schema';
+import { TaskDocument } from '../../trunk/tasks/tasks.schema';
 
 @Injectable()
 export class SearchService {

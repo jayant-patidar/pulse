@@ -1,9 +1,9 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Req, UseGuards } from '@nestjs/common';
-import { SafetyService } from './safety.service';
-import { CreateSafetyIncidentDto } from './dto/create-safety-incident.dto';
-import { UpdateSafetyIncidentDto } from './dto/update-safety-incident.dto';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Req, UseGuards } from '@nestjs/common';
 import { Request } from 'express';
 import { JwtAuthGuard } from '../../../common/guards/jwt-auth.guard';
+import { CreateSafetyIncidentDto } from './dto/create-safety-incident.dto';
+import { UpdateSafetyIncidentDto } from './dto/update-safety-incident.dto';
+import { SafetyService } from './safety.service';
 
 @Controller('construction/safety')
 @UseGuards(JwtAuthGuard)

@@ -1,7 +1,7 @@
 import { Controller, Get, Query, Req, UseGuards } from '@nestjs/common';
-import { SearchService } from './search.service';
-import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { Request } from 'express';
+import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
+import { SearchService } from './search.service';
 
 @Controller('search')
 @UseGuards(JwtAuthGuard)

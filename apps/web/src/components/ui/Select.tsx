@@ -1,5 +1,5 @@
-import * as React from "react"
-import { cn } from "@/core/lib/utils"
+import { cn } from "@/core/lib/utils";
+import * as React from "react";
 
 export interface SelectProps
   extends React.SelectHTMLAttributes<HTMLSelectElement> {
@@ -32,4 +32,4 @@ const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
 )
 Select.displayName = "Select"
 
-export { Select }
+export { Select };

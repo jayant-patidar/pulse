@@ -1,11 +1,11 @@
 'use client';
 
-import * as React from 'react';
-import { Command } from 'cmdk';
-import { Search, HardHat, FileText, Tractor, CheckSquare, X } from 'lucide-react';
-import { useRouter } from 'next/navigation';
-import { useQuery } from '@tanstack/react-query';
 import { api } from '@/core/lib/api-client';
+import { useQuery } from '@tanstack/react-query';
+import { Command } from 'cmdk';
+import { CheckSquare, FileText, HardHat, Search, Tractor, X } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import * as React from 'react';
 
 export function CommandPalette({
   open,

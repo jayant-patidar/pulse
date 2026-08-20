@@ -1,4 +1,4 @@
-import { IsString, IsEnum, IsOptional, IsNumber, IsArray, IsDateString } from 'class-validator';
+import { IsArray, IsDateString, IsEnum, IsNumber, IsOptional, IsString } from 'class-validator';
 import { CoiPolicyType, CoiStatus } from '../coi.schema';
 
 export class CreateCoiDto {

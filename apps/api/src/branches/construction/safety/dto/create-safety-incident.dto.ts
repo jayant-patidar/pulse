@@ -1,6 +1,6 @@
-import { IsString, IsEnum, IsOptional, IsArray, ValidateNested, IsDateString, IsBoolean, IsNumber } from 'class-validator';
 import { Type } from 'class-transformer';
-import { IncidentType, IncidentSeverity, IncidentStatus } from '../safety.schema';
+import { IsArray, IsBoolean, IsDateString, IsEnum, IsNumber, IsOptional, IsString, ValidateNested } from 'class-validator';
+import { IncidentSeverity, IncidentStatus, IncidentType } from '../safety.schema';
 
 class InvolvedPartyDto {
   @IsOptional()

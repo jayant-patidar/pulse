@@ -1,12 +1,12 @@
 'use client';
 
-import { useProject } from '@/core/providers/project-provider';
 import { PageHeader } from '@/components/ui/PageHeader';
-import { BadgeDollarSign, TrendingUp, AlertCircle, ArrowUpRight, ClipboardList, TrendingDown } from 'lucide-react';
+import { api } from '@/core/lib/api-client';
+import { useProject } from '@/core/providers/project-provider';
+import { useQuery } from '@tanstack/react-query';
+import { AlertCircle, ArrowUpRight, BadgeDollarSign, ClipboardList, TrendingDown, TrendingUp } from 'lucide-react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
-import { useQuery } from '@tanstack/react-query';
-import { api } from '@/core/lib/api-client';
 
 export default function FinancePage() {
   const { project, isLoading } = useProject();

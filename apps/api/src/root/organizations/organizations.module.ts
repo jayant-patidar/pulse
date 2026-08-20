@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
+import { OrganizationsController } from './organizations.controller';
 import { OrganizationDocument, OrganizationSchema } from './organizations.schema';
 import { OrganizationsService } from './organizations.service';
-import { OrganizationsController } from './organizations.controller';
 
 @Module({
   imports: [

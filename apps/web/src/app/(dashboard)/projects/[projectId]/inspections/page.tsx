@@ -1,17 +1,17 @@
 'use client';
 
-import { useState } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { api } from '@/core/lib/api-client';
-import { PageHeader } from '@/components/ui/PageHeader';
 import { Button } from '@/components/ui/Button';
-import { SlideOver } from '@/components/ui/SlideOver';
 import { DataTable } from '@/components/ui/DataTable';
 import { EmptyState } from '@/components/ui/EmptyState';
-import { Plus, Search, Calendar, CheckCircle2, XCircle, AlertCircle, Clock, Trash2 } from 'lucide-react';
-import { format } from 'date-fns';
-import { InspectionForm } from './_components/InspectionForm';
+import { PageHeader } from '@/components/ui/PageHeader';
+import { SlideOver } from '@/components/ui/SlideOver';
+import { api } from '@/core/lib/api-client';
 import { CreateInspectionInput } from '@pulse/validators';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { format } from 'date-fns';
+import { Calendar, CheckCircle2, Clock, Plus, Search, Trash2, XCircle } from 'lucide-react';
+import { useState } from 'react';
+import { InspectionForm } from './_components/InspectionForm';
 
 export default function InspectionsPage({ params }: { params: { projectId: string } }) {
   const [isSlideOverOpen, setIsSlideOverOpen] = useState(false);

@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
+import { ScoutingReportRecord, ScoutingReportSchema } from './scouting-report.schema';
 import { ScoutingController } from './scouting.controller';
 import { ScoutingService } from './scouting.service';
-import { ScoutingReportRecord, ScoutingReportSchema } from './scouting-report.schema';
 
 @Module({
   imports: [

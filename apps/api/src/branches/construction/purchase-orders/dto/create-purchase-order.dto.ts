@@ -1,6 +1,5 @@
-import { IsString, IsEnum, IsOptional, IsNumber, IsArray, ValidateNested, IsDateString } from 'class-validator';
 import { Type } from 'class-transformer';
-import { PurchaseOrderStatus } from '../purchase-order.schema';
+import { IsArray, IsDateString, IsNumber, IsOptional, IsString, ValidateNested } from 'class-validator';
 
 class PurchaseOrderLineItemDto {
   @IsString()

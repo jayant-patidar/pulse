@@ -1,8 +1,8 @@
 'use client';
 
+import { Logo } from '@/components/ui/Logo';
 import { AuthProvider } from '@/core/providers/auth-provider';
 import Image from 'next/image';
-import { Logo } from '@/components/ui/Logo';
 
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
   return (

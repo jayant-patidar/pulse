@@ -1,6 +1,6 @@
+import { cn } from "@/core/lib/utils";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "./Button";
-import { cn } from "@/core/lib/utils";
 
 interface Column<T> {
   header: string;

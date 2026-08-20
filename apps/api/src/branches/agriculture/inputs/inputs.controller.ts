@@ -1,9 +1,9 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Req, UseGuards } from '@nestjs/common';
-import { InputsService } from './inputs.service';
-import { CreateInputDto } from './dto/create-input.dto';
-import { UpdateInputDto } from './dto/update-input.dto';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Req, UseGuards } from '@nestjs/common';
 import { Request } from 'express';
 import { JwtAuthGuard } from '../../../common/guards/jwt-auth.guard';
+import { CreateInputDto } from './dto/create-input.dto';
+import { UpdateInputDto } from './dto/update-input.dto';
+import { InputsService } from './inputs.service';
 
 @Controller('branches/agriculture/inputs')
 @UseGuards(JwtAuthGuard)

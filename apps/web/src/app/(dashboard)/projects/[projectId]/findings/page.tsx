@@ -1,16 +1,16 @@
 'use client';
 
-import { useState } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { api } from '@/core/lib/api-client';
-import { PageHeader } from '@/components/ui/PageHeader';
 import { Button } from '@/components/ui/Button';
-import { SlideOver } from '@/components/ui/SlideOver';
 import { DataTable } from '@/components/ui/DataTable';
 import { EmptyState } from '@/components/ui/EmptyState';
-import { Plus, Search, AlertTriangle, Info, AlertCircle, AlertOctagon, CheckCircle2, Trash2 } from 'lucide-react';
-import { FindingForm } from './_components/FindingForm';
+import { PageHeader } from '@/components/ui/PageHeader';
+import { SlideOver } from '@/components/ui/SlideOver';
+import { api } from '@/core/lib/api-client';
 import { CreateFindingInput } from '@pulse/validators';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { AlertCircle, AlertOctagon, AlertTriangle, CheckCircle2, Info, Plus, Search, Trash2 } from 'lucide-react';
+import { useState } from 'react';
+import { FindingForm } from './_components/FindingForm';
 
 export default function FindingsPage({ params }: { params: { projectId: string } }) {
   const [isSlideOverOpen, setIsSlideOverOpen] = useState(false);

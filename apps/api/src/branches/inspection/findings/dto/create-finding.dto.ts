@@ -1,5 +1,5 @@
-import { IsString, IsEnum, IsOptional, IsBoolean, IsArray } from 'class-validator';
-import { FindingType, FindingSeverity, FindingStatus } from '../finding.schema';
+import { IsArray, IsBoolean, IsEnum, IsOptional, IsString } from 'class-validator';
+import { FindingSeverity, FindingStatus, FindingType } from '../finding.schema';
 
 export class CreateFindingDto {
   @IsString()

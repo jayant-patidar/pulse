@@ -1,13 +1,13 @@
 // ============================================================
 // Equipment Service — TRUNK Layer
 // ============================================================
-import { Injectable, NotFoundException, Logger } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { EventEmitter2 } from '@nestjs/event-emitter';
-import { EquipmentDocument } from './equipment.schema';
-import { parsePaginationQuery, buildPaginatedMeta, type PaginationQuery } from '../../common/helpers';
+import { buildPaginatedMeta, parsePaginationQuery, type PaginationQuery } from '../../common/helpers';
 import { EquipmentExtensionRegistry } from './equipment.registry';
+import { EquipmentDocument } from './equipment.schema';
 
 @Injectable()
 export class EquipmentService {

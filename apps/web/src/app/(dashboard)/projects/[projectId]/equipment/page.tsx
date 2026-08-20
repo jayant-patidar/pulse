@@ -1,19 +1,17 @@
 'use client';
 
-import { useProject } from '@/core/providers/project-provider';
-import { PageHeader } from '@/components/ui/PageHeader';
-import { Tractor, Wrench, AlertCircle, Fuel, Clock, MapPin, Gauge, Plus, Trash2 } from 'lucide-react';
-import Link from 'next/link';
-import { useParams } from 'next/navigation';
-import { useQuery } from '@tanstack/react-query';
-import { api } from '@/core/lib/api-client';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Button } from '@/components/ui/Button';
+import { PageHeader } from '@/components/ui/PageHeader';
 import { SlideOver } from '@/components/ui/SlideOver';
-import { AssignAssetForm } from './_components/AssignAssetForm';
+import { api } from '@/core/lib/api-client';
+import { useProject } from '@/core/providers/project-provider';
 import { CreateEquipmentInput } from '@pulse/validators';
-import { toast } from 'sonner';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { AlertCircle, Clock, Fuel, Gauge, MapPin, Plus, Tractor, Trash2, Wrench } from 'lucide-react';
+import { useParams } from 'next/navigation';
 import { useState } from 'react';
+import { toast } from 'sonner';
+import { AssignAssetForm } from './_components/AssignAssetForm';
 
 export default function EquipmentPage() {
   const { project, isLoading } = useProject();

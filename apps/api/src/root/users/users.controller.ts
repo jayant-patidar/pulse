@@ -1,8 +1,8 @@
-import { Controller, Get, Patch, Body, Req, UseGuards, BadRequestException } from '@nestjs/common';
-import { Request } from 'express';
-import { UsersService } from './users.service';
-import { JwtAuthGuard } from '../../common/guards';
+import { BadRequestException, Body, Controller, Get, Patch, Req, UseGuards } from '@nestjs/common';
 import * as argon2 from 'argon2';
+import { Request } from 'express';
+import { JwtAuthGuard } from '../../common/guards';
+import { UsersService } from './users.service';
 
 @Controller('root/users')
 @UseGuards(JwtAuthGuard)

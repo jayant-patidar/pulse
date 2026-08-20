@@ -1,13 +1,13 @@
 'use client';
 
-import { useForm, Controller } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { createCoiSchema, CreateCoiInput } from '@pulse/validators';
 import { Button } from '@/components/ui/Button';
+import { FormField } from '@/components/ui/FormField';
 import { Input } from '@/components/ui/Input';
 import { Select } from '@/components/ui/Select';
-import { FormField } from '@/components/ui/FormField';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { CreateCoiInput, createCoiSchema } from '@pulse/validators';
 import DatePicker from 'react-datepicker';
+import { Controller, useForm } from 'react-hook-form';
 
 interface CoiFormProps {
   onSubmit: (data: CreateCoiInput) => void;

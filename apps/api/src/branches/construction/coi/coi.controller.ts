@@ -1,9 +1,9 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Req, UseGuards } from '@nestjs/common';
+import { Request } from 'express';
+import { JwtAuthGuard } from '../../../common/guards/jwt-auth.guard';
 import { CoiService } from './coi.service';
 import { CreateCoiDto } from './dto/create-coi.dto';
 import { UpdateCoiDto } from './dto/update-coi.dto';
-import { Request } from 'express';
-import { JwtAuthGuard } from '../../../common/guards/jwt-auth.guard';
 
 @Controller('construction/coi')
 @UseGuards(JwtAuthGuard)

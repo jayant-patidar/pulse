@@ -1,10 +1,10 @@
+import { InjectQueue } from '@nestjs/bull';
 import { Injectable, Logger } from '@nestjs/common';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 import { InjectModel } from '@nestjs/mongoose';
+import { Queue } from 'bullmq';
 import { Model } from 'mongoose';
 import { NotificationRecord, NotificationType } from './notifications.schema';
-import { InjectQueue } from '@nestjs/bull';
-import { Queue } from 'bullmq';
-import { EventEmitter2 } from '@nestjs/event-emitter';
 
 export interface CreateNotificationDto {
   title: string;

@@ -1,6 +1,6 @@
-import { Injectable, BadRequestException } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
+import { AgrTaskExtensions, agrTaskExtensionsSchema } from '@pulse/validators';
 import { ExtensionPlugin } from '../../../common/interfaces';
-import { agrTaskExtensionsSchema, AgrTaskExtensions } from '@pulse/validators';
 
 @Injectable()
 export class AgrTaskPlugin implements ExtensionPlugin<AgrTaskExtensions> {

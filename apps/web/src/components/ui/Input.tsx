@@ -1,6 +1,6 @@
-import * as React from "react"
-import { cn } from "@/core/lib/utils"
-import { Calendar, Clock } from "lucide-react"
+import { cn } from "@/core/lib/utils";
+import { Calendar, Clock } from "lucide-react";
+import * as React from "react";
 
 export interface InputProps
   extends React.InputHTMLAttributes<HTMLInputElement> {
@@ -41,4 +41,4 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
 )
 Input.displayName = "Input"
 
-export { Input }
+export { Input };

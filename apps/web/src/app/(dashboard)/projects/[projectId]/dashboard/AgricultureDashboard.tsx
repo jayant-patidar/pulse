@@ -1,10 +1,10 @@
 'use client';
 
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { PageHeader } from '@/components/ui/PageHeader';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/Card';
-import { Sprout, CloudRain, AlertTriangle, ChevronRight, Activity, Beaker } from 'lucide-react';
-import { WeatherWidget } from '@/components/ui/WeatherWidget';
 import { StatCard } from '@/components/ui/StatCard';
+import { WeatherWidget } from '@/components/ui/WeatherWidget';
+import { Activity, AlertTriangle, Beaker, ChevronRight, CloudRain, Sprout } from 'lucide-react';
 import Link from 'next/link';
 
 export function AgricultureDashboard({ project, pId }: { project: any, pId: string }) {

@@ -1,11 +1,11 @@
 'use client';
 
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { createEquipmentSchema, CreateEquipmentInput } from '@pulse/validators';
 import { Button } from '@/components/ui/Button';
-import { Input } from '@/components/ui/Input';
 import { FormField } from '@/components/ui/FormField';
+import { Input } from '@/components/ui/Input';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { CreateEquipmentInput, createEquipmentSchema } from '@pulse/validators';
+import { useForm } from 'react-hook-form';
 
 interface EquipmentFormProps {
   initialData?: any;

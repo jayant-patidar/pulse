@@ -1,15 +1,15 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { api } from '@/core/lib/api-client';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
-import { ShieldAlert, Plus, ShieldCheck, CalendarX } from 'lucide-react';
-import type { CertificateOfInsurance } from '@pulse/types';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { SlideOver } from '@/components/ui/SlideOver';
-import { COIForm } from './_components/COIForm';
+import { api } from '@/core/lib/api-client';
+import type { CertificateOfInsurance } from '@pulse/types';
 import { CreateCoiInput } from '@pulse/validators';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { CalendarX, Plus, ShieldAlert, ShieldCheck } from 'lucide-react';
+import { useState } from 'react';
+import { COIForm } from './_components/COIForm';
 
 export default function COIPage() {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);

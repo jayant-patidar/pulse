@@ -1,9 +1,9 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Req, UseGuards, Query } from '@nestjs/common';
-import { ScoutingService } from './scouting.service';
-import { CreateScoutingReportDto } from './dto/create-scouting-report.dto';
-import { UpdateScoutingReportDto } from './dto/update-scouting-report.dto';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query, Req, UseGuards } from '@nestjs/common';
 import { Request } from 'express';
 import { JwtAuthGuard } from '../../../common/guards/jwt-auth.guard';
+import { CreateScoutingReportDto } from './dto/create-scouting-report.dto';
+import { UpdateScoutingReportDto } from './dto/update-scouting-report.dto';
+import { ScoutingService } from './scouting.service';
 
 @Controller('branches/agriculture/scouting')
 @UseGuards(JwtAuthGuard)

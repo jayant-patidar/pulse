@@ -1,4 +1,4 @@
-import { IsString, IsEnum, IsOptional, IsDateString, IsNumber } from 'class-validator';
+import { IsDateString, IsEnum, IsNumber, IsOptional, IsString } from 'class-validator';
 import { CropCycleStatus } from '../crop-cycle.schema';
 
 export class CreateCropCycleDto {

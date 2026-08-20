@@ -1,4 +1,4 @@
-import { IsString, IsEnum, IsOptional, IsArray, IsDateString } from 'class-validator';
+import { IsArray, IsDateString, IsEnum, IsOptional, IsString } from 'class-validator';
 import { ObservationType, ScoutingSeverity, ScoutingStatus } from '../scouting-report.schema';
 
 export class CreateScoutingReportDto {

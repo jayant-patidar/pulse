@@ -8,36 +8,36 @@
 // ============================================================
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { MongooseModule } from '@nestjs/mongoose';
 import { EventEmitterModule } from '@nestjs/event-emitter';
+import { MongooseModule } from '@nestjs/mongoose';
 
 // ---- ROOT MODULES ----
-import { AuthModule } from './root/auth/auth.module';
-import { OrganizationsModule } from './root/organizations/organizations.module';
-import { UsersModule } from './root/users/users.module';
-import { MembershipsModule } from './root/memberships/memberships.module';
-import { RbacModule } from './root/rbac/rbac.module';
 import { AuditModule } from './root/audit/audit.module';
+import { AuthModule } from './root/auth/auth.module';
+import { MembershipsModule } from './root/memberships/memberships.module';
+import { OrganizationsModule } from './root/organizations/organizations.module';
+import { RbacModule } from './root/rbac/rbac.module';
+import { UsersModule } from './root/users/users.module';
 
+import { BullModule } from '@nestjs/bull';
 import { NotificationsModule } from './root/notifications/notifications.module';
 import { RealtimeModule } from './root/realtime/realtime.module';
 import { SearchModule } from './root/search/search.module';
-import { BullModule } from '@nestjs/bull';
 
-import { RemindersModule } from './root/reminders/reminders.module';
 import { ScheduleModule } from '@nestjs/schedule';
+import { RemindersModule } from './root/reminders/reminders.module';
 
 // ---- TRUNK MODULES ----
-import { ProjectsModule } from './trunk/projects/projects.module';
-import { TasksModule } from './trunk/tasks/tasks.module';
+import { TimesheetsModule } from './branches/construction/timesheets/timesheets.module';
 import { DailyReportsModule } from './trunk/daily-reports/daily-reports.module';
 import { DocumentsModule } from './trunk/documents/documents.module';
 import { EquipmentModule } from './trunk/equipment/equipment.module';
-import { TimesheetsModule } from './branches/construction/timesheets/timesheets.module';
+import { ProjectsModule } from './trunk/projects/projects.module';
+import { TasksModule } from './trunk/tasks/tasks.module';
 
 // ---- BRANCH MODULES ----
-import { ConstructionModule } from './branches/construction/construction.module';
 import { AgricultureModule } from './branches/agriculture/agriculture.module';
+import { ConstructionModule } from './branches/construction/construction.module';
 import { InspectionModule } from './branches/inspection/inspection.module';
 
 @Module({

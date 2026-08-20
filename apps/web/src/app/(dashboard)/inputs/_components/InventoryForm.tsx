@@ -1,14 +1,14 @@
 'use client';
 
-import { useForm, Controller } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { createInputInventorySchema, CreateInputInventoryInput } from '@pulse/validators';
 import { Button } from '@/components/ui/Button';
-import { Input } from '@/components/ui/Input';
-import { Textarea } from '@/components/ui/Textarea';
-import { Select } from '@/components/ui/Select';
 import { FormField } from '@/components/ui/FormField';
+import { Input } from '@/components/ui/Input';
+import { Select } from '@/components/ui/Select';
+import { Textarea } from '@/components/ui/Textarea';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { CreateInputInventoryInput, createInputInventorySchema } from '@pulse/validators';
 import DatePicker from 'react-datepicker';
+import { Controller, useForm } from 'react-hook-form';
 
 interface InventoryFormProps {
   initialData?: any;

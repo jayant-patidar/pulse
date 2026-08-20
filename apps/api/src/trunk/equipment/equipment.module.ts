@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { EquipmentDocument, EquipmentSchema } from './equipment.schema';
-import { EquipmentService } from './equipment.service';
 import { EquipmentController } from './equipment.controller';
 import { EquipmentExtensionRegistry } from './equipment.registry';
+import { EquipmentDocument, EquipmentSchema } from './equipment.schema';
+import { EquipmentService } from './equipment.service';
 
 @Module({
   imports: [
