@@ -9,7 +9,7 @@ export class OrganizationDocument extends Document {
   @Prop({ required: true, unique: true, lowercase: true })
   declare slug: string;
 
-  @Prop({ required: true, enum: ['CONSTRUCTION', 'AGRICULTURE', 'ENERGY', 'HVAC'] })
+  @Prop({ required: true, enum: ['CONSTRUCTION', 'AGRICULTURE', 'INSPECTION_SERVICES', 'ENERGY', 'HVAC'] })
   declare industry: string;
 
   @Prop()

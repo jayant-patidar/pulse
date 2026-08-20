@@ -70,9 +70,43 @@
     --accent-glow: 245 158 11; /* Amber glow */
   }
 
+  [data-industry="INSPECTION_SERVICES"] {
+    /* Inspection Services Theme (Violet/Indigo) */
+    --brand-50: 245 243 255;
+    --brand-100: 237 233 254;
+    --brand-200: 221 214 254;
+    --brand-300: 196 181 253;
+    --brand-400: 167 139 250;
+    --brand-500: 139 92 246;
+    --brand-600: 124 58 237;
+    --brand-700: 109 40 217;
+    --brand-800: 91 33 182;
+    --brand-900: 76 29 149;
+    --brand-950: 46 16 101;
+
+    /* Inspection Accent (Electric Indigo/Fuchsia mix) */
+    --accent-50: 253 244 255;
+    --accent-100: 250 232 255;
+    --accent-200: 245 208 254;
+    --accent-300: 240 171 252;
+    --accent-400: 232 121 249;
+    --accent-500: 217 70 239;
+    --accent-600: 192 38 211;
+    --accent-700: 162 28 175;
+    --accent-800: 134 25 143;
+    --accent-900: 112 26 117;
+    --accent-950: 74 4 78;
+
+    --accent-glow: 217 70 239; /* Fuchsia glow */
+  }
+
   body {
     @apply bg-brand-50 dark:bg-brand-950 text-brand-900 dark:text-brand-100 transition-colors;
     font-feature-settings: 'cv11', 'ss01';
+  }
+
+  .dark {
+    color-scheme: dark;
   }
 
   /* Headings use Outfit for a solid, structural feel */

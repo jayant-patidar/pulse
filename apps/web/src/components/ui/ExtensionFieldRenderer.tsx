@@ -226,6 +226,111 @@ export function ExtensionFieldRenderer({ industry, entityType, extensions, onCha
     }
   }
 
+  // Phase 3: Inspection Services specific UI
+  if (industry === 'INSPECTION_SERVICES') {
+    if (entityType === 'project') {
+      return (
+        <div className="space-y-4 p-4 border border-brand-200 dark:border-brand-800 rounded-xl bg-brand-50/30 dark:bg-brand-900/10">
+          <h4 className="text-sm font-semibold text-brand-900 dark:text-brand-100 flex items-center gap-2">
+            🔍 Property / Site Details
+          </h4>
+          <div className="grid grid-cols-2 gap-4">
+            <FormField label="Property Type">
+              <select 
+                className="w-full h-10 px-3 text-sm rounded-md border border-gray-200 dark:border-slate-800 bg-white dark:bg-slate-950"
+                value={extensions?.propertyType || ''} 
+                onChange={(e) => updateField('propertyType', e.target.value)}
+              >
+                <option value="">Select...</option>
+                <option value="COMMERCIAL">Commercial</option>
+                <option value="RESIDENTIAL">Residential</option>
+                <option value="INDUSTRIAL">Industrial</option>
+                <option value="GOVERNMENT">Government</option>
+                <option value="MIXED_USE">Mixed Use</option>
+              </select>
+            </FormField>
+            <FormField label="Year Built">
+              <Input 
+                type="number" 
+                value={extensions?.yearBuilt || ''} 
+                onChange={(e) => updateField('yearBuilt', Number(e.target.value))} 
+                placeholder="e.g. 1995"
+              />
+            </FormField>
+            <FormField label="Square Footage">
+              <Input 
+                type="number" 
+                value={extensions?.licensedSquareFootage || ''} 
+                onChange={(e) => updateField('licensedSquareFootage', Number(e.target.value))} 
+                placeholder="e.g. 50000"
+              />
+            </FormField>
+          </div>
+        </div>
+      );
+    }
+    
+    if (entityType === 'task') {
+      return (
+        <div className="space-y-4 p-4 border border-brand-200 dark:border-brand-800 rounded-xl bg-brand-50/30 dark:bg-brand-900/10">
+          <h4 className="text-sm font-semibold text-brand-900 dark:text-brand-100 flex items-center gap-2">
+            🔍 Work Order Details
+          </h4>
+          <div className="grid grid-cols-2 gap-4">
+            <FormField label="Assignment Type">
+              <select 
+                className="w-full h-10 px-3 text-sm rounded-md border border-gray-200 dark:border-slate-800 bg-white dark:bg-slate-950"
+                value={extensions?.assignmentType || ''} 
+                onChange={(e) => updateField('assignmentType', e.target.value)}
+              >
+                <option value="">Select...</option>
+                <option value="ROUTINE">Routine Inspection</option>
+                <option value="FOLLOW_UP">Follow-up / Re-inspection</option>
+                <option value="COMPLAINT">Complaint Driven</option>
+                <option value="EMERGENCY">Emergency</option>
+                <option value="PERMIT_REVIEW">Permit Review</option>
+              </select>
+            </FormField>
+            <FormField label="Inspector Cert Level">
+              <Input 
+                value={extensions?.inspectorCertLevel || ''} 
+                onChange={(e) => updateField('inspectorCertLevel', e.target.value)} 
+                placeholder="e.g. Level III"
+              />
+            </FormField>
+          </div>
+        </div>
+      );
+    }
+
+    if (entityType === 'daily_report') {
+      return (
+        <div className="space-y-4 p-4 border border-brand-200 dark:border-brand-800 rounded-xl bg-brand-50/30 dark:bg-brand-900/10">
+          <h4 className="text-sm font-semibold text-brand-900 dark:text-brand-100 flex items-center gap-2">
+            🔍 Inspector Field Log
+          </h4>
+          <div className="grid grid-cols-2 gap-4">
+            <FormField label="Inspections Completed">
+              <Input 
+                type="number"
+                value={extensions?.inspectionCount || ''} 
+                onChange={(e) => updateField('inspectionCount', Number(e.target.value))}
+                placeholder="e.g. 5"
+              />
+            </FormField>
+            <FormField label="Access Issues?">
+              <Input 
+                value={extensions?.accessIssues || ''} 
+                onChange={(e) => updateField('accessIssues', e.target.value)} 
+                placeholder="e.g. Roof access blocked"
+              />
+            </FormField>
+          </div>
+        </div>
+      );
+    }
+  }
+
   // Fallback to JSON editor for unknown industries
   const handleJsonChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     try {

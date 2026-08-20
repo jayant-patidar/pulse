@@ -23,3 +23,10 @@ export * from './branches/agriculture/scouting.validators';
 export * from './branches/agriculture/harvest.validators';
 export * from './branches/agriculture/input-inventory.validators';
 export * from './branches/agriculture/compliance.validators';
+
+// ---- BRANCH VALIDATORS (Inspection Services) ----
+export * from './branches/inspection/extensions.validators';
+export * from './branches/inspection/inspection.validators';
+export * from './branches/inspection/finding.validators';
+export * from './branches/inspection/certification.validators';
+export * from './branches/inspection/corrective-action.validators';

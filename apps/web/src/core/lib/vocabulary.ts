@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 
-type IndustryType = 'CONSTRUCTION' | 'AGRICULTURE' | 'ENERGY' | 'HVAC';
+type IndustryType = 'CONSTRUCTION' | 'AGRICULTURE' | 'INSPECTION_SERVICES' | 'ENERGY' | 'HVAC';
 
 export const VOCABULARY = {
   CONSTRUCTION: {
@@ -30,6 +30,19 @@ export const VOCABULARY = {
     projectDashboard: 'Facility Overview',
     projectFleet: 'Facility Fleet',
     projectSettings: 'Facility Settings'
+  },
+  INSPECTION_SERVICES: {
+    project: 'Site',
+    projects: 'Properties & Sites',
+    projectListTitle: 'Properties & Sites',
+    projectListDescription: 'Manage properties, buildings, and sites requiring inspection services.',
+    newProject: 'Register Site',
+    projectName: 'Site / Property Name',
+    addProjectTitle: 'Register New Site',
+    addProjectDesc: 'Enter the property details to schedule inspections and track findings.',
+    projectDashboard: 'Site Overview',
+    projectFleet: 'Inspection Kits',
+    projectSettings: 'Site Settings'
   },
   // Default fallbacks for unconfigured industries
   ENERGY: null,

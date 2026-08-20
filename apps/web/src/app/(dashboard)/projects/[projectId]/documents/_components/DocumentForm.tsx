@@ -69,7 +69,7 @@ export function DocumentForm({ initialData, onSubmit, isLoading }: DocumentFormP
       {activeProjectId ? (
         <FormField label="Project">
           <Input 
-            value={projects.find((p: any) => p._id === activeProjectId)?.name || 'Loading...'} 
+            value={projects.find((p: any) => p._id === activeProjectId)?.name || 'Loading / Unknown Project'} 
             disabled 
             className="bg-slate-50 dark:bg-brand-900/50 text-slate-500 dark:text-slate-400 cursor-not-allowed" 
           />

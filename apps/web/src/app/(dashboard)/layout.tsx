@@ -83,6 +83,19 @@ const AGRICULTURE_PROJECT_NAV_ITEMS = [
   { label: 'Directory', href: '/directory', icon: <Settings className="w-5 h-5" /> },
 ];
 
+const INSPECTION_PROJECT_NAV_ITEMS = [
+  { label: 'Site Overview', href: '/dashboard', icon: <LayoutDashboard className="w-5 h-5" /> },
+  { label: 'Work Orders', href: '/tasks', icon: <ListTodo className="w-5 h-5" /> },
+  { label: 'Inspector Logs', href: '/reports', icon: <ClipboardList className="w-5 h-5" /> },
+  { label: 'Inspection Kits', href: '/equipment', icon: <HardHat className="w-5 h-5" /> },
+  { label: 'Documents', href: '/documents', icon: <FileText className="w-5 h-5" /> },
+  { label: 'Inspections', href: '/inspections', icon: <Search className="w-5 h-5" /> },
+  { label: 'Findings', href: '/findings', icon: <FileText className="w-5 h-5" /> },
+  { label: 'Certifications', href: '/certifications', icon: <ClipboardList className="w-5 h-5" /> },
+  { label: 'Corrective Actions', href: '/corrective-actions', icon: <ListTodo className="w-5 h-5" /> },
+  { label: 'Directory', href: '/directory', icon: <Settings className="w-5 h-5" /> },
+];
+
 function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
   const pathname = usePathname();
   const { user, logout } = useAuth();
@@ -113,6 +126,8 @@ function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) 
   let activeProjectNavItems = PROJECT_NAV_ITEMS;
   if (project?.industry === 'AGRICULTURE') {
     activeProjectNavItems = AGRICULTURE_PROJECT_NAV_ITEMS;
+  } else if (project?.industry === 'INSPECTION_SERVICES') {
+    activeProjectNavItems = INSPECTION_PROJECT_NAV_ITEMS;
   }
 
   const mappedBaseNav = BASE_NAV_ITEMS.map(item => 
