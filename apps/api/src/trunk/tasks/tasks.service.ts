@@ -3,7 +3,7 @@
 // ============================================================
 import { Injectable, NotFoundException, BadRequestException, Logger } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { Model, Types } from 'mongoose';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 import { TaskDocument } from './tasks.schema';
 import { parsePaginationQuery, buildPaginatedMeta, type PaginationQuery } from '../../common/helpers';
@@ -29,7 +29,19 @@ export class TasksService {
     private readonly registry: TaskExtensionRegistry,
   ) {}
 
-  async create(orgId: string, userId: string, industry: string, dto: Record<string, unknown>) {
+  async create(orgId: string, userId: string, defaultIndustry: string, dto: Record<string, unknown>) {
+    let industry = defaultIndustry;
+    if (dto.projectId) {
+      try {
+        const project = await this.taskModel.db.collection('projects').findOne({ _id: new Types.ObjectId(dto.projectId as string) });
+        if (project && project.industry) {
+          industry = project.industry as string;
+        }
+      } catch (e) {
+        // Ignore invalid object id
+      }
+    }
+
     if (dto.extensions) {
       const plugin = this.registry.getPlugin(industry);
       if (plugin) {
